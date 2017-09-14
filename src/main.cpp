@@ -17,6 +17,8 @@ int main()
 {
 	AudioFile file = AudioFile::fromPath(INPUT_FILE_PATH);
 
+	file.print();
+
 	MAX_TIME = file.getDuration().getSeconds(44100);
 
 	const long int frame_time_micros = (long int) (1000000.f * dur);
@@ -79,10 +81,10 @@ const float scale = 15.f;
 
 void tick(const AudioFile &file, const float time)
 {
-	const int loudness_left = (int)(file.getLoudness_sum(Time::fromSeconds((float)time, 44100), Time::fromSeconds(dur, 44100), StereoChannel::LEFT)*scale);
-	const int loudness_right = (int)(file.getLoudness_sum(Time::fromSeconds((float)time, 44100), Time::fromSeconds(dur, 44100), StereoChannel::RIGHT)*scale);
-	const int loudness_left2 = (int)(file.getLoudness_diff(Time::fromSeconds((float)time, 44100), Time::fromSeconds(dur, 44100), StereoChannel::LEFT)*scale);
-	const int loudness_right2 = (int)(file.getLoudness_diff(Time::fromSeconds((float)time, 44100), Time::fromSeconds(dur, 44100), StereoChannel::RIGHT)*scale);
+	const int loudness_left = (int)(file.getLoudness_sum(FrameTime::fromSeconds((float)time, 44100), FrameTime::fromSeconds(dur, 44100), StereoChannel::LEFT)*scale);
+	const int loudness_right = (int)(file.getLoudness_sum(FrameTime::fromSeconds((float)time, 44100), FrameTime::fromSeconds(dur, 44100), StereoChannel::RIGHT)*scale);
+	const int loudness_left2 = (int)(file.getLoudness_diff(FrameTime::fromSeconds((float)time, 44100), FrameTime::fromSeconds(dur, 44100), StereoChannel::LEFT)*scale);
+	const int loudness_right2 = (int)(file.getLoudness_diff(FrameTime::fromSeconds((float)time, 44100), FrameTime::fromSeconds(dur, 44100), StereoChannel::RIGHT)*scale);
 	render(loudness_left, loudness_right, window_width/2.f);
 	render(loudness_left2, loudness_right2, window_width/2.f);
 	std::cout << std::endl;

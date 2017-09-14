@@ -16,7 +16,7 @@ AudioFile AudioFile::fromPath(const char* path)
 		return AudioFile();
 	}
 
-	Time duration = Time::fromFramecount(info.frames);
+	FrameTime duration = FrameTime::fromFrameCount(info.frames);
 	const unsigned int channelCount = info.channels;
 	const unsigned int framerate = info.samplerate;
 	const size_t sampleCount = info.frames * channelCount;
@@ -28,12 +28,12 @@ AudioFile AudioFile::fromPath(const char* path)
 	return AudioFile(file, samples, duration, framerate, channelCount);
 }
 
-AudioFile::AudioFile(SNDFILE *f, float *samp, Time &dur, const unsigned int framert, const unsigned int channelc)
+AudioFile::AudioFile(SNDFILE *f, float *samp, FrameTime &dur, const unsigned int framert, const unsigned int channelc)
 	: file(f), samples(samp), valid(true), duration(dur), framerate(framert), channelCount(channelc)
 { }
 
 AudioFile::AudioFile()
-	: valid(false), duration(Time::fromFramecount(0))
+	: valid(false), duration(FrameTime::fromFrameCount(0))
 {
 	Debug::out << Debug::error << "invalid file created" << Debug::endl;
 }
@@ -47,17 +47,17 @@ AudioFile::~AudioFile()
 	}
 }
 
-float AudioFile::getLoudness_diff(Time offset, Time duration) const
+float AudioFile::getLoudness_diff(FrameTime offset, FrameTime duration) const
 {
 	return (getLoudness_diff(offset, duration, StereoChannel::LEFT) + getLoudness_diff(offset, duration, StereoChannel::RIGHT)) / 2.f;
 }
 
-float AudioFile::getLoudness_diff(Time offset, Time duration, StereoChannel channel) const
+float AudioFile::getLoudness_diff(FrameTime offset, FrameTime duration, StereoChannel channel) const
 {
 	SampleIterator iter = getIteratorFrom(offset, channel);
 	float max = iter.get();
 	float min = iter.get();
-	for (size_t i = 0; i < duration.getFramecount(); i++, ++iter)
+	for (size_t i = 0; i < duration.getFrameCount(); i++, ++iter)
 	{
 		const float val = iter.get();
 		if (val < min)
@@ -68,19 +68,19 @@ float AudioFile::getLoudness_diff(Time offset, Time duration, StereoChannel chan
 	return max - min;
 }
 
-float AudioFile::getLoudness_sum(Time offset, Time duration) const
+float AudioFile::getLoudness_sum(FrameTime offset, FrameTime duration) const
 {
 	return (getLoudness_sum(offset, duration, StereoChannel::LEFT) + getLoudness_sum(offset, duration, StereoChannel::RIGHT)) / 2.f;
 }
 
-float AudioFile::getLoudness_sum(Time offset, Time duration, StereoChannel channel) const
+float AudioFile::getLoudness_sum(FrameTime offset, FrameTime duration, StereoChannel channel) const
 {
 	SampleIterator iter = getIteratorFrom(offset, channel);
 	float sum = 0.f;
 	SampleIterator last = iter;
 	bool next_point_high = last.get() < (iter+1).get();
 	SampleIterator last_extrem_point_index = iter;
-	for (size_t i = 0; i < duration.getFramecount(); i++, ++iter)
+	for (size_t i = 0; i < duration.getFrameCount(); i++, ++iter)
 	{
 		if (next_point_high)
 		{
@@ -106,26 +106,20 @@ float AudioFile::getLoudness_sum(Time offset, Time duration, StereoChannel chann
 
 void AudioFile::print() const
 {
-	Debug::out << "duration in sec=" << duration.getSeconds(framerate) << Debug::endl;
-	SampleIterator iter = getIteratorFrom(Time::fromFramecount(264600), StereoChannel::LEFT);
-	for (size_t i = 529200; i < 530000; i += 2)
-	{
-		Debug::out << samples[i] << " - " << iter.get() << Debug::endl;
-		++iter;
-	}
+	Debug::out << "duration: " << duration.getSeconds(framerate) << Debug::endl;
 }
 
-Time AudioFile::getDuration() const
+FrameTime AudioFile::getDuration() const
 {
 	return duration;
 }
 
 size_t AudioFile::getMemSize() const
 {
-	return duration.getFramecount() * channelCount;
+	return duration.getFrameCount() * channelCount;
 }
 
-SampleIterator AudioFile::getIteratorFrom(const Time frame_offset, StereoChannel channel) const
+SampleIterator AudioFile::getIteratorFrom(const FrameTime frame_offset, StereoChannel channel) const
 {
-	return SampleIterator(samples, frame_offset.getFramecount(), duration.getFramecount(), channel);
+	return SampleIterator(samples, frame_offset.getFrameCount(), duration.getFrameCount(), channel);
 }
