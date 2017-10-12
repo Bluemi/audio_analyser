@@ -35,5 +35,5 @@ SampleIterator SampleIterator::operator+(const int i) const
 
 size_t SampleIterator::getArrayAccessPoint() const
 {
-	return iter*2 + channel;
+	return iter*STEREO_CHANNEL_NUMBER + channel;
 }

@@ -1,5 +1,7 @@
 start: compile run
 run:
+	@./bam/build/debug/analyser
+music:
 	@cvlc ./test1.wav &
 	@./bam/build/debug/analyser
 	@pkill vlc
