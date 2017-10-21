@@ -6,7 +6,7 @@
 
 #include <AudioFile.hpp>
 
-#define INPUT_FILE_PATH "./tone2.wav"
+#define INPUT_FILE_PATH "./tone.wav"
 const float DURATION = 0.03f;
 const int window_width = 199;
 const int NUM_OF_SUBBANDS = 20;
@@ -14,7 +14,9 @@ const float SCALE = 4.f;
 const float SCALE_FREQ = 0.7f;
 const float DELAY = 0.0f;
 
-void tick(const AudioFile &file, const float time);
+typedef short TestSampleType;
+
+void tick(const AudioFile<TestSampleType> &file, const float time);
 long int unix_micros();
 void render(int left_value, int right_value, int width);
 
@@ -25,7 +27,7 @@ float round(float value, int position)
 	return new_value / (float)factor;
 }
 
-void test_runtime(const AudioFile &file)
+void test_runtime(const AudioFile<TestSampleType> &file)
 {
 	const float MAX_TIME = file.getDuration().getSeconds();
 
@@ -62,7 +64,7 @@ void test_runtime(const AudioFile &file)
 	system("pkill vlc");
 }
 
-void test_precalculated(const AudioFile &file)
+void test_precalculated(const AudioFile<TestSampleType> &file)
 {
 	const float MAX_TIME = file.getDuration().getSeconds();
 	//const float MAX_TIME = std::min(10.f, file.getDuration().getSeconds());
@@ -124,7 +126,7 @@ void test_precalculated(const AudioFile &file)
 
 int main()
 {
-	AudioFile file = AudioFile::fromPath(INPUT_FILE_PATH);
+	AudioFile<TestSampleType> file = AudioFile<TestSampleType>::fromPath(INPUT_FILE_PATH);
 	file.print();
 	//test_runtime(file);
 	test_precalculated(file);
@@ -164,7 +166,7 @@ void render(int left_value, int right_value, int width)
 	}
 }
 
-void tick(const AudioFile &file, const float time)
+void tick(const AudioFile<TestSampleType> &file, const float time)
 {
 	const int loudness_left_sum = (int)(file.getLoudness_sum(file.secondsToTime(time+DELAY), file.secondsToTime(DURATION), StereoChannel::LEFT)*SCALE);
 	const int loudness_right_sum = (int)(file.getLoudness_sum(file.secondsToTime(time+DELAY), file.secondsToTime(DURATION), StereoChannel::RIGHT)*SCALE);

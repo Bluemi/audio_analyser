@@ -3,17 +3,15 @@
 
 #include <vector>
 
+template <typename SampleType>
 class SampleIterator;
 class Time;
 
-std::vector<float> group(std::vector<float> &vec, unsigned int subbands);
+template <typename T>
+std::vector<T> group(std::vector<T> &vec, unsigned int subbands);
 
-// Transformations
-std::vector<float> discreteCosineTransformationIV(SampleIterator iterator, const Time &duration);
-std::vector<float> inverseDiscreteCosineTransformationIV(const std::vector<float> &vec);
-
-std::vector<float> modifiedDiscreteCosineTransformation(SampleIterator iterator, const Time &duration, float percentage);
-//std::vector<float> modifiedDinverseDiscreteCosineTransformation(const std::vector<float> &vec);
+template <typename SampleType>
+std::vector<float> modifiedDiscreteCosineTransformation(SampleIterator<SampleType> iterator, const Time &duration, float percentage);
 
 #include <SampleIterator.hpp>
 #include <time/Time.hpp>

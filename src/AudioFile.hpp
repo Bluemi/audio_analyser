@@ -10,6 +10,7 @@
 #include <SampleIterator.hpp>
 #include <channels/Channels.hpp>
 
+template <typename SampleType>
 class AudioFile
 {
 	public:
@@ -34,13 +35,16 @@ class AudioFile
 		// misc
 		void print() const;
 		size_t getMemSize() const;
-		SampleIterator getIteratorFrom(const Time offset_frame, StereoChannel channel) const;
+		SampleIterator<SampleType> getIteratorFrom(const Time offset_frame, StereoChannel channel) const;
 
 		static constexpr float FREQUENCIES_SHARE() { return 1.f; };
+		static constexpr float SHORT_COEFFICIENT();
 	private:
-		AudioFile(SNDFILE *f, float *samp, Time &dur, unsigned int channelc);
+		static sf_count_t loadSamples(SNDFILE *file, SampleType *samples, const sf_count_t frames);
+
+		AudioFile(SNDFILE *f, SampleType *samp, Time &dur, unsigned int channelc);
 		SNDFILE *file;
-		float *samples;
+		SampleType *samples;
 		bool valid;
 		Time duration;
 		unsigned int channelCount;

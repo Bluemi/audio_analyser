@@ -2,10 +2,11 @@
 
 #include <cmath>
 
-std::vector<float> group(std::vector<float> &vec, unsigned int num_of_subbands)
+template <typename T>
+std::vector<T> group(std::vector<T> &vec, unsigned int num_of_subbands)
 {
 	const float subband_width = vec.size() / (float) num_of_subbands;
-	std::vector<float> result(num_of_subbands, 0.f);
+	std::vector<T> result(num_of_subbands, 0.f);
 	unsigned int last_subband_index = 0;
 	unsigned int value_counter = 0;
 	for (unsigned int i = 0; i < vec.size(); i++)
@@ -27,39 +28,11 @@ std::vector<float> group(std::vector<float> &vec, unsigned int num_of_subbands)
 	return result;
 }
 
-std::vector<float> discreteCosineTransformationIV(SampleIterator iterator, const Time &duration)
-{
-	const int N = duration.getFrameCount();
-	std::vector<float> result(N);
-	for (int k = 0; k < N; k++)
-	{
-		float sum = 0.f;
-		for (int n = 0; n < N; n++, ++iterator)
-		{
-			sum += iterator.get() * cos(M_PI/N * (n + 0.5f) * (k + 0.5f));
-		}
-		result[k] = sum;
-	}
-	return result;
-}
+template std::vector<float> group(std::vector<float> &vec, unsigned int num_of_subbands);
+template std::vector<short> group(std::vector<short> &vec, unsigned int num_of_subbands);
 
-std::vector<float> inverseDiscreteCosineTransformationIV(const std::vector<float> &vec)
-{
-	std::vector<float> result(vec.size(), 0.f);
-	const int N = vec.size();
-	for (int k = 0; k < N; k++)
-	{
-		float sum = 0.f;
-		for (int n = 0; n < N; n++)
-		{
-			sum += vec[n] * cos(M_PI/N * (n + 0.5f) * (k + 0.5f));
-		}
-		result[k] = (2.f/N) * sum;
-	}
-	return result;
-}
-
-std::vector<float> modifiedDiscreteCosineTransformation(SampleIterator iterator, const Time &duration, float percentage)
+template <typename T>
+std::vector<float> modifiedDiscreteCosineTransformation(SampleIterator<T> iterator, const Time &duration, float percentage)
 {
 	const int N = duration.getFrameCount();
 	std::vector<float> result((int)(N*percentage));
@@ -74,3 +47,6 @@ std::vector<float> modifiedDiscreteCosineTransformation(SampleIterator iterator,
 	}
 	return result;
 }
+
+template std::vector<float> modifiedDiscreteCosineTransformation<float>(SampleIterator<float> iterator, const Time &duration, float percentage);
+template std::vector<float> modifiedDiscreteCosineTransformation<short>(SampleIterator<short> iterator, const Time &duration, float percentage);
