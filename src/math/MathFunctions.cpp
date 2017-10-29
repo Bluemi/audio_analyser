@@ -31,6 +31,48 @@ std::vector<T> group(std::vector<T> &vec, unsigned int num_of_subbands)
 template std::vector<float> group(std::vector<float> &vec, unsigned int num_of_subbands);
 template std::vector<short> group(std::vector<short> &vec, unsigned int num_of_subbands);
 
+template<typename T>
+std::vector<T> group(const std::vector<T> &input, const std::vector<float> &bounds, const int max)
+{
+	unsigned int n = bounds.size()-1;
+	if (n < 1)
+	{
+		return std::vector<T>();
+	}
+	float coefficient = input.size() / (float)max;
+	std::vector<int> input_frequencies(bounds.size());
+	for (unsigned int i = 0; i < bounds.size(); i++)
+	{
+		input_frequencies[i] = (int)(coefficient * bounds[i]);
+	}
+
+	std::vector<T> result(n);
+	for (unsigned int i = 0; i < n; i++)
+	{
+		//std::cout << "getSubgroup(input, input_frequencies[" << i << "]=" << input_frequencies[i] << ", input_frequencies[i+i]);
+		result[i] = getSubgroup(input, input_frequencies[i], input_frequencies[i+1]);
+	}
+	return result;
+
+}
+
+template std::vector<float> group(const std::vector<float> &input, const std::vector<float> &bounds, const int max);
+template std::vector<short> group(const std::vector<short> &input, const std::vector<float> &bounds, const int max);
+
+template<typename T>
+T getSubgroup(const std::vector<T> &input, unsigned int lower_bound, unsigned int upper_bound)
+{
+	T sum = 0;
+	for (unsigned int i = lower_bound; i < upper_bound; i++)
+	{
+		sum += input[i];
+	}
+	return sum / (upper_bound - lower_bound);
+}
+
+template float getSubgroup(const std::vector<float> &input, unsigned int lower_bound, unsigned int upper_bound);
+template short getSubgroup(const std::vector<short> &input, unsigned int lower_bound, unsigned int upper_bound);
+
 template <typename T>
 std::vector<float> modifiedDiscreteCosineTransformation(SampleIterator<T> iterator, const Time &duration, float percentage)
 {

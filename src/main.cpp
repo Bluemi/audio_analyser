@@ -4,19 +4,18 @@
 #include <unistd.h>
 #include <cmath>
 
-#include <AudioFile.hpp>
+#include <audio/AudioFile.hpp>
 
-#define INPUT_FILE_PATH "./tone.wav"
+#define INPUT_FILE_PATH "./test/tone2.wav"
 const float DURATION = 0.03f;
 const int window_width = 199;
 const int NUM_OF_SUBBANDS = 20;
 const float SCALE = 4.f;
-const float SCALE_FREQ = 0.7f;
+const float SCALE_FREQ = 2.7f;
 const float DELAY = 0.0f;
 
-typedef short TestSampleType;
+typedef float TestSampleType;
 
-void tick(const AudioFile<TestSampleType> &file, const float time);
 long int unix_micros();
 void render(int left_value, int right_value, int width);
 
@@ -45,6 +44,19 @@ void test_runtime(const AudioFile<TestSampleType> &file)
 
 	system("cvlc " INPUT_FILE_PATH " &");
 
+	std::vector<float> frequencySubbands(11);
+	frequencySubbands[0] = 0.f;
+	frequencySubbands[1] = 2000.f;
+	frequencySubbands[2] = 4000.f;
+	frequencySubbands[3] = 6000.f;
+	frequencySubbands[4] = 8000.f;
+	frequencySubbands[5] = 10000.f;
+	frequencySubbands[6] = 12000.f;
+	frequencySubbands[7] = 14000.f;
+	frequencySubbands[8] = 16000.f;
+	frequencySubbands[9] = 18000.f;
+	frequencySubbands[10] = 20000.f;
+
 	while (time < MAX_TIME)
 	{
 		const long int current_time = unix_micros();
@@ -57,9 +69,14 @@ void test_runtime(const AudioFile<TestSampleType> &file)
 			std::cout << "overload" << std::endl;
 		}
 
-		tick(file, time);
-		time += DURATION;
+		const std::vector<float> frequencies = file.getFrequencySubbands(file.secondsToTime(time), file.secondsToTime(DURATION*0.2f), frequencySubbands);
+		for (unsigned int i = 0; i+1 < frequencies.size(); i+=2)
+		{
+			render(frequencies[i]*SCALE_FREQ, frequencies[i+1]*SCALE_FREQ, window_width/frequencies.size()*2.f);
+		}
+		std::cout << std::endl;
 		frameCounter++;
+		time += DURATION;
 	}
 	system("pkill vlc");
 }
@@ -128,8 +145,8 @@ int main()
 {
 	AudioFile<TestSampleType> file = AudioFile<TestSampleType>::fromPath(INPUT_FILE_PATH);
 	file.print();
-	//test_runtime(file);
-	test_precalculated(file);
+	test_runtime(file);
+	//test_precalculated(file);
 
 	return 0;
 }
@@ -164,29 +181,6 @@ void render(int left_value, int right_value, int width)
 	{
 		std::cout << " ";
 	}
-}
-
-void tick(const AudioFile<TestSampleType> &file, const float time)
-{
-	const int loudness_left_sum = (int)(file.getLoudness_sum(file.secondsToTime(time+DELAY), file.secondsToTime(DURATION), StereoChannel::LEFT)*SCALE);
-	const int loudness_right_sum = (int)(file.getLoudness_sum(file.secondsToTime(time+DELAY), file.secondsToTime(DURATION), StereoChannel::RIGHT)*SCALE);
-	const int loudness_left_diff = (int)(file.getLoudness_diff(file.secondsToTime(time+DELAY), file.secondsToTime(DURATION), StereoChannel::LEFT)*SCALE);
-	const int loudness_right_diff = (int)(file.getLoudness_diff(file.secondsToTime(time+DELAY), file.secondsToTime(DURATION), StereoChannel::RIGHT)*SCALE);
-	const int loudness_left_grade = (int)(file.getLoudness_grade(file.secondsToTime(time+DELAY), file.secondsToTime(DURATION), StereoChannel::LEFT)*SCALE);
-	const int loudness_right_grade = (int)(file.getLoudness_grade(file.secondsToTime(time+DELAY), file.secondsToTime(DURATION), StereoChannel::RIGHT)*SCALE);
-	render(loudness_left_sum, loudness_right_sum, window_width/3.f);
-	render(loudness_left_diff, loudness_right_diff, window_width/3.f);
-	render(loudness_left_grade, loudness_right_grade, window_width/3.f);
-	std::cout << std::endl;
-	/*
-	const std::vector<float> frequencies = file.getFrequencySubbands(file.secondsToTime(time+DELAY), file.secondsToTime(DURATION), NUM_OF_SUBBANDS);
-	for (unsigned int i = 0; i+1 < frequencies.size(); i+=2)
-	{
-		render(frequencies[i]*SCALE_FREQ, frequencies[i+1]*SCALE_FREQ, window_width/frequencies.size()*2.f);
-		//std::cout << frequencies[i] << std::endl;
-	}
-	std::cout << std::endl;
-	*/
 }
 
 long int unix_micros()

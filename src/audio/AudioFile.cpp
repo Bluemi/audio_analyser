@@ -31,7 +31,7 @@ AudioFile<SampleType> AudioFile<SampleType>::fromPath(const char* path)
 	{
 		Debug::out << Debug::warn << "AudioFile::AudioFile(): info.frames(" << info.frames << "differs with the result of READ_FUNCTION" << Debug::endl;
 	}
-	return AudioFile<SampleType>(file, samples, duration, channelCount);
+	return AudioFile<SampleType>(file, samples, duration, channelCount, info.samplerate);
 }
 
 template<>
@@ -47,8 +47,8 @@ sf_count_t AudioFile<short>::loadSamples(SNDFILE *file, short *samples, const sf
 }
 
 template <typename SampleType>
-AudioFile<SampleType>::AudioFile(SNDFILE *f, SampleType *samp, Time &dur, unsigned int channelc)
-	: file(f), samples(samp), valid(true), duration(dur), channelCount(channelc)
+AudioFile<SampleType>::AudioFile(SNDFILE *f, SampleType *samp, Time &dur, unsigned int channelc, unsigned int srate)
+	: file(f), samples(samp), valid(true), duration(dur), channelCount(channelc), samplerate(srate)
 {}
 
 template <typename SampleType>
@@ -217,6 +217,21 @@ std::vector<float> AudioFile<SampleType>::getFrequencySubbands(const Time &offse
 	}
 
 	return group(frequencies, num_of_subbands);
+}
+
+template <typename SampleType>
+std::vector<float> AudioFile<SampleType>::getFrequencySubbands(const Time &offset, const Time &duration, const std::vector<float> &bounds) const
+{
+	std::vector<float> frequencies_left = modifiedDiscreteCosineTransformation(getIteratorFrom(offset, StereoChannel::LEFT), duration, FREQUENCIES_SHARE());
+	std::vector<float> frequencies_right = modifiedDiscreteCosineTransformation(getIteratorFrom(offset, StereoChannel::RIGHT), duration, FREQUENCIES_SHARE());
+
+	std::vector<float> frequencies(frequencies_left.size());
+	for (unsigned int i = 0; i < frequencies.size(); i++)
+	{
+		frequencies[i] = ((std::abs(frequencies_left[i]) + std::abs(frequencies_right[i])) / 2.f) * SHORT_COEFFICIENT();
+	}
+
+	return group(frequencies, bounds, samplerate / 2);
 }
 
 template <typename SampleType>

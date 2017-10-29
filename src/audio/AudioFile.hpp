@@ -7,7 +7,7 @@
 
 #include <time/FrameTime.hpp>
 #include <time/Time.hpp>
-#include <SampleIterator.hpp>
+#include <audio/SampleIterator.hpp>
 #include <channels/Channels.hpp>
 
 template <typename SampleType>
@@ -17,22 +17,30 @@ class AudioFile
 		static AudioFile fromPath(const char* path);
 		~AudioFile();
 		AudioFile();
-		// Loudness
+
+		// Loudness -----------------------------------------------
 		float getLoudness_diff(Time offset, Time duration) const;
 		float getLoudness_diff(Time offset, Time duration, StereoChannel channel) const;
 		float getLoudness_sum(Time offset, Time duration) const;
 		float getLoudness_sum(Time offset, Time duration, StereoChannel channel) const;
 		float getLoudness_grade(Time offset, Time duration, StereoChannel channel) const;
 		float getLoudness_grade(Time offset, Time duration) const;
-		// Time
+
+		// Time ---------------------------------------------------
 		Time toTime(const FrameTime &frameTime) const;
 		Time toTime(const SecondsTime &secondsTime) const;
 		Time secondsToTime(float seconds) const;
 		Time frameCountToTime(size_t frameCount) const;
 		Time getDuration() const;
-		// Frequency
+
+		// Frequency - Subbands -----------------------------------
+		// calculates the loudness of <num_of_subbands> frequency Subbands from 0 Hz to 22050 Hz
 		std::vector<float> getFrequencySubbands(const Time &offset, const Time &duration, int num_of_subbands) const;
-		// misc
+		// calculates the loudness of <bounds.size()-1> subbands
+		// each sector will be restricted by bounds[n] and bounds[n+1]
+		std::vector<float> getFrequencySubbands(const Time &offset, const Time &duration, const std::vector<float> &bounds) const;
+
+		// misc ---------------------------------------------------
 		void print() const;
 		size_t getMemSize() const;
 		SampleIterator<SampleType> getIteratorFrom(const Time offset_frame, StereoChannel channel) const;
@@ -42,12 +50,13 @@ class AudioFile
 	private:
 		static sf_count_t loadSamples(SNDFILE *file, SampleType *samples, const sf_count_t frames);
 
-		AudioFile(SNDFILE *f, SampleType *samp, Time &dur, unsigned int channelc);
+		AudioFile(SNDFILE *f, SampleType *samp, Time &dur, unsigned int channelc, unsigned int srate);
 		SNDFILE *file;
 		SampleType *samples;
 		bool valid;
 		Time duration;
 		unsigned int channelCount;
+		unsigned int samplerate;
 };
 
 #endif
