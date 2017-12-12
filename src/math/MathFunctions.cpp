@@ -2,11 +2,10 @@
 
 #include <cmath>
 
-template <typename T>
-std::vector<T> group(std::vector<T> &vec, unsigned int num_of_subbands)
+std::vector<float> MathFunctions::group(std::vector<float> &vec, unsigned int num_of_subbands)
 {
 	const float subband_width = vec.size() / (float) num_of_subbands;
-	std::vector<T> result(num_of_subbands, 0.f);
+	std::vector<float> result(num_of_subbands, 0.f);
 	unsigned int last_subband_index = 0;
 	unsigned int value_counter = 0;
 	for (unsigned int i = 0; i < vec.size(); i++)
@@ -28,16 +27,12 @@ std::vector<T> group(std::vector<T> &vec, unsigned int num_of_subbands)
 	return result;
 }
 
-template std::vector<float> group(std::vector<float> &vec, unsigned int num_of_subbands);
-template std::vector<short> group(std::vector<short> &vec, unsigned int num_of_subbands);
-
-template<typename T>
-std::vector<T> group(const std::vector<T> &input, const std::vector<float> &bounds, const int max)
+std::vector<float> MathFunctions::group(const std::vector<float> &input, const std::vector<float> &bounds, const int max)
 {
 	unsigned int n = bounds.size()-1;
 	if (n < 1)
 	{
-		return std::vector<T>();
+		return std::vector<float>();
 	}
 	float coefficient = input.size() / (float)max;
 	std::vector<int> input_frequencies(bounds.size());
@@ -46,23 +41,19 @@ std::vector<T> group(const std::vector<T> &input, const std::vector<float> &boun
 		input_frequencies[i] = (int)(coefficient * bounds[i]);
 	}
 
-	std::vector<T> result(n);
+	std::vector<float> result(n);
 	for (unsigned int i = 0; i < n; i++)
 	{
 		//std::cout << "getSubgroup(input, input_frequencies[" << i << "]=" << input_frequencies[i] << ", input_frequencies[i+i]);
-		result[i] = getSubgroup(input, input_frequencies[i], input_frequencies[i+1]);
+		result[i] = MathFunctions::getSubgroup(input, input_frequencies[i], input_frequencies[i+1]);
 	}
 	return result;
 
 }
 
-template std::vector<float> group(const std::vector<float> &input, const std::vector<float> &bounds, const int max);
-template std::vector<short> group(const std::vector<short> &input, const std::vector<float> &bounds, const int max);
-
-template<typename T>
-T getSubgroup(const std::vector<T> &input, unsigned int lower_bound, unsigned int upper_bound)
+float MathFunctions::getSubgroup(const std::vector<float> &input, unsigned int lower_bound, unsigned int upper_bound)
 {
-	T sum = 0;
+	float sum = 0;
 	for (unsigned int i = lower_bound; i < upper_bound; i++)
 	{
 		sum += input[i];
@@ -70,11 +61,7 @@ T getSubgroup(const std::vector<T> &input, unsigned int lower_bound, unsigned in
 	return sum / (upper_bound - lower_bound);
 }
 
-template float getSubgroup(const std::vector<float> &input, unsigned int lower_bound, unsigned int upper_bound);
-template short getSubgroup(const std::vector<short> &input, unsigned int lower_bound, unsigned int upper_bound);
-
-template <typename T>
-std::vector<float> modifiedDiscreteCosineTransformation(SampleIterator<T> iterator, const Time &duration, float percentage)
+std::vector<float> MathFunctions::modifiedDiscreteCosineTransformation(SampleIterator iterator, const Time &duration, float percentage)
 {
 	const int N = duration.getFrameCount();
 	std::vector<float> result((int)(N*percentage));
@@ -90,5 +77,22 @@ std::vector<float> modifiedDiscreteCosineTransformation(SampleIterator<T> iterat
 	return result;
 }
 
-template std::vector<float> modifiedDiscreteCosineTransformation<float>(SampleIterator<float> iterator, const Time &duration, float percentage);
-template std::vector<float> modifiedDiscreteCosineTransformation<short>(SampleIterator<short> iterator, const Time &duration, float percentage);
+std::vector<float> MathFunctions::scale(const std::vector<float>& input, const std::vector<float>& factor)
+{
+	std::vector<float> result(input.size());
+	for (unsigned int i = 0; i < input.size(); i++)
+	{
+		result[i] = input[i] * factor[i];
+	}
+	return result;
+}
+
+std::vector<float> MathFunctions::scale(const std::vector<float>& input, float factor)
+{
+	std::vector<float> result;
+	for (unsigned int i = 0; i < input.size(); i++)
+	{
+		result[i] = input[i] * factor;
+	}
+	return result;
+}

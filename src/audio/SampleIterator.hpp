@@ -15,15 +15,14 @@
 
 #include <channels/Channels.hpp>
 
-template <typename SampleType>
 class SampleIterator
 {
 	public:
-		SampleIterator(SampleType *samples, size_t frame_offset, size_t frame_size, StereoChannel channel);
+		SampleIterator(float* samples, size_t frame_offset, size_t frame_size, StereoChannel channel);
 		SampleIterator(const SampleIterator&) = default;
 		SampleIterator& operator=(const SampleIterator&) = default;
 
-		SampleType get() const;
+		float get() const;
 		void operator++();
 		void operator--();
 		SampleIterator operator+(const int i) const;
@@ -31,7 +30,7 @@ class SampleIterator
 		static const unsigned int STEREO_CHANNEL_NUMBER;
 	private:
 		size_t getArrayAccessPoint() const;
-		SampleType *samples;
+		float *samples;
 		// the index of the current frame
 		size_t iter;
 		// the number of frames

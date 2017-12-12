@@ -5,9 +5,9 @@
 #include <cmath>
 
 #include <math/MathFunctions.hpp>
+#include <math/ScaledGrouper.hpp>
 
-template <typename SampleType>
-AudioFile<SampleType> AudioFile<SampleType>::fromPath(const char* path)
+AudioFile AudioFile::fromPath(const char* path)
 {
 	SF_INFO info;
 	info.format = 0;
@@ -16,7 +16,7 @@ AudioFile<SampleType> AudioFile<SampleType>::fromPath(const char* path)
 	if (file == nullptr)
 	{
 		Debug::out << Debug::error << "could not read from file \"" << path << "\"" << Debug::endl;
-		return AudioFile<SampleType>();
+		return AudioFile();
 	}
 
 	const unsigned int channelCount = info.channels;
@@ -26,40 +26,30 @@ AudioFile<SampleType> AudioFile<SampleType>::fromPath(const char* path)
 	}
 	const size_t sampleCount = info.frames * channelCount;
 	Time duration = Time::fromFrameCount(info.frames, info.samplerate);
-	SampleType *samples = (SampleType*)::operator new(sizeof(SampleType) * sampleCount);
+	float *samples = (float*)::operator new(sizeof(float) * sampleCount);
 	if (loadSamples(file, samples, info.frames) != info.frames)
 	{
 		Debug::out << Debug::warn << "AudioFile::AudioFile(): info.frames(" << info.frames << "differs with the result of READ_FUNCTION" << Debug::endl;
 	}
-	return AudioFile<SampleType>(file, samples, duration, channelCount, info.samplerate);
+	return AudioFile(file, samples, duration, channelCount, info.samplerate);
 }
 
-template<>
-sf_count_t AudioFile<float>::loadSamples(SNDFILE *file, float *samples, const sf_count_t frames)
+sf_count_t AudioFile::loadSamples(SNDFILE *file, float *samples, const sf_count_t frames)
 {
 	return sf_readf_float(file, samples, frames);
 }
 
-template<>
-sf_count_t AudioFile<short>::loadSamples(SNDFILE *file, short *samples, const sf_count_t frames)
-{
-	return sf_readf_short(file, samples, frames);
-}
-
-template <typename SampleType>
-AudioFile<SampleType>::AudioFile(SNDFILE *f, SampleType *samp, Time &dur, unsigned int channelc, unsigned int srate)
+AudioFile::AudioFile(SNDFILE *f, float *samp, Time &dur, unsigned int channelc, unsigned int srate)
 	: file(f), samples(samp), valid(true), duration(dur), channelCount(channelc), samplerate(srate)
 {}
 
-template <typename SampleType>
-AudioFile<SampleType>::AudioFile()
+AudioFile::AudioFile()
        : valid(false), duration(Time::fromFrameCount(0, 0))
 {
        Debug::out << Debug::error << "invalid file created" << Debug::endl;
 }
 
-template <typename SampleType>
-AudioFile<SampleType>::~AudioFile()
+AudioFile::~AudioFile()
 {
 	if (valid)
 	{
@@ -68,45 +58,41 @@ AudioFile<SampleType>::~AudioFile()
 	}
 }
 
-template <typename SampleType>
-float AudioFile<SampleType>::getLoudness_diff(Time offset, Time duration) const
+float AudioFile::getLoudness_diff(Time offset, Time duration) const
 {
 	return (getLoudness_diff(offset, duration, StereoChannel::LEFT) + getLoudness_diff(offset, duration, StereoChannel::RIGHT)) / 2.f;
 }
 
-template <typename SampleType>
-float AudioFile<SampleType>::getLoudness_diff(Time offset, Time duration, StereoChannel channel) const
+float AudioFile::getLoudness_diff(Time offset, Time duration, StereoChannel channel) const
 {
-	SampleIterator<SampleType> iter = getIteratorFrom(offset, channel);
-	SampleType max = iter.get();
-	SampleType min = iter.get();
+	SampleIterator iter = getIteratorFrom(offset, channel);
+	float max = iter.get();
+	float min = iter.get();
 	for (size_t i = 0; i < duration.getFrameCount(); i++, ++iter)
 	{
-		const SampleType val = iter.get();
+		const float val = iter.get();
 		if (val < min)
 			min = val;
 		if (val > max)
 			max = val;
 	}
-	return (max - min) * SHORT_COEFFICIENT();
+	return (max - min);
 }
 
 const float LOUDNESS_SUM_SCALE = 0.002f;
 
-template <typename SampleType>
-float AudioFile<SampleType>::getLoudness_sum(Time offset, Time duration) const
+float AudioFile::getLoudness_sum(Time offset, Time duration) const
 {
 	return (getLoudness_sum(offset, duration, StereoChannel::LEFT) + getLoudness_sum(offset, duration, StereoChannel::RIGHT)) / 2.f;
 }
 
-template <typename SampleType>
-float AudioFile<SampleType>::getLoudness_sum(Time offset, Time duration, StereoChannel channel) const
+float AudioFile::getLoudness_sum(Time offset, Time duration, StereoChannel channel) const
 {
-	SampleIterator<SampleType> iter = getIteratorFrom(offset, channel);
+	SampleIterator iter = getIteratorFrom(offset, channel);
 	float sum = 0.f;
-	SampleIterator<SampleType> last = iter;
+	SampleIterator last = iter;
 	bool next_point_high = last.get() < (iter+1).get();
-	SampleIterator<SampleType> last_extrem_point_index = iter;
+	SampleIterator last_extrem_point_index = iter;
 	for (size_t i = 0; i < duration.getFrameCount(); i++, ++iter)
 	{
 		if (next_point_high)
@@ -128,31 +114,29 @@ float AudioFile<SampleType>::getLoudness_sum(Time offset, Time duration, StereoC
 
 		last = iter;
 	}
-	return (sum / duration.getSeconds() * LOUDNESS_SUM_SCALE) * SHORT_COEFFICIENT();
+	return (sum / duration.getSeconds() * LOUDNESS_SUM_SCALE);
 }
 
 const float LOUDNESS_GRADE_SCALE = 24.f;
 
-template <typename SampleType>
-float AudioFile<SampleType>::getLoudness_grade(Time offset, Time duration) const
+float AudioFile::getLoudness_grade(Time offset, Time duration) const
 {
 	return (getLoudness_grade(offset, duration, StereoChannel::LEFT) + getLoudness_grade(offset, duration, StereoChannel::RIGHT)) / 2.f;
 }
 
 const unsigned int PEAK_WIDTH = 10;
 
-template <typename SampleType>
-float AudioFile<SampleType>::getLoudness_grade(Time offset, Time duration, StereoChannel channel) const
+float AudioFile::getLoudness_grade(Time offset, Time duration, StereoChannel channel) const
 {
-	SampleType sum = 0.f;
-	SampleIterator<SampleType> iter = getIteratorFrom(offset, channel);
-	SampleIterator<SampleType> start = iter;
+	float sum = 0.f;
+	SampleIterator iter = getIteratorFrom(offset, channel);
+	SampleIterator start = iter;
 	for (size_t i = 0; i < PEAK_WIDTH; i++)
 	{
 		sum += std::abs(iter.get() - (iter+1).get());
 	}
-	SampleIterator<SampleType> end = start + PEAK_WIDTH;
-	SampleType max_sum = sum;
+	SampleIterator end = start + PEAK_WIDTH;
+	float max_sum = sum;
 	for (size_t i = 0; i < duration.getFrameCount() - PEAK_WIDTH - 1; i++, ++start, ++end)
 	{
 		sum -= std::abs(start.get() - (start+1).get());
@@ -160,103 +144,84 @@ float AudioFile<SampleType>::getLoudness_grade(Time offset, Time duration, Stere
 		if (sum > max_sum)
 			max_sum = sum;
 	}
-	return (max_sum / PEAK_WIDTH * LOUDNESS_GRADE_SCALE) * SHORT_COEFFICIENT();
+	return (max_sum / PEAK_WIDTH * LOUDNESS_GRADE_SCALE);
 }
 
-template <typename SampleType>
-Time AudioFile<SampleType>::toTime(const FrameTime &frameTime) const
+Time AudioFile::toTime(const FrameTime &frameTime) const
 {
 	return Time::fromFrameTime(frameTime, duration.getFramerate());
 }
 
-template <typename SampleType>
-Time AudioFile<SampleType>::toTime(const SecondsTime &secondsTime) const
+Time AudioFile::toTime(const SecondsTime &secondsTime) const
 {
 	return Time::fromSecondsTime(secondsTime, duration.getFramerate());
 }
 
-template <typename SampleType>
-Time AudioFile<SampleType>::secondsToTime(float seconds) const
+Time AudioFile::secondsToTime(float seconds) const
 {
 	return Time::fromSeconds(seconds, duration.getFramerate());
 }
 
-template <typename SampleType>
-Time AudioFile<SampleType>::frameCountToTime(size_t frameCount) const
+Time AudioFile::frameCountToTime(size_t frameCount) const
 {
 	return Time::fromFrameCount(frameCount, duration.getFramerate());
 }
 
-template <typename SampleType>
-void AudioFile<SampleType>::print() const
+void AudioFile::print() const
 {
 	Debug::out << "duration: " << duration.getSeconds() << Debug::endl;
-	int i = 0;
-	for (SampleIterator<SampleType> iter = getIteratorFrom(secondsToTime(2), StereoChannel::RIGHT); i < 100; i++)
-	{
-		std::cout << (iter+i).get() << std::endl;
-	}
 }
 
-template <typename SampleType>
-Time AudioFile<SampleType>::getDuration() const
+Time AudioFile::getDuration() const
 {
 	return duration;
 }
 
-template <typename SampleType>
-std::vector<float> AudioFile<SampleType>::getFrequencySubbands(const Time &offset, const Time &duration, int num_of_subbands) const
+std::vector<float> AudioFile::getFrequencySubbands(const Time &offset, const Time &duration, Grouper* grouper) const
 {
-	std::vector<float> frequencies_left = modifiedDiscreteCosineTransformation(getIteratorFrom(offset, StereoChannel::LEFT), duration, FREQUENCIES_SHARE());
-	std::vector<float> frequencies_right = modifiedDiscreteCosineTransformation(getIteratorFrom(offset, StereoChannel::RIGHT), duration, FREQUENCIES_SHARE());
+	std::vector<float> frequencies_left = MathFunctions::modifiedDiscreteCosineTransformation(getIteratorFrom(offset, StereoChannel::LEFT), duration, FREQUENCIES_SHARE());
+	std::vector<float> frequencies_right = MathFunctions::modifiedDiscreteCosineTransformation(getIteratorFrom(offset, StereoChannel::RIGHT), duration, FREQUENCIES_SHARE());
 
-	std::vector<float> frequencies(frequencies_left.size());
+	unsigned int new_size = frequencies_left.size();
+
+	Debug::out << "new_size = " << new_size << Debug::endl;
+
+	std::vector<float> frequencies(new_size);
 	for (unsigned int i = 0; i < frequencies.size(); i++)
 	{
-		frequencies[i] = ((std::abs(frequencies_left[i]) + std::abs(frequencies_right[i])) / 2.f) * SHORT_COEFFICIENT();
+		frequencies[i] = ((std::abs(frequencies_left[i]) + std::abs(frequencies_right[i])) / 2.f);
 	}
 
-	return group(frequencies, num_of_subbands);
+	return grouper->group(frequencies);
 }
 
-template <typename SampleType>
-std::vector<float> AudioFile<SampleType>::getFrequencySubbands(const Time &offset, const Time &duration, const std::vector<float> &bounds) const
+std::vector<float> AudioFile::getScaledFrequencySubbands(const Time &offset, const Time &duration) const
 {
-	std::vector<float> frequencies_left = modifiedDiscreteCosineTransformation(getIteratorFrom(offset, StereoChannel::LEFT), duration, FREQUENCIES_SHARE());
-	std::vector<float> frequencies_right = modifiedDiscreteCosineTransformation(getIteratorFrom(offset, StereoChannel::RIGHT), duration, FREQUENCIES_SHARE());
+	std::vector<float> bounds(11);
+	std::vector<float> scale(11);
 
-	std::vector<float> frequencies(frequencies_left.size());
-	for (unsigned int i = 0; i < frequencies.size(); i++)
-	{
-		frequencies[i] = ((std::abs(frequencies_left[i]) + std::abs(frequencies_right[i])) / 2.f) * SHORT_COEFFICIENT();
-	}
+	bounds[0] = 20.f;   scale[0] = 0.1f;
+	bounds[1] = 50.f;   scale[1] = 0.4f;
+	bounds[2] = 100.f;  scale[2] = 0.1f;
+	bounds[3] = 200.f;  scale[3] = 0.3f;
+	bounds[4] = 300.f;  scale[4] = 0.5f;
+	bounds[5] = 500.f;  scale[5] = 0.6f;
+	bounds[6] = 800.f;  scale[6] = 0.7f;
+	bounds[7] = 1200.f; scale[7] = 5.0f;
+	bounds[8] = 1600.f; scale[8] = 6.0f;
+	bounds[9] = 2000.f; scale[9] = 0.0001f;
+	bounds[10] = 4000.f; scale[10] = 0.0001f;
 
-	return group(frequencies, bounds, samplerate / 2);
+	ScaledGrouper grouper(bounds, scale);
+	return getFrequencySubbands(offset, duration, &grouper);
 }
 
-template <typename SampleType>
-size_t AudioFile<SampleType>::getMemSize() const
+size_t AudioFile::getMemSize() const
 {
 	return duration.getFrameCount() * channelCount;
 }
 
-template <typename SampleType>
-SampleIterator<SampleType> AudioFile<SampleType>::getIteratorFrom(const Time frame_offset, StereoChannel channel) const
+SampleIterator AudioFile::getIteratorFrom(const Time frame_offset, StereoChannel channel) const
 {
-	return SampleIterator<SampleType>(samples, frame_offset.getFrameCount(), duration.getFrameCount(), channel);
+	return SampleIterator(samples, frame_offset.getFrameCount(), duration.getFrameCount(), channel);
 }
-
-template<>
-constexpr float AudioFile<float>::SHORT_COEFFICIENT()
-{
-	return 1.f;
-}
-
-template<>
-constexpr float AudioFile<short>::SHORT_COEFFICIENT()
-{
-	return 1.f/65000.f;
-}
-
-template class AudioFile<float>;
-template class AudioFile<short>;

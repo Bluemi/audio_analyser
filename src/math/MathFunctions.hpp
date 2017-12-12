@@ -3,23 +3,20 @@
 
 #include <vector>
 
-template <typename SampleType>
 class SampleIterator;
 class Time;
 
-template <typename T>
-std::vector<T> group(std::vector<T> &vec, unsigned int subbands);
+namespace MathFunctions
+{
+	std::vector<float> group(std::vector<float> &vec, unsigned int subbands);
+	std::vector<float> group(const std::vector<float> &input, const std::vector<float> &bounds, const int max);
+	float getSubgroup(const std::vector<float> &input, unsigned int lower_bound, unsigned int upper_bound);
+	std::vector<float> modifiedDiscreteCosineTransformation(SampleIterator iterator, const Time &duration, float percentage);
+	std::vector<float> scale(const std::vector<float>& input, const std::vector<float>& factor);
+	std::vector<float> scale(const std::vector<float>& input, float factor);
+}
 
-template <typename T>
-std::vector<T> group(const std::vector<T> &input, const std::vector<float> &bounds, const int max);
-
-template <typename T>
-T getSubgroup(const std::vector<T> &input, unsigned int lower_bound, unsigned int upper_bound);
-
-template <typename SampleType>
-std::vector<float> modifiedDiscreteCosineTransformation(SampleIterator<SampleType> iterator, const Time &duration, float percentage);
-
-#include <audio/SampleIterator.hpp>
 #include <time/Time.hpp>
+#include <audio/SampleIterator.hpp>
 
 #endif

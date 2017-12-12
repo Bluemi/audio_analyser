@@ -5,8 +5,9 @@
 #include <cmath>
 
 #include <audio/AudioFile.hpp>
+#include <math/BoundsGrouper.hpp>
 
-#define INPUT_FILE_PATH "./test/tone2.wav"
+#define INPUT_FILE_PATH "./test/test1.wav"
 const float DURATION = 0.03f;
 const int window_width = 199;
 const int NUM_OF_SUBBANDS = 20;
@@ -14,10 +15,9 @@ const float SCALE = 4.f;
 const float SCALE_FREQ = 2.7f;
 const float DELAY = 0.0f;
 
-typedef float TestSampleType;
-
 long int unix_micros();
 void render(int left_value, int right_value, int width);
+void render_single(int value, int width);
 
 float round(float value, int position)
 {
@@ -26,7 +26,7 @@ float round(float value, int position)
 	return new_value / (float)factor;
 }
 
-void test_runtime(const AudioFile<TestSampleType> &file)
+void test_runtime(const AudioFile &file)
 {
 	const float MAX_TIME = file.getDuration().getSeconds();
 
@@ -44,19 +44,6 @@ void test_runtime(const AudioFile<TestSampleType> &file)
 
 	system("cvlc " INPUT_FILE_PATH " &");
 
-	std::vector<float> frequencySubbands(11);
-	frequencySubbands[0] = 0.f;
-	frequencySubbands[1] = 2000.f;
-	frequencySubbands[2] = 4000.f;
-	frequencySubbands[3] = 6000.f;
-	frequencySubbands[4] = 8000.f;
-	frequencySubbands[5] = 10000.f;
-	frequencySubbands[6] = 12000.f;
-	frequencySubbands[7] = 14000.f;
-	frequencySubbands[8] = 16000.f;
-	frequencySubbands[9] = 18000.f;
-	frequencySubbands[10] = 20000.f;
-
 	while (time < MAX_TIME)
 	{
 		const long int current_time = unix_micros();
@@ -69,10 +56,11 @@ void test_runtime(const AudioFile<TestSampleType> &file)
 			std::cout << "overload" << std::endl;
 		}
 
-		const std::vector<float> frequencies = file.getFrequencySubbands(file.secondsToTime(time), file.secondsToTime(DURATION*0.2f), frequencySubbands);
-		for (unsigned int i = 0; i+1 < frequencies.size(); i+=2)
+		const std::vector<float> frequencies = file.getScaledFrequencySubbands(file.secondsToTime(time), file.secondsToTime(DURATION*0.2f));
+		for (unsigned int i = 0; i+1 < frequencies.size(); i++)
 		{
-			render(frequencies[i]*SCALE_FREQ, frequencies[i+1]*SCALE_FREQ, window_width/frequencies.size()*2.f);
+			//render_single(frequencies[i]*SCALE_FREQ, window_width/frequencies.size());
+			std::cout << frequencies[i] << "  ";
 		}
 		std::cout << std::endl;
 		frameCounter++;
@@ -81,74 +69,33 @@ void test_runtime(const AudioFile<TestSampleType> &file)
 	system("pkill vlc");
 }
 
-void test_precalculated(const AudioFile<TestSampleType> &file)
-{
-	const float MAX_TIME = file.getDuration().getSeconds();
-	//const float MAX_TIME = std::min(10.f, file.getDuration().getSeconds());
-	float time = 0.f;
-	std::vector<std::vector<float>> frequencyHistory;
-
-	// precalculating
-	while (time < MAX_TIME)
-	{
-		frequencyHistory.push_back(file.getFrequencySubbands(file.secondsToTime(time), file.secondsToTime(DURATION*0.2f), NUM_OF_SUBBANDS));
-		std::cout << "calculated " << round(time, 1) << " seconds\t\t" << round(time / MAX_TIME * 100.f, 1) << "%" << std::endl;
-		time += DURATION;
-	}
-
-	system("cvlc " INPUT_FILE_PATH " &");
-
-	// output
-
-	const long int frame_time_micros = (long int) (1000000.f * DURATION);
-	long int first_frame_unix_micros;
-	{
-		const long int pre_begin_micros = unix_micros();
-		first_frame_unix_micros = pre_begin_micros - (pre_begin_micros % frame_time_micros) + frame_time_micros;
-		usleep(first_frame_unix_micros - pre_begin_micros);
-	}
-
-	long int frameCounter = 0;
-
-	time = 0.f;
-
-	while (time < MAX_TIME)
-	{
-		const long int current_time = unix_micros();
-		if (frameCounter * frame_time_micros + first_frame_unix_micros > current_time)
-		{
-			usleep(frameCounter * frame_time_micros + first_frame_unix_micros - current_time);
-		}
-		else
-		{
-			std::cout << "overload" << std::endl;
-		}
-
-		const std::vector<float> frequencies = frequencyHistory[frameCounter];
-		for (unsigned int i = 0; i+1 < frequencies.size(); i+=2)
-		{
-			if (i == 0) {
-				render(frequencies[i]*SCALE_FREQ*0.2f, frequencies[i+1]*SCALE_FREQ*0.5f, window_width/frequencies.size()*2.f);
-			} else {
-				render(frequencies[i]*SCALE_FREQ, frequencies[i+1]*SCALE_FREQ, window_width/frequencies.size()*2.f);
-			}
-		}
-		//render(frequencies[0]*SCALE_FREQ, frequencies[1]*SCALE_FREQ*4.f, window_width);
-		std::cout << std::endl;
-		time += DURATION;
-		frameCounter++;
-	}
-	system("pkill vlc ");
-}
-
 int main()
 {
-	AudioFile<TestSampleType> file = AudioFile<TestSampleType>::fromPath(INPUT_FILE_PATH);
+	AudioFile file = AudioFile::fromPath(INPUT_FILE_PATH);
 	file.print();
 	test_runtime(file);
-	//test_precalculated(file);
 
 	return 0;
+}
+
+void render_single(int value, int width)
+{
+	value = std::abs(value);
+	if (value > width)
+	{
+		value = width;
+	}
+	value--;
+	std::cout << "|";
+	std::cout << " value=" << value << std::endl;
+	for (int i = 0; i < value; i++)
+	{
+		std::cout << ">";
+	}
+	for (int i = 0; i < (width - value); i++)
+	{
+		std::cout << " ";
+	}
 }
 
 void render(int left_value, int right_value, int width)

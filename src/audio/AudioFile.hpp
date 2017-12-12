@@ -9,8 +9,8 @@
 #include <time/Time.hpp>
 #include <audio/SampleIterator.hpp>
 #include <channels/Channels.hpp>
+#include <math/Grouper.hpp>
 
-template <typename SampleType>
 class AudioFile
 {
 	public:
@@ -35,24 +35,25 @@ class AudioFile
 
 		// Frequency - Subbands -----------------------------------
 		// calculates the loudness of <num_of_subbands> frequency Subbands from 0 Hz to 22050 Hz
-		std::vector<float> getFrequencySubbands(const Time &offset, const Time &duration, int num_of_subbands) const;
+		// std::vector<float> getFrequencySubbands(const Time &offset, const Time &duration, int num_of_subbands) const;
 		// calculates the loudness of <bounds.size()-1> subbands
 		// each sector will be restricted by bounds[n] and bounds[n+1]
-		std::vector<float> getFrequencySubbands(const Time &offset, const Time &duration, const std::vector<float> &bounds) const;
+		std::vector<float> getFrequencySubbands(const Time &offset, const Time &duration, Grouper* grouper) const;
+
+		std::vector<float> getScaledFrequencySubbands(const Time &offset, const Time &duration) const;
 
 		// misc ---------------------------------------------------
 		void print() const;
 		size_t getMemSize() const;
-		SampleIterator<SampleType> getIteratorFrom(const Time offset_frame, StereoChannel channel) const;
+		SampleIterator getIteratorFrom(const Time offset_frame, StereoChannel channel) const;
 
 		static constexpr float FREQUENCIES_SHARE() { return 1.f; };
-		static constexpr float SHORT_COEFFICIENT();
 	private:
-		static sf_count_t loadSamples(SNDFILE *file, SampleType *samples, const sf_count_t frames);
+		static sf_count_t loadSamples(SNDFILE *file, float *samples, const sf_count_t frames);
 
-		AudioFile(SNDFILE *f, SampleType *samp, Time &dur, unsigned int channelc, unsigned int srate);
+		AudioFile(SNDFILE *f, float* samp, Time &dur, unsigned int channelc, unsigned int srate);
 		SNDFILE *file;
-		SampleType *samples;
+		float* samples;
 		bool valid;
 		Time duration;
 		unsigned int channelCount;
