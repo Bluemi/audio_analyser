@@ -73,11 +73,14 @@ AddJob(lib_file, "building    " .. lib_file, "ar rs " .. lib_file .. object_file
 AddDependency(lib_file, targets)
 
 -- creating includes
+include_headers = {}
+
 for _, header in ipairs(headers) do
     without_src_header = string.gsub(header, src_dir, "")
     include_header = PathJoin(include_dir, without_src_header)
     AddJob(include_header, "copying     " .. header, "cp " .. header .. " " .. include_header)
     AddDependency(include_header, header)
+    table.insert(include_headers, include_header)
 end
 
 -- creating tests
@@ -88,5 +91,5 @@ for _, test_source in ipairs(test_sources) do
     path = string.gsub(file, ".cpp", "")
     target_executable = PathJoin(test_bin_dir, path)
     AddJob(target_executable, "create test " .. target_executable, "g++ " .. compiler_flags .. " " .. test_source .. " -o " .. target_executable .. " -L" .. lib_dir .. " -l" .. lib_name .. " -I" .. include_dir .. " " .. lib_extra_libraries)
-    AddDependency(target_executable, test_source, lib_file)
+    AddDependency(target_executable, test_source, lib_file, include_headers)
 end
