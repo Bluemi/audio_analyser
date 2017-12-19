@@ -1,90 +1,93 @@
+lib_dir = "target/lib/"
+lib_name = "audio_analyser"
+lib_file = lib_dir .. "lib" .. lib_name .. ".a"
+src_dir = "src/"
+build_dir = "target/build/debug/"
+include_dir = "target/includes/"
+test_src_dir = "tests/"
+test_bin_dir = "target/tests/"
+tmp_dependency_file = "/tmp/bam.dep"
 
-Import("bam/lua/print_r.lua")
-Import("bam/lua/util.lua")
+sources = CollectRecursive(src_dir .. "*.cpp")
+headers = CollectRecursive(src_dir .. "*.hpp")
 
-plattform = "linux";
+targets = {}
 
-function ValidiateArg(arg, value)
-	if arg == "conf" then
-		if conf ~= "debug" and conf ~= "release" then
-			error("Invalid value for argument 'conf': '"..value.."'. Valid values are 'debug' and 'release'")
-		end
-	elseif arg == "dir" then
-		
-	end
-	-- arch
+lib_extra_libraries = "-I/usr/include/ -L/usr/lib -lsndfile"
+
+linked_libraries = "-I " .. src_dir .. " " .. lib_extra_libraries
+
+compiler_flags = "-Wall"
+
+function ExecuteCommandAndReturn(command)
+    local lines = {}
+    os.execute(command .. ' > ' .. tmp_dependency_file)
+    local f = io.open(tmp_dependency_file)
+    if not f then return lines end
+    local k = 1
+    for line in f:lines() do
+        lines[k] = line
+        k = k + 1
+    end
+    f:close()
+    return lines
 end
 
-function GenerateLibSettings(settings, name)
-	Import("bam/lib/" .. name .. "/" .. name .. ".lua")
-	lib:configure()
-	lib:apply(settings)
+-- function CompileWithArgs(compiler, flags, sources, )
+-- end
+
+
+-- create compiling Jobs + Dependencies
+for i, source in ipairs(sources) do
+    object_file = string.gsub(string.gsub(source, src_dir, ""), ".cpp", ".o")
+    full_path = PathJoin(build_dir, object_file)
+    -- create targets
+    targets[i] = full_path
+    print(linked_libraries)
+    AddJob(full_path, "compiling   " .. source, "g++ " .. linked_libraries .. " -c " .. source .. " -o " .. full_path)
+    lines = ExecuteCommandAndReturn("g++ -MM -I" .. src_dir .. " " .. source)
+    dependencies = {}
+    for _, l in ipairs(lines) do
+        local i = 1
+        for dep in string.gmatch(l, "%S+") do
+            if i > 1 then
+                if dep ~= "\\" then
+                    table.insert(dependencies, dep)
+                end
+            end
+            i = i + 1
+        end
+    end
+
+    AddDependency(full_path, dependencies)
 end
 
-function GenerateGenerelSettings(settings)
-	if conf == "debug" then
-		settings.debug = 1
-		settings.optimize = 0
-	elseif conf == "release" then
-		settings.debug = 0
-		settings.optimize = 1
-	end
-
-	settings.cc.flags:Add("-Wall")
-	settings.cc.flags_cxx:Add("--std=c++14")
-	settings.cc.includes:Add("src")
-	settings.cc.Output = function(settings, input)
-		input = input:gsub("^src/", "")
-		return PathJoin(PathJoin(build_dir, "obj"), PathBase(input))
-	end
-	settings.link.Output = function(settings, input)
-		return PathJoin(build_dir, PathBase(input))
-	end
+-- building lib
+-- creating object_file_str
+object_file_str = ""
+for _, target in ipairs(targets) do
+    object_file_str = object_file_str .. " " .. target
 end
 
-function GenerateClientSettings(settings)
-	GenerateLibSettings(settings, "sndfile")
+-- ar command
+AddJob(lib_file, "building    " .. lib_file, "ar rs " .. lib_file .. object_file_str .. " 2>/dev/null")
+AddDependency(lib_file, targets)
+
+-- creating includes
+for _, header in ipairs(headers) do
+    without_src_header = string.gsub(header, src_dir, "")
+    include_header = PathJoin(include_dir, without_src_header)
+    AddJob(include_header, "copying     " .. header, "cp " .. header .. " " .. include_header)
+    AddDependency(include_header, header)
 end
 
-if ScriptArgs["conf"] then
-	conf = ScriptArgs["conf"]
-else
-	conf = "debug"
+-- creating tests
+test_sources = CollectRecursive(test_src_dir .. "*.cpp")
+
+for _, test_source in ipairs(test_sources) do
+    file = string.gsub(test_source, "tests/", "")
+    path = string.gsub(file, ".cpp", "")
+    target_executable = PathJoin(test_bin_dir, path)
+    AddJob(target_executable, "create test " .. target_executable, "g++ " .. compiler_flags .. " " .. test_source .. " -o " .. target_executable .. " -L" .. lib_dir .. " -l" .. lib_name .. " -I" .. include_dir .. " " .. lib_extra_libraries)
+    AddDependency(target_executable, test_source, lib_file)
 end
-ValidiateArg("conf", conf)
-
-if ScriptArgs["dir"] then
-	build_dir = ScriptArgs["dir"]
-else
-	build_dir = "bam/build"
-end
-ValidiateArg("dir", build_dir)
-build_dir = PathJoin(build_dir, conf)
-
-src_dir = "src"
-datasrc_dir = "res"
-
-settings = NewSettings()
-GenerateGenerelSettings(settings)
-GenerateClientSettings(settings)
-
-PseudoTarget("client")
-srcs = CollectRecursive(src_dir .. "/*.cpp")
-objs = Compile(settings, srcs)
-exe = Link(settings, "analyser", objs)
-AddDependency("client", exe)
-
-PseudoTarget("data")
-do
-	local data_files = CollectRecursive(datasrc_dir .. "/")
-	for i, file in pairs(data_files) do
-		local target = PathJoin(build_dir, file)
-		AddJob(target, file .. " > " .. target , "cp " .. file .. " " .. target)
-		AddDependency(target, file)
-		AddDependency("data", target)
-	end
-end
-
-PseudoTarget("all", "client", "data")
-PseudoTarget("game", "client", "data")
-DefaultTarget("game")
