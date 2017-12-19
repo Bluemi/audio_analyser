@@ -43,7 +43,6 @@ for i, source in ipairs(sources) do
     full_path = PathJoin(build_dir, object_file)
     -- create targets
     targets[i] = full_path
-    print(linked_libraries)
     AddJob(full_path, "compiling   " .. source, "g++ " .. linked_libraries .. " -c " .. source .. " -o " .. full_path)
     lines = ExecuteCommandAndReturn("g++ -MM -I" .. src_dir .. " " .. source)
     dependencies = {}
