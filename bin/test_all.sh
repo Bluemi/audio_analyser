@@ -2,6 +2,7 @@
 
 verbose=0
 
+# check flags
 while getopts ":v" opt; do
   case $opt in
     v)
@@ -13,10 +14,15 @@ while getopts ":v" opt; do
   esac
 done
 
+# find tests
 tests=$(find ./target/tests -type f)
+
+# initiate counters
 run_counter=0
 success_counter=0
 fail_counter=0
+
+# loop through tests
 for t in $tests
 do
 	if [ $verbose -eq 1 ]; then
@@ -33,5 +39,7 @@ do
 	run_counter=$(($run_counter+1))
 done
 
-echo "runs : $run_counter"
-echo "fails: $fail_counter"
+# print results
+
+echo "Tests run: $run_counter"
+echo "Failures: $fail_counter"
