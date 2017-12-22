@@ -2,7 +2,7 @@
 
 #include <audio/AudioBuffer.hpp>
 
-#define INPUT_PATH "./test_audio_files/"
+#define INPUT_PATH "./audio_tests/"
 #define INPUT_FILE_PATH INPUT_PATH"test1.wav"
 
 int main() {
