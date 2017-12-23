@@ -89,6 +89,16 @@ namespace analyser {
 		return Time::from_number_of_samples(number_of_samples, samplerate_);
 	}
 
+	Sample AudioBuffer::get_sample_at(const Time& time) const
+	{
+		return get_sample(time.get_number_of_samples());
+	}
+
+	Sample AudioBuffer::get_sample(const size_t sample_offset) const
+	{
+		return Sample();
+	}
+
 	/*
 	SampleIterator AudioBuffer::getIteratorFrom(const Time frame_offset, StereoChannel channel) const
 	{

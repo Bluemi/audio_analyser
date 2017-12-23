@@ -6,6 +6,7 @@
 #include <fftw3.h>
 
 #include <time/Time.hpp>
+#include <audio/Sample.hpp>
 
 namespace analyser {
 	class AudioBuffer
@@ -15,6 +16,7 @@ namespace analyser {
 			~AudioBuffer();
 			AudioBuffer();
 
+			// stats
 			unsigned int get_samplerate() const;
 			unsigned int get_number_of_channels() const;
 			bool is_empty() const;
@@ -23,6 +25,10 @@ namespace analyser {
 			Time get_duration() const;
 			Time seconds_to_time(double seconds) const;
 			Time number_of_samples_to_time(size_t number_of_samples) const;
+
+			// Samples
+			Sample get_sample_at(const Time& time) const;
+			Sample get_sample(const size_t sample_offset) const;
 
 			// misc ---------------------------------------------------
 			/*
