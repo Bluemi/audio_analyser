@@ -26,6 +26,7 @@ fail_counter=0
 for t in $tests
 do
 	if [ $verbose -eq 1 ]; then
+		echo $t:
 		$t
 	else
 		$t 2>/dev/null 1>&2

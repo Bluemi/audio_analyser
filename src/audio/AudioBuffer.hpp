@@ -38,6 +38,7 @@ namespace analyser {
 			*/
 		private:
 			static size_t loadSamples(SNDFILE *file, float *samples, const sf_count_t frames);
+			void delete_samples();
 
 			float* samples_;
 			bool empty_;

@@ -22,6 +22,11 @@ namespace analyser {
 				Debug::out << Debug::warn << "AudioBuffer::AudioBuffer(): info.frames(" << info.frames << "differs with the result of READ_FUNCTION" << Debug::endl;
 			}
 
+			// free old buffer
+			if (!buffer->is_empty()) {
+				buffer->delete_samples();
+			}
+
 			// set buffer properties
 			buffer->samples_ = samples;
 			buffer->empty_ = false;
@@ -45,11 +50,16 @@ namespace analyser {
 		: samples_(nullptr), empty_(true), number_of_channels_(0), samplerate_(0), number_of_samples_(0)
 	{}
 
+	void AudioBuffer::delete_samples()
+	{
+		delete samples_;
+	}
+
 	AudioBuffer::~AudioBuffer()
 	{
 		if (!empty_)
 		{
-			delete samples_;
+			delete_samples();
 		}
 	}
 
