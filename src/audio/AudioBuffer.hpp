@@ -5,11 +5,7 @@
 #include <vector>
 #include <fftw3.h>
 
-#include <time/FrameTime.hpp>
 #include <time/Time.hpp>
-#include <audio/SampleIterator.hpp>
-#include <channels/Channels.hpp>
-#include <math/Grouper.hpp>
 
 namespace analyser {
 	class AudioBuffer
@@ -22,17 +18,14 @@ namespace analyser {
 			unsigned int get_samplerate() const;
 			unsigned int get_number_of_channels() const;
 			bool is_empty() const;
-			Time get_duration() const;
 
-			/*
 			// Time ---------------------------------------------------
-			Time toTime(const FrameTime &frameTime) const;
-			Time toTime(const SecondsTime &secondsTime) const;
-			Time secondsToTime(float seconds) const;
-			Time frameCountToTime(size_t frameCount) const;
-			Time getDuration() const;
+			Time get_duration() const;
+			Time seconds_to_time(double seconds) const;
+			Time number_of_samples_to_time(size_t number_of_samples) const;
 
 			// misc ---------------------------------------------------
+			/*
 			size_t getMemSize() const;
 			SampleIterator getIteratorFrom(const Time offset_frame, StereoChannel channel) const;
 			*/

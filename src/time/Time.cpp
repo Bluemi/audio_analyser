@@ -1,50 +1,32 @@
 #include "Time.hpp"
 
-Time::Time(size_t frameCount, unsigned int framerate)
-	: frameCount(frameCount), framerate(framerate)
-{}
+namespace analyser {
+	Time Time::from_number_of_samples(size_t number_of_samples, unsigned int samplerate)
+	{
+		return Time(number_of_samples, samplerate);
+	}
 
-FrameTime Time::toFrameTime() const
-{
-	return FrameTime::fromFrameCount(frameCount);
-}
+	Time Time::from_seconds(double seconds, unsigned int samplerate)
+	{
+		return Time(seconds * samplerate, samplerate);
+	}
 
-SecondsTime Time::toSecondsTime() const
-{
-	return SecondsTime(frameCount / (float)framerate);
-}
+	Time::Time(size_t number_of_samples, unsigned int samplerate)
+		: number_of_samples_(number_of_samples), samplerate_(samplerate)
+	{}
 
-unsigned int Time::getFramerate() const
-{
-	return framerate;
-}
+	unsigned int Time::get_samplerate() const
+	{
+		return samplerate_;
+	}
 
-size_t Time::getFrameCount() const
-{
-	return frameCount;
-}
+	size_t Time::get_number_of_samples() const
+	{
+		return number_of_samples_;
+	}
 
-float Time::getSeconds() const
-{
-	return frameCount / (float)framerate;
-}
-
-Time Time::fromFrameTime(const FrameTime &frameTime, unsigned int framerate)
-{
-	return Time(frameTime.getFrameCount(), framerate);
-}
-
-Time Time::fromSecondsTime(const SecondsTime &secondsTime, unsigned int framerate)
-{
-	return Time(secondsTime.getSeconds() * framerate, framerate);
-}
-
-Time Time::fromFrameCount(size_t frameCount, unsigned int framerate)
-{
-	return Time(frameCount, framerate);
-}
-
-Time Time::fromSeconds(float seconds, unsigned int framerate)
-{
-	return Time(seconds * framerate, framerate);
+	double Time::get_seconds() const
+	{
+		return number_of_samples_ / (double)samplerate_;
+	}
 }

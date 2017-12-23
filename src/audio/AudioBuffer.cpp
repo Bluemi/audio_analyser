@@ -76,40 +76,20 @@ namespace analyser {
 	}
 
 	Time AudioBuffer::get_duration() const {
-		return Time(number_of_samples_, samplerate_);
+		return Time::from_number_of_samples(number_of_samples_, samplerate_);
+	}
+
+	Time AudioBuffer::seconds_to_time(double seconds) const
+	{
+		return Time::from_seconds(seconds, samplerate_);
+	}
+
+	Time AudioBuffer::number_of_samples_to_time(size_t number_of_samples) const
+	{
+		return Time::from_number_of_samples(number_of_samples, samplerate_);
 	}
 
 	/*
-	Time AudioBuffer::toTime(const FrameTime &frameTime) const
-	{
-		return Time::fromFrameTime(frameTime, duration.getFramerate());
-	}
-
-	Time AudioBuffer::toTime(const SecondsTime &secondsTime) const
-	{
-		return Time::fromSecondsTime(secondsTime, duration.getFramerate());
-	}
-
-	Time AudioBuffer::secondsToTime(float seconds) const
-	{
-		return Time::fromSeconds(seconds, duration.getFramerate());
-	}
-
-	Time AudioBuffer::frameCountToTime(size_t frameCount) const
-	{
-		return Time::fromFrameCount(frameCount, duration.getFramerate());
-	}
-
-	Time AudioBuffer::getDuration() const
-	{
-		return duration;
-	}
-
-	size_t AudioBuffer::getMemSize() const
-	{
-		return duration.getFrameCount() * number_of_channels;
-	}
-
 	SampleIterator AudioBuffer::getIteratorFrom(const Time frame_offset, StereoChannel channel) const
 	{
 		return SampleIterator(samples, frame_offset.getFrameCount(), duration.getFrameCount(), channel);

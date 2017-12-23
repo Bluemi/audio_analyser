@@ -11,10 +11,12 @@ int main() {
 	if (!analyser::AudioBuffer::load_from_file(INPUT_FILE_PATH, &buffer)) {
 		failed = 1;
 	} else {
-		std::cout << "samplerate: " << buffer.get_samplerate() << std::endl;
-		std::cout << "number of channels: " << buffer.get_number_of_channels() << std::endl;
-		std::cout << "is empty: " << buffer.is_empty() << std::endl;
-		std::cout << "duration: " << buffer.get_duration().get_seconds() << " Seconds" << std::endl;
+		if (buffer.number_of_samples_to_time(44100).get_number_of_samples() != analyser::Time::from_seconds(1.0f, 44100).get_number_of_samples()) {
+			failed = 1;
+		}
+		if (buffer.seconds_to_time(25.2).get_number_of_samples() != analyser::Time::from_seconds(25.2f, 44100).get_number_of_samples()) {
+			failed = 1;
+		}
 	}
 	return failed;
 }
