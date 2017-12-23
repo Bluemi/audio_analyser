@@ -27,8 +27,8 @@ namespace analyser {
 			Time number_of_samples_to_time(size_t number_of_samples) const;
 
 			// Samples
-			Sample get_sample_at(const Time& time) const;
-			Sample get_sample(const size_t sample_offset) const;
+			bool get_sample_at(const Time& time, Sample* sample) const;
+			bool get_sample(const size_t sample_offset, Sample* sample) const;
 
 			// misc ---------------------------------------------------
 			/*

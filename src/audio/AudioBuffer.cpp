@@ -89,14 +89,23 @@ namespace analyser {
 		return Time::from_number_of_samples(number_of_samples, samplerate_);
 	}
 
-	Sample AudioBuffer::get_sample_at(const Time& time) const
+	bool AudioBuffer::get_sample_at(const Time& time, Sample* sample) const
 	{
-		return get_sample(time.get_number_of_samples());
+		return get_sample(time.get_number_of_samples(), sample);
 	}
 
-	Sample AudioBuffer::get_sample(const size_t sample_offset) const
+	bool AudioBuffer::get_sample(const size_t sample_offset, Sample* sample) const
 	{
-		return Sample();
+		bool success;
+		if (sample_offset < number_of_samples_) {
+			float* samples = samples_ + (sample_offset * number_of_channels_);
+			sample->set(samples, number_of_channels_);
+			success = true;
+		} else {
+			success = false;
+			sample->invalidate();
+		}
+		return success;
 	}
 
 	/*
