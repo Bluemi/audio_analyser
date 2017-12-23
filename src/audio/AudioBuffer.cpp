@@ -17,7 +17,7 @@ namespace analyser {
 		{
 			const size_t number_of_subsamples = info.frames * info.channels;
 			float* samples = (float*)::operator new(sizeof(float) * number_of_subsamples);
-			if (loadSamples(file, samples, info.frames) != info.frames)
+			if (loadSamples(file, samples, info.frames) != (size_t) info.frames)
 			{
 				Debug::out << Debug::warn << "AudioBuffer::AudioBuffer(): info.frames(" << info.frames << "differs with the result of READ_FUNCTION" << Debug::endl;
 			}
