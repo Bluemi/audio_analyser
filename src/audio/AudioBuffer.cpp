@@ -63,6 +63,16 @@ namespace analyser {
 		}
 	}
 
+	AudioBuffer::Iterator AudioBuffer::begin() const
+	{
+		return AudioBuffer::Iterator(samples_, 0, number_of_channels_, number_of_samples_);
+	}
+
+	AudioBuffer::Iterator AudioBuffer::end() const
+	{
+		return AudioBuffer::Iterator(samples_, number_of_samples_, number_of_channels_, number_of_samples_);
+	}
+
 	unsigned int AudioBuffer::get_samplerate() const {
 		return samplerate_;
 	}

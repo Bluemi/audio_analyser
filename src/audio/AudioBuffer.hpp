@@ -58,6 +58,9 @@ namespace analyser {
 					size_t number_of_samples_;
 			};
 
+			Iterator begin() const;
+			Iterator end() const;
+
 			// stats
 			unsigned int get_samplerate() const;
 			unsigned int get_number_of_channels() const;
