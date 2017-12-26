@@ -14,7 +14,7 @@ namespace analyser {
 		return (position_ >= number_of_samples_);
 	}
 
-	float AudioBuffer::Iterator::get(const int channel_index) const
+	float AudioBuffer::Iterator::get_subsample(const int channel_index) const
 	{
 		return *(this->samples_ + (this->position_ * this->number_of_channels_ + channel_index));
 	}

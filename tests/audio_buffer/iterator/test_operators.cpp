@@ -14,12 +14,12 @@ int main() {
 	if (analyser::AudioBuffer::load_from_file(INPUT_FILE_PATH, &buffer)) {
 		analyser::AudioBuffer::Iterator iterator = buffer.begin();
 		iterator += 3;
-		float f = iterator.get(0);
+		float f = iterator.get_subsample(0);
 		// test increment
 		iterator++;
 		iterator--;
 
-		if (iterator.get(0) == f) {
+		if (iterator.get_subsample(0) == f) {
 			analyser::AudioBuffer::Iterator iterator2;
 			iterator2 = iterator;
 			if (iterator == iterator2) {

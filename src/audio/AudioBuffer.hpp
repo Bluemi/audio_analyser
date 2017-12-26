@@ -27,7 +27,7 @@ namespace analyser {
 
 					bool is_end() const;
 
-					float get(const int channel_index) const;
+					float get_subsample(const int channel_index) const;
 
 					bool operator==(const AudioBuffer::Iterator& iterator) const;
 					bool operator!=(const AudioBuffer::Iterator& iterator) const;
