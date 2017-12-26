@@ -37,4 +37,9 @@ namespace analyser {
 		}
 		return success;
 	}
+
+	Sample* Sample::operator->()
+	{
+		return this;
+	}
 }
