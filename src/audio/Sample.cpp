@@ -42,4 +42,9 @@ namespace analyser {
 	{
 		return this;
 	}
+
+	const Sample* Sample::operator->() const
+	{
+		return this;
+	}
 }

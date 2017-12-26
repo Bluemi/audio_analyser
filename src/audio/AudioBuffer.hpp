@@ -27,6 +27,8 @@ namespace analyser {
 
 					bool is_end() const;
 
+					float get(const int channel_index) const;
+
 					bool operator==(const AudioBuffer::Iterator& iterator) const;
 					bool operator!=(const AudioBuffer::Iterator& iterator) const;
 
@@ -96,7 +98,6 @@ namespace analyser {
 	AudioBuffer::Iterator operator+(int step, AudioBuffer::Iterator iterator);
 
 	AudioBuffer::Iterator operator-(AudioBuffer::Iterator iterator, int step);
-	AudioBuffer::Iterator operator-(int step, AudioBuffer::Iterator iterator);
 }
 
 #endif

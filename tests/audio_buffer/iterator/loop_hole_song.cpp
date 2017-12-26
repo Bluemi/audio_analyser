@@ -15,7 +15,7 @@ int main() {
 		float sum = 0.f;
 		for (analyser::AudioBuffer::Iterator iter = buffer.begin(); iter != buffer.end(); ++iter) {
 			float f = 0.f;
-			if ((*iter).get_subsample(analyser::StereoChannel::LEFT, &f)) {
+			if (iter->get_subsample(analyser::StereoChannel::LEFT, &f)) {
 				sum += f;
 			} else {
 				failed = 1;

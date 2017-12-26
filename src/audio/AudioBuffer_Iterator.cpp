@@ -14,6 +14,11 @@ namespace analyser {
 		return (position_ >= number_of_samples_);
 	}
 
+	float AudioBuffer::Iterator::get(const int channel_index) const
+	{
+		return *(this->samples_ + (this->position_ * this->number_of_channels_ + channel_index));
+	}
+
 	bool AudioBuffer::Iterator::operator==(const AudioBuffer::Iterator& iterator2) const
 	{
 		bool equal = true;
@@ -141,12 +146,4 @@ namespace analyser {
 		iterator -= step;
 		return iterator;
 	}
-
-	AudioBuffer::Iterator operator-(int step, AudioBuffer::Iterator iterator)
-	{
-		iterator -= step;
-		return iterator;
-	}
-
-
 }

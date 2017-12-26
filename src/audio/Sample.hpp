@@ -14,6 +14,7 @@ namespace analyser {
 			bool get_subsample(unsigned int channel_number, float* subsample) const;
 
 			Sample* operator->();
+			const Sample* operator->() const;
 		private:
 			bool is_empty_;
 			float* samples_;
