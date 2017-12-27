@@ -25,13 +25,24 @@ fail_counter=0
 # loop through tests
 for t in $tests
 do
+	success=0
+	# verbose
 	if [ $verbose -eq 1 ]; then
+		echo "-----------------------------------------------------------------------"
 		echo $t:
-		$t
+		if $t
+		then
+			success=1
+		fi 2>/dev/null
+		echo ""
 	else
-		$t 2>/dev/null 1>&2
+	# unverbose
+		if $($t &>/dev/null) &>/dev/null
+		then
+			success=1
+		fi
 	fi
-	if [ $? -ne 0 ]; then
+	if [ $success -eq 0 ]; then
 		echo "test $t failed"
 		fail_counter=$(($fail_counter+1))
 	else
@@ -42,5 +53,6 @@ done
 
 # print results
 
+echo ""
 echo "Tests run: $run_counter"
 echo "Failures: $fail_counter"
