@@ -73,6 +73,17 @@ namespace analyser {
 		return AudioBuffer::Iterator(samples_, number_of_samples_, number_of_channels_, number_of_samples_);
 	}
 
+	AudioBuffer::Iterator AudioBuffer::get_iterator_at(const Time& time) const
+	{
+		size_t sample_position = time.get_number_of_samples();
+		return Iterator(samples_, sample_position, number_of_channels_, number_of_samples_);
+	}
+
+	AudioBuffer::Iterator AudioBuffer::get_iterator_at_second(float seconds) const
+	{
+		return get_iterator_at(seconds_to_time(seconds));
+	}
+
 	unsigned int AudioBuffer::get_samplerate() const {
 		return samplerate_;
 	}
@@ -118,10 +129,17 @@ namespace analyser {
 		return success;
 	}
 
-	/*
-	SampleIterator AudioBuffer::getIteratorFrom(const Time frame_offset, StereoChannel channel) const
+	bool AudioBuffer::get_subsample_at(const Time& time, unsigned int number_of_channel, float* subsample) const
 	{
-		return SampleIterator(samples, frame_offset.getFrameCount(), duration.getFrameCount(), channel);
+		bool success = true;
+		if (time.get_number_of_samples() >= number_of_samples_) {
+			success = false;
+		} else if (number_of_channel >= number_of_channels_) {
+			success = false;
+		} else {
+			*subsample = *(samples_ + (number_of_channels_ * time.get_number_of_samples() + number_of_channel));
+		}
+
+		return success;
 	}
-	*/
 }

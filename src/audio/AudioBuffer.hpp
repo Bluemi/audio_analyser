@@ -62,6 +62,8 @@ namespace analyser {
 
 			Iterator begin() const;
 			Iterator end() const;
+			Iterator get_iterator_at(const Time& time) const;
+			Iterator get_iterator_at_second(float second) const;
 
 			// stats
 			unsigned int get_samplerate() const;
@@ -76,12 +78,7 @@ namespace analyser {
 			// Samples
 			bool get_sample_at(const Time& time, Sample* sample) const;
 			bool get_sample(const size_t sample_offset, Sample* sample) const;
-
-			// misc ---------------------------------------------------
-			/*
-			size_t getMemSize() const;
-			Iterator getIteratorFrom(const Time offset_frame, StereoChannel channel) const;
-			*/
+			bool get_subsample_at(const Time& time, unsigned int number_of_channel, float* subsample) const;
 		private:
 			static size_t loadSamples(SNDFILE *file, float *samples, const sf_count_t frames);
 			void delete_samples();

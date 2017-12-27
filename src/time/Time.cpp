@@ -1,5 +1,7 @@
 #include "Time.hpp"
 
+#include <cmath>
+
 namespace analyser {
 	Time Time::from_number_of_samples(size_t number_of_samples, unsigned int samplerate)
 	{
@@ -9,6 +11,16 @@ namespace analyser {
 	Time Time::from_seconds(double seconds, unsigned int samplerate)
 	{
 		return Time(seconds * samplerate, samplerate);
+	}
+
+	size_t Time::seconds_to_number_of_samples(float seconds, unsigned int samplerate)
+	{
+		return (size_t)std::abs(seconds * samplerate);
+	}
+
+	float Time::number_of_samples_to_seconds(size_t number_of_samples, unsigned int samplerate)
+	{
+		return number_of_samples / (float)samplerate;
 	}
 
 	Time::Time(size_t number_of_samples, unsigned int samplerate)
