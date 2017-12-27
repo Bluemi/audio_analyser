@@ -79,7 +79,7 @@ namespace analyser {
 		return Iterator(samples_, sample_position, number_of_channels_, number_of_samples_);
 	}
 
-	AudioBuffer::Iterator AudioBuffer::get_iterator_at_second(float seconds) const
+	AudioBuffer::Iterator AudioBuffer::get_iterator_at_second(double seconds) const
 	{
 		return get_iterator_at(seconds_to_time(seconds));
 	}

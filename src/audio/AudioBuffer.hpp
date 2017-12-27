@@ -63,7 +63,7 @@ namespace analyser {
 			Iterator begin() const;
 			Iterator end() const;
 			Iterator get_iterator_at(const Time& time) const;
-			Iterator get_iterator_at_second(float second) const;
+			Iterator get_iterator_at_second(double second) const;
 
 			// stats
 			unsigned int get_samplerate() const;

@@ -13,14 +13,14 @@ namespace analyser {
 		return Time(seconds * samplerate, samplerate);
 	}
 
-	size_t Time::seconds_to_number_of_samples(float seconds, unsigned int samplerate)
+	size_t Time::seconds_to_number_of_samples(double seconds, unsigned int samplerate)
 	{
 		return (size_t)std::abs(seconds * samplerate);
 	}
 
-	float Time::number_of_samples_to_seconds(size_t number_of_samples, unsigned int samplerate)
+	double Time::number_of_samples_to_seconds(size_t number_of_samples, unsigned int samplerate)
 	{
-		return number_of_samples / (float)samplerate;
+		return number_of_samples / (double)samplerate;
 	}
 
 	Time::Time(size_t number_of_samples, unsigned int samplerate)
