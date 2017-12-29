@@ -14,6 +14,11 @@ namespace analyser {
 		return *(this->samples_ + channel_index);
 	}
 
+	void AudioBuffer::Iterator::set_subsample(const unsigned int channel_index, const float sample)
+	{
+		*(this->samples_ + channel_index) = sample;
+	}
+
 	bool AudioBuffer::Iterator::operator==(const AudioBuffer::Iterator& other_iterator) const
 	{
 		return this->samples_ == other_iterator.samples_;
