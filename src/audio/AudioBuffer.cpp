@@ -65,18 +65,18 @@ namespace analyser {
 
 	AudioBuffer::Iterator AudioBuffer::begin() const
 	{
-		return AudioBuffer::Iterator(samples_, 0, number_of_channels_, number_of_samples_);
+		return AudioBuffer::Iterator(samples_, 0, number_of_channels_);
 	}
 
 	AudioBuffer::Iterator AudioBuffer::end() const
 	{
-		return AudioBuffer::Iterator(samples_, number_of_samples_, number_of_channels_, number_of_samples_);
+		return AudioBuffer::Iterator(samples_, number_of_samples_, number_of_channels_);
 	}
 
 	AudioBuffer::Iterator AudioBuffer::get_iterator_at(const Time& time) const
 	{
 		size_t sample_position = time.get_number_of_samples();
-		return Iterator(samples_, sample_position, number_of_channels_, number_of_samples_);
+		return Iterator(samples_, sample_position, number_of_channels_);
 	}
 
 	AudioBuffer::Iterator AudioBuffer::get_iterator_at_second(double seconds) const

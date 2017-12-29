@@ -22,12 +22,11 @@ namespace analyser {
 				public:
 					Iterator();
 					Iterator(const Iterator& original) = default;
-					Iterator(float* samples, size_t initial_offset, unsigned int number_of_channels, size_t number_of_samples);
+					Iterator(float* samples, size_t initial_offset, unsigned int number_of_channels);
 					Iterator& operator=(const Iterator& original) = default;
 
-					bool is_end() const;
-
-					float get_subsample(const int channel_index) const;
+					float get_subsample(const unsigned int channel_index) const;
+					void set_subsample(const unsigned int channel_index, const float sample);
 
 					bool operator==(const AudioBuffer::Iterator& iterator) const;
 					bool operator!=(const AudioBuffer::Iterator& iterator) const;
@@ -49,15 +48,10 @@ namespace analyser {
 					void operator+=(int step);
 					void operator-=(int step);
 
-					Iterator operator+(const Iterator&) const;
-					Iterator operator-(const Iterator&) const;
-
 					Sample operator[](int index) const;
 				private:
 					float* samples_;
-					size_t position_;
 					unsigned int number_of_channels_;
-					size_t number_of_samples_;
 			};
 
 			Iterator begin() const;

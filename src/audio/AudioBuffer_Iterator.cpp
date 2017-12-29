@@ -2,124 +2,94 @@
 
 namespace analyser {
 	AudioBuffer::Iterator::Iterator()
-		: samples_(nullptr), position_(0), number_of_channels_(0), number_of_samples_(0)
+		: samples_(nullptr), number_of_channels_(0)
 	{}
 
-	AudioBuffer::Iterator::Iterator(float* samples, size_t initial_offset, unsigned int number_of_channels, size_t number_of_samples)
-		: samples_(samples), position_(initial_offset * number_of_channels), number_of_channels_(number_of_channels), number_of_samples_(number_of_samples)
+	AudioBuffer::Iterator::Iterator(float* samples, size_t initial_offset, unsigned int number_of_channels)
+		: samples_(samples + initial_offset * number_of_channels), number_of_channels_(number_of_channels)
 	{}
 
-	bool AudioBuffer::Iterator::is_end() const
+	float AudioBuffer::Iterator::get_subsample(const unsigned int channel_index) const
 	{
-		return (position_ >= number_of_samples_);
+		return *(this->samples_ + channel_index);
 	}
 
-	float AudioBuffer::Iterator::get_subsample(const int channel_index) const
+	bool AudioBuffer::Iterator::operator==(const AudioBuffer::Iterator& other_iterator) const
 	{
-		return *(this->samples_ + (this->position_ * this->number_of_channels_ + channel_index));
-	}
-
-	bool AudioBuffer::Iterator::operator==(const AudioBuffer::Iterator& iterator2) const
-	{
-		bool equal = true;
-		if (this->samples_ != iterator2.samples_) {
-			equal = false;
-		} else if (this->position_ != iterator2.position_) {
-			if ((!this->is_end()) || (!iterator2.is_end())) {
-				equal = false;
-			}
-		}
-
-		return equal;
+		return this->samples_ == other_iterator.samples_;
 	}
 
 	bool AudioBuffer::Iterator::operator!=(const AudioBuffer::Iterator& other_iterator) const
 	{
-		return !(*this == other_iterator);
+		return this->samples_ != other_iterator.samples_;
 	}
 
-	bool AudioBuffer::Iterator::operator<(const AudioBuffer::Iterator& iterator) const
+	bool AudioBuffer::Iterator::operator<(const AudioBuffer::Iterator& other_iterator) const
 	{
-		return this->position_ < iterator.position_;
+		return this->samples_ < other_iterator.samples_;
 	}
 
-	bool AudioBuffer::Iterator::operator>(const AudioBuffer::Iterator& iterator) const
+	bool AudioBuffer::Iterator::operator>(const AudioBuffer::Iterator& other_iterator) const
 	{
-		return this->position_ > iterator.position_;
+		return this->samples_ > other_iterator.samples_;
 	}
 
-	bool AudioBuffer::Iterator::operator<=(const AudioBuffer::Iterator& iterator) const
+	bool AudioBuffer::Iterator::operator<=(const AudioBuffer::Iterator& other_iterator) const
 	{
-		return this->position_ <= iterator.position_;
+		return this->samples_ <= other_iterator.samples_;
 	}
 
-	bool AudioBuffer::Iterator::operator>=(const AudioBuffer::Iterator& iterator) const
+	bool AudioBuffer::Iterator::operator>=(const AudioBuffer::Iterator& other_iterator) const
 	{
-		return this->position_ >= iterator.position_;
+		return this->samples_ >= other_iterator.samples_;
 	}
 
 	const Sample AudioBuffer::Iterator::operator*() const
 	{
-		float* samples = this->samples_ + (this->position_ * this->number_of_channels_);
-		return Sample(samples, this->number_of_channels_);
+		return Sample(samples_, this->number_of_channels_);
 	}
 
 	const Sample AudioBuffer::Iterator::operator->() const
 	{
-		float* samples = this->samples_ + (this->position_ * this->number_of_channels_);
-		return Sample(samples, this->number_of_channels_);
+		return *(*this);
 	}
 
 	Sample AudioBuffer::Iterator::operator++(int)
 	{
 		Sample sample = *(*this);
-		position_++;
+		samples_ += number_of_channels_;
 		return sample;
 	}
 
 
 	Sample AudioBuffer::Iterator::operator++()
 	{
-		position_++;
+		samples_ += number_of_channels_;
 		return *(*this);
 	}
 
 	Sample AudioBuffer::Iterator::operator--(int)
 	{
 		Sample sample = *(*this);
-		position_--;
+		samples_ -= number_of_channels_;
 		return sample;
 	}
 
 	Sample AudioBuffer::Iterator::operator--()
 	{
-		position_--;
+		samples_ -= number_of_channels_;
 		return *(*this);
 	}
 
 
 	void AudioBuffer::Iterator::operator+=(int step)
 	{
-		position_ += step;
+		samples_ += (number_of_channels_ * step);
 	}
 
 	void AudioBuffer::Iterator::operator-=(int step)
 	{
-		position_ -= step;
-	}
-
-	AudioBuffer::Iterator AudioBuffer::Iterator::operator+(const AudioBuffer::Iterator& summand) const
-	{
-		AudioBuffer::Iterator iterator(*this);
-		iterator.position_ += summand.position_;
-		return iterator;
-	}
-
-	AudioBuffer::Iterator AudioBuffer::Iterator::operator-(const AudioBuffer::Iterator& minuend) const
-	{
-		AudioBuffer::Iterator iterator(*this);
-		iterator.position_ -= minuend.position_;
-		return iterator;
+		samples_ -= (number_of_channels_ * step);
 	}
 
 	Sample AudioBuffer::Iterator::operator[](int index) const
@@ -139,7 +109,6 @@ namespace analyser {
 		iterator += step;
 		return iterator;
 	}
-
 
 	AudioBuffer::Iterator operator-(AudioBuffer::Iterator iterator, int step)
 	{
