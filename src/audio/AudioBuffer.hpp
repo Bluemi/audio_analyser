@@ -7,6 +7,7 @@
 
 #include <time/Time.hpp>
 #include <audio/Sample.hpp>
+#include <audio/Channel.hpp>
 
 namespace analyser {
 	class AudioBuffer
@@ -64,15 +65,18 @@ namespace analyser {
 			unsigned int get_number_of_channels() const;
 			bool is_empty() const;
 
-			// Time ---------------------------------------------------
+			// Time
 			Time get_duration() const;
 			Time seconds_to_time(double seconds) const;
 			Time number_of_samples_to_time(size_t number_of_samples) const;
 
-			// Samples
+			// Sample
 			bool get_sample_at(const Time& time, Sample* sample) const;
 			bool get_sample(const size_t sample_offset, Sample* sample) const;
 			bool get_subsample_at(const Time& time, unsigned int number_of_channel, float* subsample) const;
+
+			// Channel
+			bool get_channel(unsigned int channel_index, Channel* channel) const;
 		private:
 			static size_t loadSamples(SNDFILE *file, float *samples, const sf_count_t frames);
 			void delete_samples();
@@ -86,7 +90,6 @@ namespace analyser {
 
 	// Iterator Functions
 	AudioBuffer::Iterator operator+(AudioBuffer::Iterator iterator, int step);
-	AudioBuffer::Iterator operator+(int step, AudioBuffer::Iterator iterator);
 
 	AudioBuffer::Iterator operator-(AudioBuffer::Iterator iterator, int step);
 }

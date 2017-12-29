@@ -142,4 +142,19 @@ namespace analyser {
 
 		return success;
 	}
+
+	bool AudioBuffer::get_channel(unsigned int channel_index, Channel* channel) const
+	{
+		bool success = true;
+
+		// if this buffer is empty number_of_channels_ will be 0
+		if (channel_index >= number_of_channels_) {
+			success = false;
+		} else {
+			float* samples = (float*)::operator new(sizeof(float) * number_of_samples_);
+			channel->set_all(samples, number_of_samples_, samplerate_);
+		}
+
+		return success;
+	}
 }

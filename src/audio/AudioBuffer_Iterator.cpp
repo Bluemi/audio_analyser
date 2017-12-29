@@ -109,12 +109,6 @@ namespace analyser {
 		return iterator;
 	}
 
-	AudioBuffer::Iterator operator+(int step, AudioBuffer::Iterator iterator)
-	{
-		iterator += step;
-		return iterator;
-	}
-
 	AudioBuffer::Iterator operator-(AudioBuffer::Iterator iterator, int step)
 	{
 		iterator -= step;
