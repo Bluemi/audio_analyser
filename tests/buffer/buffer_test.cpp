@@ -21,8 +21,15 @@ void test_copy_constructor() {
 	analyser::Buffer buffer4(buffer2);
 }
 
+void test_assign_nonempty() {
+	analyser::Buffer buffer1(100);
+	analyser::Buffer buffer2(200);
+	buffer1 = buffer2;
+}
+
 int main() {
 	test_simple();
 	test_assignment_operator();
 	test_copy_constructor();
+	test_assign_nonempty();
 }

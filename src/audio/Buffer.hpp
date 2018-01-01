@@ -15,6 +15,8 @@ namespace analyser {
 			void plus_reference();
 			void minus_reference();
 
+			void allocate(size_t number_of_samples);
+
 			float* get_samples() const;
 
 		private:
