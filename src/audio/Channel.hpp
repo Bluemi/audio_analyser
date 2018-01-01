@@ -59,6 +59,7 @@ namespace analyser {
 
 			// Subsample Access
 			bool get_subsample_at(const Time& time, float* subsample);
+			bool get_subsample_at_seconds(double seconds, float* subsample);
 
 		private:
 			float* samples_;

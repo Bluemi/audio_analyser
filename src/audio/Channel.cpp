@@ -56,4 +56,9 @@ namespace analyser {
 		}
 		return success;
 	}
+
+	bool Channel::get_subsample_at_seconds(double seconds, float* subsample)
+	{
+		return get_subsample_at(this->seconds_to_time(seconds), subsample);
+	}
 }
