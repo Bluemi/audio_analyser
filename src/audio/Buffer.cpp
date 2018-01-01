@@ -1,7 +1,5 @@
 #include "Buffer.hpp"
 
-#include <iostream>
-
 namespace analyser {
 	Buffer::Buffer()
 		: samples_(nullptr), number_of_references_(nullptr)
@@ -12,8 +10,6 @@ namespace analyser {
 		samples_ = (float*)::operator new(sizeof(float) * number_of_samples);
 		number_of_references_ = (unsigned int*)::operator new(sizeof(unsigned int));
 		*number_of_references_ = 1;
-
-		std::cout << "allocated " << number_of_samples << " samples" << std::endl;
 	}
 
 	Buffer::Buffer(const Buffer& buffer)
@@ -62,7 +58,6 @@ namespace analyser {
 			if (*number_of_references_ == 0) {
 				delete samples_;
 				delete number_of_references_;
-				std::cout << "freed" << std::endl;
 			}
 		}
 	}

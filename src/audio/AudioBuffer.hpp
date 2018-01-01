@@ -8,6 +8,7 @@
 #include <time/Time.hpp>
 #include <audio/Sample.hpp>
 #include <audio/Channel.hpp>
+#include <audio/Buffer.hpp>
 
 namespace analyser {
 	class AudioBuffer
@@ -79,9 +80,8 @@ namespace analyser {
 			bool get_channel(unsigned int channel_index, Channel* channel) const;
 		private:
 			static size_t loadSamples(SNDFILE *file, float *samples, const sf_count_t frames);
-			void delete_samples();
 
-			float* samples_;
+			Buffer buffer_;
 			bool empty_;
 			unsigned int number_of_channels_;
 			unsigned int samplerate_;
