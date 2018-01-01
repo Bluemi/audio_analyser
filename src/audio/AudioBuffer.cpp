@@ -135,8 +135,8 @@ namespace analyser {
 		if (channel_index >= number_of_channels_) {
 			success = false;
 		} else {
-			float* samples = (float*)::operator new(sizeof(float) * number_of_samples_);
-			channel->set_all(samples, number_of_samples_, samplerate_);
+			Buffer buffer(number_of_samples_);
+			channel->set_all(buffer, number_of_samples_, samplerate_);
 		}
 
 		return success;

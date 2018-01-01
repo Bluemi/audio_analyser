@@ -18,6 +18,7 @@ namespace analyser {
 			void allocate(size_t number_of_samples);
 
 			float* get_samples() const;
+			bool is_empty() const;
 
 		private:
 			float* samples_;

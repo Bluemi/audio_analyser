@@ -66,4 +66,9 @@ namespace analyser {
 	{
 		return samples_;
 	}
+
+	bool Buffer::is_empty() const
+	{
+		return samples_ == nullptr;
+	}
 }

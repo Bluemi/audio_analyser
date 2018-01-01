@@ -4,16 +4,17 @@
 #include <cstddef>
 
 #include <time/Time.hpp>
+#include <audio/Buffer.hpp>
 
 namespace analyser {
 	class Channel
 	{
 		public:
 			Channel();
-			Channel(float* samples, size_t number_of_samples, unsigned int samplerate);
+			Channel(const Buffer& buffer, size_t number_of_samples, unsigned int samplerate);
 			~Channel();
 
-			void set_all(float* samples, size_t number_of_samples, unsigned int samplerate);
+			void set_all(const Buffer& buffer, size_t number_of_samples, unsigned int samplerate);
 
 			// Properties
 			bool is_empty() const;
@@ -62,7 +63,7 @@ namespace analyser {
 			bool get_subsample_at_seconds(double seconds, float* subsample);
 
 		private:
-			float* samples_;
+			Buffer buffer_;
 			size_t number_of_samples_;
 			unsigned int samplerate_;
 	};

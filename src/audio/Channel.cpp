@@ -2,28 +2,26 @@
 
 namespace analyser {
 	Channel::Channel()
-		: samples_(nullptr), number_of_samples_(0), samplerate_(0)
+		: buffer_(), number_of_samples_(0), samplerate_(0)
 	{}
 
-	Channel::Channel(float* samples, size_t number_of_samples, unsigned int samplerate)
-		: samples_(samples), number_of_samples_(number_of_samples), samplerate_(samplerate)
+	Channel::Channel(const Buffer& buffer, size_t number_of_samples, unsigned int samplerate)
+		: buffer_(buffer), number_of_samples_(number_of_samples), samplerate_(samplerate)
 	{}
 
 	Channel::~Channel() 
-	{
-		delete samples_;
-	}
+	{}
 
-	void Channel::set_all(float* samples, size_t number_of_samples, unsigned int samplerate)
+	void Channel::set_all(const Buffer& buffer, size_t number_of_samples, unsigned int samplerate)
 	{
-		samples_ = samples;
+		buffer_ = buffer;
 		number_of_samples_ = number_of_samples;
 		samplerate_ = samplerate;
 	}
 
 	bool Channel::is_empty() const
 	{
-		return samples_ == nullptr;
+		return buffer_.is_empty();
 	}
 
 	unsigned int Channel::get_samplerate() const
@@ -52,7 +50,7 @@ namespace analyser {
 		if (time > get_duration()) {
 			success = false;
 		} else {
-			*subsample = *(samples_ + time.get_number_of_samples());
+			*subsample = *(buffer_.get_samples() + time.get_number_of_samples());
 		}
 		return success;
 	}
