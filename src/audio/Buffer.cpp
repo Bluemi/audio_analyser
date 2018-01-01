@@ -1,11 +1,14 @@
 #include "Buffer.hpp"
 
+#include <cstring> // for memcpy
+
 namespace analyser {
 	Buffer::Buffer()
-		: samples_(nullptr), number_of_references_(nullptr)
+		: samples_(nullptr), number_of_references_(nullptr), number_of_samples_(0)
 	{}
 
 	Buffer::Buffer(size_t number_of_samples)
+		: number_of_samples_(number_of_samples)
 	{
 		samples_ = (float*)::operator new(sizeof(float) * number_of_samples);
 		number_of_references_ = (unsigned int*)::operator new(sizeof(unsigned int));
@@ -43,6 +46,13 @@ namespace analyser {
 		samples_ = (float*)::operator new(sizeof(float) * number_of_samples);
 		number_of_references_ = (unsigned int*)::operator new(sizeof(unsigned int));
 		*number_of_references_ = 1;
+	}
+
+	Buffer Buffer::clone() const
+	{
+		Buffer buffer(number_of_samples_);
+		memcpy(buffer.get_samples(), get_samples(), number_of_samples_);
+		return buffer;
 	}
 
 	void Buffer::plus_reference()

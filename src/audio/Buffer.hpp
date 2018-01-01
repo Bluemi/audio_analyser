@@ -16,6 +16,7 @@ namespace analyser {
 			void minus_reference();
 
 			void allocate(size_t number_of_samples);
+			Buffer clone() const;
 
 			float* get_samples() const;
 			bool is_empty() const;
@@ -23,6 +24,7 @@ namespace analyser {
 		private:
 			float* samples_;
 			unsigned int* number_of_references_;
+			size_t number_of_samples_;
 	};
 }
 

@@ -27,9 +27,15 @@ void test_assign_nonempty() {
 	buffer1 = buffer2;
 }
 
+void test_clone() {
+	analyser::Buffer buffer1(100);
+	analyser::Buffer buffer2 = buffer1.clone();
+}
+
 int main() {
 	test_simple();
 	test_assignment_operator();
 	test_copy_constructor();
 	test_assign_nonempty();
+	test_clone();
 }
