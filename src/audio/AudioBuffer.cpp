@@ -47,6 +47,13 @@ namespace analyser {
 	AudioBuffer::~AudioBuffer()
 	{}
 
+	AudioBuffer AudioBuffer::clone() const
+	{
+		AudioBuffer buffer(*this);
+		buffer.buffer_ = buffer_.clone();
+		return buffer;
+	}
+
 	AudioBuffer::Iterator AudioBuffer::begin() const
 	{
 		return AudioBuffer::Iterator(buffer_.get_samples(), 0, number_of_channels_);

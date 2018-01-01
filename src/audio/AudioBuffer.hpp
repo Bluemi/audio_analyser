@@ -18,6 +18,8 @@ namespace analyser {
 			~AudioBuffer();
 			AudioBuffer();
 
+			AudioBuffer clone() const;
+
 			// Iterator
 			class Iterator
 			{
