@@ -45,4 +45,15 @@ namespace analyser {
 	{
 		return Time::from_number_of_samples(number_of_samples, samplerate_);
 	}
+
+	bool Channel::get_subsample_at(const Time& time, float* subsample)
+	{
+		bool success = true;
+		if (time >= get_duration()) {
+			success = false;
+		} else {
+			return *(samples_ + time.get_number_of_samples());
+		}
+		return success;
+	}
 }
