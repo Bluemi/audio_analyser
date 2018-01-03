@@ -6,9 +6,9 @@
 #include <fftw3.h>
 
 #include <time/Time.hpp>
-#include <audio/Sample.hpp>
-#include <audio/Channel.hpp>
-#include <audio/Buffer.hpp>
+#include <audio/sample/Sample.hpp>
+#include <audio/channel/Channel.hpp>
+#include <buffer/Buffer.hpp>
 
 namespace analyser {
 	class AudioBuffer

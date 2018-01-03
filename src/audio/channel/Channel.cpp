@@ -44,6 +44,27 @@ namespace analyser {
 		return Time::from_number_of_samples(number_of_samples, samplerate_);
 	}
 
+	Channel::Iterator Channel::begin() const
+	{
+		return Channel::Iterator(buffer_.get_samples(), 0);
+	}
+
+	Channel::Iterator Channel::end()
+	{
+		return Channel::Iterator(buffer_.get_samples(), number_of_samples_);
+	}
+
+	Channel::Iterator Channel::get_iterator_at(const Time& time)
+	{
+		return get_iterator_at_sample(time.get_number_of_samples());
+	}
+
+	Channel::Iterator Channel::get_iterator_at_sample(const size_t offset)
+	{
+		return Channel::Iterator(buffer_.get_samples(), offset);
+	}
+
+
 	bool Channel::get_subsample_at(const Time& time, float* subsample)
 	{
 		bool success = true;

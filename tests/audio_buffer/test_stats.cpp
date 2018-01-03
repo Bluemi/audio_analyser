@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <audio/AudioBuffer.hpp>
+#include <audio/buffer/AudioBuffer.hpp>
 
 #define INPUT_PATH "./audio_tests/"
 #define INPUT_FILE_PATH INPUT_PATH"test1.wav"

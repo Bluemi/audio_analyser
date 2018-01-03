@@ -4,7 +4,7 @@
 #include <cstddef>
 
 #include <time/Time.hpp>
-#include <audio/Buffer.hpp>
+#include <buffer/Buffer.hpp>
 
 namespace analyser {
 	class Channel
@@ -57,6 +57,13 @@ namespace analyser {
 				private:
 					float* samples_;
 			};
+
+			Iterator begin() const;
+			Iterator end();
+			Iterator get_iterator_at(const Time& time);
+			Iterator get_iterator_at_sample(const size_t offset);
+
+			// Block
 
 			// Subsample Access
 			bool get_subsample_at(const Time& time, float* subsample);

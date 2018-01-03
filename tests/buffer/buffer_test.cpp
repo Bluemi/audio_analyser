@@ -1,5 +1,5 @@
 #include <iostream>
-#include <audio/Buffer.hpp>
+#include <buffer/Buffer.hpp>
 
 void test_empty() {
 	analyser::Buffer buffer;
@@ -27,9 +27,11 @@ void test_assign_nonempty() {
 	buffer1 = buffer2;
 }
 
-void test_clone() {
+bool test_clone() {
 	analyser::Buffer buffer1(100);
+	*(buffer1.get_samples() + 5) = 0.2f;
 	analyser::Buffer buffer2 = buffer1.clone();
+	return (*(buffer2.get_samples() + 5) == *(buffer1.get_samples() + 5));
 }
 
 int main() {

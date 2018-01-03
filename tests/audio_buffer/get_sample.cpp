@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include <audio/AudioBuffer.hpp>
-#include <audio/Channels.hpp>
+#include <audio/buffer/AudioBuffer.hpp>
+#include <audio/channel/Channels.hpp>
 
 #include <math.h>
 

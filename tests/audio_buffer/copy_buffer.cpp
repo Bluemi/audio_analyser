@@ -1,5 +1,5 @@
 #include <iostream>
-#include <audio/AudioBuffer.hpp>
+#include <audio/buffer/AudioBuffer.hpp>
 
 #define INCLUDE_PATH "./audio_tests/"
 #define INCLUDE_FILE INCLUDE_PATH"test1.wav"
