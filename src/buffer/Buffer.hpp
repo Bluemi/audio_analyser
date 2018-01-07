@@ -20,6 +20,7 @@ namespace analyser {
 
 			float* get_samples() const;
 			bool is_empty() const;
+			size_t get_number_of_samples() const;
 
 		private:
 			float* samples_;

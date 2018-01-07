@@ -81,4 +81,9 @@ namespace analyser {
 	{
 		return samples_ == nullptr;
 	}
+
+	size_t Buffer::get_number_of_samples() const
+	{
+		return number_of_samples_;
+	}
 }

@@ -64,6 +64,31 @@ namespace analyser {
 			Iterator get_iterator_at_sample(const size_t offset);
 
 			// Block
+			class Block
+			{
+				public:
+					Block();
+					Block(const Block& original) = default;
+					Block(const Buffer& buffer);
+
+					float& operator[](size_t index) const;
+					bool set_subsample(size_t index, float subsample);
+
+					bool get_subsample(size_t index, float* subsample) const;
+					float* get_samples() const;
+
+					size_t get_number_of_samples() const;
+					bool is_empty() const;
+
+					Channel::Iterator begin() const;
+					Channel::Iterator end() const;
+					Channel::Iterator get_iterator_at_sample(size_t index) const;
+
+				private:
+					Buffer buffer_;
+			};
+
+			size_t get_block(const Time& start, const Time& duration, Block* block) const;
 
 			// Subsample Access
 			bool get_subsample_at(const Time& time, float* subsample);
