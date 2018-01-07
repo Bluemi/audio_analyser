@@ -16,7 +16,7 @@ int main() {
 		if (buffer.get_channel(analyser::StereoChannel::LEFT, &channel)) {
 			std::cout << "channel.duration = " << channel.get_duration().get_seconds() << std::endl;
 			analyser::Channel::Block block;
-			size_t number_of_copied_samples = channel.get_block(channel.seconds_to_time(2.0), channel.seconds_to_time(0.01), &block);
+			size_t number_of_copied_samples = channel.get_block(channel.seconds_to_time(2.0), channel.number_of_samples_to_time(5), &block);
 			std::cout << "number_of_copied_samples = " << number_of_copied_samples << std::endl;
 			if (number_of_copied_samples > 0) {
 				std::cout << "number_of_samples = " << block.get_number_of_samples() << std::endl;
