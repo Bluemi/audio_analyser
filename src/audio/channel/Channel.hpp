@@ -5,6 +5,7 @@
 
 #include <time/Time.hpp>
 #include <buffer/Buffer.hpp>
+#include <functional>
 
 namespace analyser {
 	class Channel
@@ -83,6 +84,8 @@ namespace analyser {
 					Channel::Iterator begin() const;
 					Channel::Iterator end() const;
 					Channel::Iterator get_iterator_at_sample(size_t index) const;
+
+					void manipulate(std::function<void(float&, size_t, size_t)> function);
 
 				private:
 					Buffer buffer_;

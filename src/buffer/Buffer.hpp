@@ -17,6 +17,7 @@ namespace analyser {
 
 			void allocate(size_t number_of_samples);
 			Buffer clone() const;
+			Buffer clone_from_to(size_t start, size_t end) const;
 
 			float* get_samples() const;
 			bool is_empty() const;

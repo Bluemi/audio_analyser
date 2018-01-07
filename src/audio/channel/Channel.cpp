@@ -64,6 +64,19 @@ namespace analyser {
 		return Channel::Iterator(buffer_.get_samples(), offset);
 	}
 
+	size_t Channel::get_block(const Time& start, const Time& duration, Block* block) const
+	{
+		size_t number_of_copied_samples = 0;
+		if (start <= get_duration()) {
+			size_t end_index = std::min(start.get_number_of_samples() + duration.get_number_of_samples(), 	// normal end index
+										get_duration().get_number_of_samples());							// index if end would be out of bounds
+
+			Buffer buffer = buffer_.clone_from_to(start.get_number_of_samples(), end_index);
+			*block = Block(buffer);
+			number_of_copied_samples = end_index - start.get_number_of_samples();
+		}
+		return number_of_copied_samples;
+	}
 
 	bool Channel::get_subsample_at(const Time& time, float* subsample)
 	{

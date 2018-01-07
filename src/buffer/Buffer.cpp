@@ -16,7 +16,7 @@ namespace analyser {
 	}
 
 	Buffer::Buffer(const Buffer& buffer)
-		: samples_(buffer.samples_), number_of_references_(buffer.number_of_references_)
+		: samples_(buffer.samples_), number_of_references_(buffer.number_of_references_), number_of_samples_(buffer.number_of_samples_)
 	{
 		plus_reference();
 	}
@@ -30,6 +30,7 @@ namespace analyser {
 		}
 		samples_ = buffer.samples_;
 		number_of_references_ = buffer.number_of_references_;
+		number_of_samples_ = buffer.number_of_samples_;
 		plus_reference();
 	}
 
@@ -52,6 +53,14 @@ namespace analyser {
 	{
 		Buffer buffer(number_of_samples_);
 		memcpy(buffer.get_samples(), get_samples(), number_of_samples_);
+		return buffer;
+	}
+
+	Buffer Buffer::clone_from_to(size_t start, size_t end)  const
+	{
+		size_t number_of_samples = end-start;
+		Buffer buffer(end-start);
+		memcpy(buffer.get_samples(), get_samples()+start, number_of_samples);
 		return buffer;
 	}
 

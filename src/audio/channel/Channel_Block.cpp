@@ -60,4 +60,13 @@ namespace analyser {
 	{
 		return Channel::Iterator(buffer_.get_samples(), index);
 	}
+
+	void Channel::Block::manipulate(std::function<void(float&, size_t, size_t)> function)
+	{
+		float* samples = buffer_.get_samples();
+		for (size_t i = 0; i < buffer_.get_number_of_samples(); i++) {
+			function(*samples, i, buffer_.get_number_of_samples());
+			samples++;
+		}
+	}
 }
