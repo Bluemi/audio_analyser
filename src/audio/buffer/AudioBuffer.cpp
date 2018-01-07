@@ -1,6 +1,5 @@
 #include "AudioBuffer.hpp"
 
-#include <misc/Debug.hpp>
 #include <iostream>
 #include <cmath>
 
@@ -19,7 +18,7 @@ namespace analyser {
 			buffer->buffer_.allocate(number_of_subsamples);
 			if (loadSamples(file, buffer->buffer_.get_samples(), info.frames) != (size_t) info.frames)
 			{
-				Debug::out << Debug::warn << "AudioBuffer::AudioBuffer(): info.frames(" << info.frames << "differs with the result of READ_FUNCTION" << Debug::endl;
+				//Debug::out << Debug::warn << "AudioBuffer::AudioBuffer(): info.frames(" << info.frames << "differs with the result of READ_FUNCTION" << Debug::endl;
 			}
 
 			// set buffer properties
