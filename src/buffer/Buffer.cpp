@@ -1,6 +1,7 @@
 #include "Buffer.hpp"
 
 #include <cstring> // for memcpy
+#include <algorithm> // for swap
 
 namespace analyser {
 	Buffer::Buffer()
@@ -21,17 +22,18 @@ namespace analyser {
 		plus_reference();
 	}
 
-	void Buffer::operator=(const Buffer& buffer)
+	void Buffer::swap(Buffer& buffer1, Buffer& buffer2)
 	{
-		minus_reference();
-		// if this has the same samples as buffer -> do nothing
-		if (this->samples_ == buffer.samples_) {
-			return;
-		}
-		samples_ = buffer.samples_;
-		number_of_references_ = buffer.number_of_references_;
-		number_of_samples_ = buffer.number_of_samples_;
-		plus_reference();
+		using std::swap;
+		swap(buffer1.samples_, buffer2.samples_);
+		swap(buffer1.number_of_references_, buffer2.number_of_references_);
+		swap(buffer1.number_of_samples_, buffer2.number_of_samples_);
+	}
+
+	Buffer& Buffer::operator=(Buffer buffer)
+	{
+		swap(*this, buffer);
+		return *this;
 	}
 
 	Buffer::~Buffer()

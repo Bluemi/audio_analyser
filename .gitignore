@@ -7,3 +7,5 @@
 /plan
 *.swp
 /core.*
+/doxygen
+/.doxy_config

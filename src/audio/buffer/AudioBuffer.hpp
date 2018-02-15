@@ -11,25 +11,96 @@
 #include <buffer/Buffer.hpp>
 
 namespace analyser {
+	/**
+	 * \brief Represents an AudioFile
+	 *
+	 * An AudioBuffer holds the samples of an Audiofile and provides functions to access the containing samples.
+	 */
 	class AudioBuffer
 	{
 		public:
+			/**
+			 * \brief Loads samples from an audiofile into a buffer.
+			 *
+			 * Loads samples from an audiofile given by `path` into the given buffer. Returns whether loading was successful or not.
+			 * @param path Path to file to load
+			 * @param buffer Buffer into which the samples are loaded
+			 * @return true if loading was successful, false if not
+			 */
 			static bool load_from_file(const char* path, AudioBuffer* buffer);
+
+			/**
+			 * \brief Destructs the Audiobuffer
+			 *
+			 * Releases the contained sampels if not hold by another buffer.
+			 */
 			~AudioBuffer();
+
+			/**
+			 * \brief Creates an empty buffer
+			 */
 			AudioBuffer();
 
+			/**
+			 * \brief Clones the audiobuffer
+			 *
+			 * Performs a deep copy of the samples. The new buffer will have independent samples
+			 */
 			AudioBuffer clone() const;
 
-			// Iterator
+			/**
+			 * \brief An Iterator over the buffer
+			 *
+			 * This random access iterator can be used to iterate over the samples of the buffer.
+			 * You can access samples as well as subsamples.
+			 */
 			class Iterator
 			{
 				public:
+					/**
+					 * \brief Creates an empty Iterator
+					 *
+					 * This Iterator points to no data. You should not try to access samples of this iterator.
+					 */
 					Iterator();
+
+					/**
+					 * \brief copy constructor
+					 *
+					 * Performs a memberwise copy of this iterator.
+					 * @param original The iterator to copy from
+					 */
 					Iterator(const Iterator& original) = default;
+
+					/**
+					 * \brief Creates an new iterator to iterator over the samples
+					 *
+					 * @param samples The samples to iterator over
+					 * @param initial_offset The offset to start with
+					 * @param number_of_channels The number of channels of the AudioBuffer
+					 */
 					Iterator(float* samples, size_t initial_offset, unsigned int number_of_channels);
+
+					/**
+					 * \brief Assigns the righthand iterator to the lefthand.
+					 *
+					 * @param original The iterator to copy from
+					 */
 					Iterator& operator=(const Iterator& original) = default;
 
+					/**
+					 * \brief Gets the subsample at the current iterator position
+					 *
+					 * @param channel_index The channelindex from which you want to get the sample
+					 * @return The subsample at the current iterator position and specified channel
+					 */
 					float get_subsample(const unsigned int channel_index) const;
+
+					/**
+					 * \brief Sets the subsample at the current iterator position
+					 *
+					 * @param channel_index The channelindex from which you want to set the sample
+					 */
 					void set_subsample(const unsigned int channel_index, const float sample);
 
 					bool operator==(const AudioBuffer::Iterator& iterator) const;
