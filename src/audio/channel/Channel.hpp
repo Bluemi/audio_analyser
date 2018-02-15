@@ -12,14 +12,15 @@ namespace analyser {
 	{
 		public:
 			Channel();
-			Channel(const Buffer& buffer, size_t number_of_samples, unsigned int samplerate);
+			Channel(const Buffer& buffer, unsigned int samplerate);
 			~Channel();
 
-			void set_all(const Buffer& buffer, size_t number_of_samples, unsigned int samplerate);
+			void set_all(const Buffer& buffer, unsigned int samplerate);
 
 			// Properties
 			bool is_empty() const;
 			unsigned int get_samplerate() const;
+			size_t get_number_of_samples() const;
 			Time get_duration() const;
 
 			// Time
@@ -99,7 +100,6 @@ namespace analyser {
 
 		private:
 			Buffer buffer_;
-			size_t number_of_samples_;
 			unsigned int samplerate_;
 	};
 	// Iterator Functions

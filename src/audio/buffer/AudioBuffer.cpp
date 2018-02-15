@@ -142,7 +142,7 @@ namespace analyser {
 			success = false;
 		} else {
 			Buffer buffer(number_of_samples_);
-			channel->set_all(buffer, number_of_samples_, samplerate_);
+			channel->set_all(buffer, samplerate_);
 		}
 
 		return success;

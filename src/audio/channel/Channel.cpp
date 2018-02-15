@@ -2,26 +2,30 @@
 
 namespace analyser {
 	Channel::Channel()
-		: buffer_(), number_of_samples_(0), samplerate_(0)
+		: buffer_(), samplerate_(0)
 	{}
 
-	Channel::Channel(const Buffer& buffer, size_t number_of_samples, unsigned int samplerate)
-		: buffer_(buffer), number_of_samples_(number_of_samples), samplerate_(samplerate)
+	Channel::Channel(const Buffer& buffer, unsigned int samplerate)
+		: buffer_(buffer), samplerate_(samplerate)
 	{}
 
 	Channel::~Channel() 
 	{}
 
-	void Channel::set_all(const Buffer& buffer, size_t number_of_samples, unsigned int samplerate)
+	void Channel::set_all(const Buffer& buffer, unsigned int samplerate)
 	{
 		buffer_ = buffer;
-		number_of_samples_ = number_of_samples;
 		samplerate_ = samplerate;
 	}
 
 	bool Channel::is_empty() const
 	{
 		return buffer_.is_empty();
+	}
+
+	size_t Channel::get_number_of_samples() const
+	{
+		return buffer_.get_number_of_samples();
 	}
 
 	unsigned int Channel::get_samplerate() const
@@ -31,7 +35,7 @@ namespace analyser {
 
 	Time Channel::get_duration() const
 	{
-		return Time::from_number_of_samples(number_of_samples_, samplerate_);
+		return Time::from_number_of_samples(get_number_of_samples(), samplerate_);
 	}
 
 	Time Channel::seconds_to_time(float seconds) const
@@ -51,7 +55,7 @@ namespace analyser {
 
 	Channel::Iterator Channel::end()
 	{
-		return Channel::Iterator(buffer_.get_samples(), number_of_samples_);
+		return Channel::Iterator(buffer_.get_samples(), get_number_of_samples());
 	}
 
 	Channel::Iterator Channel::get_iterator_at(const Time& time)
