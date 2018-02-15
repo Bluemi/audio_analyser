@@ -1,10 +1,10 @@
-#include "AudioBuffer.hpp"
+#include "SampleBuffer.hpp"
 
 #include <iostream>
 #include <cmath>
 
 namespace analyser {
-	bool AudioBuffer::load_from_file(const char* path, AudioBuffer* buffer)
+	bool SampleBuffer::load_from_file(const char* path, SampleBuffer* buffer)
 	{
 		SF_INFO info;
 		info.format = 0;
@@ -18,7 +18,7 @@ namespace analyser {
 			buffer->buffer_.allocate(number_of_subsamples);
 			if (loadSamples(file, buffer->buffer_.get_data(), info.frames) != (size_t) info.frames)
 			{
-				//Debug::out << Debug::warn << "AudioBuffer::AudioBuffer(): info.frames(" << info.frames << "differs with the result of READ_FUNCTION" << Debug::endl;
+				//Debug::out << Debug::warn << "SampleBuffer::SampleBuffer(): info.frames(" << info.frames << "differs with the result of READ_FUNCTION" << Debug::endl;
 			}
 
 			// set buffer properties
@@ -34,78 +34,78 @@ namespace analyser {
 		return success;
 	}
 
-	size_t AudioBuffer::loadSamples(SNDFILE *file, float *samples, const sf_count_t frames)
+	size_t SampleBuffer::loadSamples(SNDFILE *file, float *samples, const sf_count_t frames)
 	{
 		return sf_readf_float(file, samples, frames);
 	}
 
-	AudioBuffer::AudioBuffer()
+	SampleBuffer::SampleBuffer()
 		: buffer_(), empty_(true), number_of_channels_(0), samplerate_(0), number_of_samples_(0)
 	{}
 
-	AudioBuffer::~AudioBuffer()
+	SampleBuffer::~SampleBuffer()
 	{}
 
-	AudioBuffer AudioBuffer::clone() const
+	SampleBuffer SampleBuffer::clone() const
 	{
-		AudioBuffer buffer(*this);
+		SampleBuffer buffer(*this);
 		buffer.buffer_ = buffer_.clone();
 		return buffer;
 	}
 
-	AudioBuffer::Iterator AudioBuffer::begin() const
+	SampleBuffer::Iterator SampleBuffer::begin() const
 	{
-		return AudioBuffer::Iterator(buffer_.get_data(), 0, number_of_channels_);
+		return SampleBuffer::Iterator(buffer_.get_data(), 0, number_of_channels_);
 	}
 
-	AudioBuffer::Iterator AudioBuffer::end() const
+	SampleBuffer::Iterator SampleBuffer::end() const
 	{
-		return AudioBuffer::Iterator(buffer_.get_data(), number_of_samples_, number_of_channels_);
+		return SampleBuffer::Iterator(buffer_.get_data(), number_of_samples_, number_of_channels_);
 	}
 
-	AudioBuffer::Iterator AudioBuffer::get_iterator_at(const Time& time) const
+	SampleBuffer::Iterator SampleBuffer::get_iterator_at(const Time& time) const
 	{
 		size_t sample_position = time.get_number_of_samples();
 		return Iterator(buffer_.get_data(), sample_position, number_of_channels_);
 	}
 
-	AudioBuffer::Iterator AudioBuffer::get_iterator_at_second(double seconds) const
+	SampleBuffer::Iterator SampleBuffer::get_iterator_at_second(double seconds) const
 	{
 		return get_iterator_at(seconds_to_time(seconds));
 	}
 
-	unsigned int AudioBuffer::get_samplerate() const {
+	unsigned int SampleBuffer::get_samplerate() const {
 		return samplerate_;
 	}
 
-	unsigned int AudioBuffer::get_number_of_channels() const {
+	unsigned int SampleBuffer::get_number_of_channels() const {
 		return number_of_channels_;
 	}
 
-	bool AudioBuffer::is_empty() const {
+	bool SampleBuffer::is_empty() const {
 		return empty_;
 	}
 
-	Time AudioBuffer::get_duration() const {
+	Time SampleBuffer::get_duration() const {
 		return Time::from_number_of_samples(number_of_samples_, samplerate_);
 	}
 
-	Time AudioBuffer::seconds_to_time(double seconds) const
+	Time SampleBuffer::seconds_to_time(double seconds) const
 	{
 		return Time::from_seconds(seconds, samplerate_);
 	}
 
-	Time AudioBuffer::number_of_samples_to_time(size_t number_of_samples) const
+	Time SampleBuffer::number_of_samples_to_time(size_t number_of_samples) const
 	{
 		return Time::from_number_of_samples(number_of_samples, samplerate_);
 	}
 
-	bool AudioBuffer::get_sample_at(const Time& time, Sample* sample) const
+	bool SampleBuffer::get_sample_at(const Time& time, Sample* sample) const
 	{
 		return get_sample(time.get_number_of_samples(), sample);
 	}
 
-	bool AudioBuffer::get_sample(const size_t sample_offset, Sample* sample) const
+	bool SampleBuffer::get_sample(const size_t sample_offset, Sample* sample) const
 	{
 		bool success;
 		if (sample_offset < number_of_samples_) {
@@ -119,7 +119,7 @@ namespace analyser {
 		return success;
 	}
 
-	bool AudioBuffer::get_subsample_at(const Time& time, unsigned int number_of_channel, float* subsample) const
+	bool SampleBuffer::get_subsample_at(const Time& time, unsigned int number_of_channel, float* subsample) const
 	{
 		bool success = true;
 		if (time.get_number_of_samples() >= number_of_samples_) {
@@ -133,7 +133,7 @@ namespace analyser {
 		return success;
 	}
 
-	bool AudioBuffer::get_channel(unsigned int channel_index, Channel* channel) const
+	bool SampleBuffer::get_channel(unsigned int channel_index, Channel* channel) const
 	{
 		bool success = true;
 

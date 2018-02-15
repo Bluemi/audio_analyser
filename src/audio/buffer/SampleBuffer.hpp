@@ -1,5 +1,5 @@
-#ifndef __AUDIOFILE_CLASS__
-#define __AUDIOFILE_CLASS__
+#ifndef __SAMPLE_BUFFER_CLASS__
+#define __SAMPLE_BUFFER_CLASS__
 
 #include <sndfile.h>
 #include <vector>
@@ -14,9 +14,9 @@ namespace analyser {
 	/**
 	 * \brief Represents an AudioFile
 	 *
-	 * An AudioBuffer holds the samples of an Audiofile and provides functions to access the containing samples.
+	 * An SampleBuffer holds the samples of an Audiofile and provides functions to access the containing samples.
 	 */
-	class AudioBuffer
+	class SampleBuffer
 	{
 		public:
 			/**
@@ -27,26 +27,26 @@ namespace analyser {
 			 * @param buffer Buffer into which the samples are loaded
 			 * @return true if loading was successful, false if not
 			 */
-			static bool load_from_file(const char* path, AudioBuffer* buffer);
+			static bool load_from_file(const char* path, SampleBuffer* buffer);
 
 			/**
 			 * \brief Destructs the Audiobuffer
 			 *
 			 * Releases the contained sampels if not hold by another buffer.
 			 */
-			~AudioBuffer();
+			~SampleBuffer();
 
 			/**
 			 * \brief Creates an empty buffer
 			 */
-			AudioBuffer();
+			SampleBuffer();
 
 			/**
 			 * \brief Clones the audiobuffer
 			 *
 			 * Performs a deep copy of the samples. The new buffer will have independent samples
 			 */
-			AudioBuffer clone() const;
+			SampleBuffer clone() const;
 
 			/**
 			 * \brief An Iterator over the buffer
@@ -77,7 +77,7 @@ namespace analyser {
 					 *
 					 * @param samples The samples to iterator over
 					 * @param initial_offset The offset to start with
-					 * @param number_of_channels The number of channels of the AudioBuffer
+					 * @param number_of_channels The number of channels of the SampleBuffer
 					 */
 					Iterator(float* samples, size_t initial_offset, unsigned int number_of_channels);
 
@@ -103,13 +103,13 @@ namespace analyser {
 					 */
 					void set_subsample(const unsigned int channel_index, const float sample);
 
-					bool operator==(const AudioBuffer::Iterator& iterator) const;
-					bool operator!=(const AudioBuffer::Iterator& iterator) const;
+					bool operator==(const SampleBuffer::Iterator& iterator) const;
+					bool operator!=(const SampleBuffer::Iterator& iterator) const;
 
-					bool operator<(const AudioBuffer::Iterator& iterator) const;
-					bool operator>(const AudioBuffer::Iterator& iterator) const;
-					bool operator<=(const AudioBuffer::Iterator& iterator) const;
-					bool operator>=(const AudioBuffer::Iterator& iterator) const;
+					bool operator<(const SampleBuffer::Iterator& iterator) const;
+					bool operator>(const SampleBuffer::Iterator& iterator) const;
+					bool operator<=(const SampleBuffer::Iterator& iterator) const;
+					bool operator>=(const SampleBuffer::Iterator& iterator) const;
 
 					const Sample operator*() const;
 					const Sample operator->() const;
@@ -162,9 +162,9 @@ namespace analyser {
 	};
 
 	// Iterator Functions
-	AudioBuffer::Iterator operator+(AudioBuffer::Iterator iterator, int step);
+	SampleBuffer::Iterator operator+(SampleBuffer::Iterator iterator, int step);
 
-	AudioBuffer::Iterator operator-(AudioBuffer::Iterator iterator, int step);
+	SampleBuffer::Iterator operator-(SampleBuffer::Iterator iterator, int step);
 }
 
 #endif
