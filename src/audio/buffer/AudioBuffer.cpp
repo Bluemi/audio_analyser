@@ -16,7 +16,7 @@ namespace analyser {
 		{
 			const size_t number_of_subsamples = info.frames * info.channels;
 			buffer->buffer_.allocate(number_of_subsamples);
-			if (loadSamples(file, buffer->buffer_.get_samples(), info.frames) != (size_t) info.frames)
+			if (loadSamples(file, buffer->buffer_.get_data(), info.frames) != (size_t) info.frames)
 			{
 				//Debug::out << Debug::warn << "AudioBuffer::AudioBuffer(): info.frames(" << info.frames << "differs with the result of READ_FUNCTION" << Debug::endl;
 			}
@@ -55,18 +55,18 @@ namespace analyser {
 
 	AudioBuffer::Iterator AudioBuffer::begin() const
 	{
-		return AudioBuffer::Iterator(buffer_.get_samples(), 0, number_of_channels_);
+		return AudioBuffer::Iterator(buffer_.get_data(), 0, number_of_channels_);
 	}
 
 	AudioBuffer::Iterator AudioBuffer::end() const
 	{
-		return AudioBuffer::Iterator(buffer_.get_samples(), number_of_samples_, number_of_channels_);
+		return AudioBuffer::Iterator(buffer_.get_data(), number_of_samples_, number_of_channels_);
 	}
 
 	AudioBuffer::Iterator AudioBuffer::get_iterator_at(const Time& time) const
 	{
 		size_t sample_position = time.get_number_of_samples();
-		return Iterator(buffer_.get_samples(), sample_position, number_of_channels_);
+		return Iterator(buffer_.get_data(), sample_position, number_of_channels_);
 	}
 
 	AudioBuffer::Iterator AudioBuffer::get_iterator_at_second(double seconds) const
@@ -109,7 +109,7 @@ namespace analyser {
 	{
 		bool success;
 		if (sample_offset < number_of_samples_) {
-			float* samples = buffer_.get_samples() + (sample_offset * number_of_channels_);
+			float* samples = buffer_.get_data() + (sample_offset * number_of_channels_);
 			sample->set(samples, number_of_channels_);
 			success = true;
 		} else {
@@ -127,7 +127,7 @@ namespace analyser {
 		} else if (number_of_channel >= number_of_channels_) {
 			success = false;
 		} else {
-			*subsample = *(buffer_.get_samples() + (number_of_channels_ * time.get_number_of_samples() + number_of_channel));
+			*subsample = *(buffer_.get_data() + (number_of_channels_ * time.get_number_of_samples() + number_of_channel));
 		}
 
 		return success;

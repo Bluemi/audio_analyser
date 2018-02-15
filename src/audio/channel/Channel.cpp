@@ -25,7 +25,7 @@ namespace analyser {
 
 	size_t Channel::get_number_of_samples() const
 	{
-		return buffer_.get_number_of_samples();
+		return buffer_.get_size();
 	}
 
 	unsigned int Channel::get_samplerate() const
@@ -50,12 +50,12 @@ namespace analyser {
 
 	Channel::Iterator Channel::begin() const
 	{
-		return Channel::Iterator(buffer_.get_samples(), 0);
+		return Channel::Iterator(buffer_.get_data(), 0);
 	}
 
 	Channel::Iterator Channel::end()
 	{
-		return Channel::Iterator(buffer_.get_samples(), get_number_of_samples());
+		return Channel::Iterator(buffer_.get_data(), get_number_of_samples());
 	}
 
 	Channel::Iterator Channel::get_iterator_at(const Time& time)
@@ -65,7 +65,7 @@ namespace analyser {
 
 	Channel::Iterator Channel::get_iterator_at_sample(const size_t offset)
 	{
-		return Channel::Iterator(buffer_.get_samples(), offset);
+		return Channel::Iterator(buffer_.get_data(), offset);
 	}
 
 	size_t Channel::get_block(const Time& start, const Time& duration, Block* block) const
@@ -88,7 +88,7 @@ namespace analyser {
 		if (time > get_duration()) {
 			success = false;
 		} else {
-			*subsample = *(buffer_.get_samples() + time.get_number_of_samples());
+			*subsample = *(buffer_.get_data() + time.get_number_of_samples());
 		}
 		return success;
 	}

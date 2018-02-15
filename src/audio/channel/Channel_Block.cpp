@@ -10,21 +10,21 @@ namespace analyser {
 
 	float& Channel::Block::operator[](size_t index) const
 	{
-		return *(buffer_.get_samples() + index);
+		return *(buffer_.get_data() + index);
 	}
 
 	bool Channel::Block::set_subsample(size_t index, float subsample)
 	{
-		bool success = (index < buffer_.get_number_of_samples());
+		bool success = (index < buffer_.get_size());
 		if (success) {
-			*(buffer_.get_samples() + index) = subsample;
+			*(buffer_.get_data() + index) = subsample;
 		}
 		return success;
 	}
 
 	bool Channel::Block::get_subsample(size_t index, float* subsample) const
 	{
-		bool success = (index < buffer_.get_number_of_samples());
+		bool success = (index < buffer_.get_size());
 		if (success) {
 			*subsample = (*this)[index];
 		}
@@ -33,12 +33,12 @@ namespace analyser {
 
 	float* Channel::Block::get_samples() const
 	{
-		return buffer_.get_samples();
+		return buffer_.get_data();
 	}
 
 	size_t Channel::Block::get_number_of_samples() const
 	{
-		return buffer_.get_number_of_samples();
+		return buffer_.get_size();
 	}
 
 	bool Channel::Block::is_empty() const
@@ -48,24 +48,24 @@ namespace analyser {
 
 	Channel::Iterator Channel::Block::begin() const
 	{
-		return Channel::Iterator(buffer_.get_samples(), 0);
+		return Channel::Iterator(buffer_.get_data(), 0);
 	}
 
 	Channel::Iterator Channel::Block::end() const
 	{
-		return Channel::Iterator(buffer_.get_samples(), buffer_.get_number_of_samples());
+		return Channel::Iterator(buffer_.get_data(), buffer_.get_size());
 	}
 
 	Channel::Iterator Channel::Block::get_iterator_at_sample(size_t index) const
 	{
-		return Channel::Iterator(buffer_.get_samples(), index);
+		return Channel::Iterator(buffer_.get_data(), index);
 	}
 
 	void Channel::Block::manipulate(std::function<void(float&, size_t, size_t)> function)
 	{
-		float* samples = buffer_.get_samples();
-		for (size_t i = 0; i < buffer_.get_number_of_samples(); i++) {
-			function(*samples, i, buffer_.get_number_of_samples());
+		float* samples = buffer_.get_data();
+		for (size_t i = 0; i < buffer_.get_size(); i++) {
+			function(*samples, i, buffer_.get_size());
 			samples++;
 		}
 	}

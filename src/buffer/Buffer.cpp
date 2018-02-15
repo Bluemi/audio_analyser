@@ -5,19 +5,19 @@
 
 namespace analyser {
 	Buffer::Buffer()
-		: samples_(nullptr), number_of_references_(nullptr), number_of_samples_(0)
+		: data_(nullptr), number_of_references_(nullptr), size_(0)
 	{}
 
-	Buffer::Buffer(size_t number_of_samples)
-		: number_of_samples_(number_of_samples)
+	Buffer::Buffer(size_t size)
+		: size_(size)
 	{
-		samples_ = (float*)::operator new(sizeof(float) * number_of_samples);
+		data_ = (float*)::operator new(sizeof(float) * size);
 		number_of_references_ = (unsigned int*)::operator new(sizeof(unsigned int));
 		*number_of_references_ = 1;
 	}
 
 	Buffer::Buffer(const Buffer& buffer)
-		: samples_(buffer.samples_), number_of_references_(buffer.number_of_references_), number_of_samples_(buffer.number_of_samples_)
+		: data_(buffer.data_), number_of_references_(buffer.number_of_references_), size_(buffer.size_)
 	{
 		plus_reference();
 	}
@@ -25,9 +25,9 @@ namespace analyser {
 	void Buffer::swap(Buffer& buffer1, Buffer& buffer2)
 	{
 		using std::swap;
-		swap(buffer1.samples_, buffer2.samples_);
+		swap(buffer1.data_, buffer2.data_);
 		swap(buffer1.number_of_references_, buffer2.number_of_references_);
-		swap(buffer1.number_of_samples_, buffer2.number_of_samples_);
+		swap(buffer1.size_, buffer2.size_);
 	}
 
 	Buffer& Buffer::operator=(Buffer buffer)
@@ -41,28 +41,28 @@ namespace analyser {
 		minus_reference();
 	}
 
-	void Buffer::allocate(size_t number_of_samples)
+	void Buffer::allocate(size_t size)
 	{
-		// this buffers samples are overwritten
+		// this buffers data are overwritten
 		minus_reference();
 
-		samples_ = (float*)::operator new(sizeof(float) * number_of_samples);
+		data_ = (float*)::operator new(sizeof(float) * size);
 		number_of_references_ = (unsigned int*)::operator new(sizeof(unsigned int));
 		*number_of_references_ = 1;
 	}
 
 	Buffer Buffer::clone() const
 	{
-		Buffer buffer(number_of_samples_);
-		memcpy(buffer.get_samples(), get_samples(), number_of_samples_);
+		Buffer buffer(size_);
+		memcpy(buffer.get_data(), get_data(), size_);
 		return buffer;
 	}
 
 	Buffer Buffer::clone_from_to(size_t start, size_t end)  const
 	{
-		size_t number_of_samples = end-start;
+		size_t size = end-start;
 		Buffer buffer(end-start);
-		memcpy(buffer.get_samples(), get_samples()+start, number_of_samples);
+		memcpy(buffer.get_data(), get_data()+start, size);
 		return buffer;
 	}
 
@@ -77,24 +77,24 @@ namespace analyser {
 		if (number_of_references_ != nullptr) {
 			(*number_of_references_)--;
 			if (*number_of_references_ == 0) {
-				delete samples_;
+				delete data_;
 				delete number_of_references_;
 			}
 		}
 	}
 
-	float* Buffer::get_samples() const
+	float* Buffer::get_data() const
 	{
-		return samples_;
+		return data_;
 	}
 
 	bool Buffer::is_empty() const
 	{
-		return samples_ == nullptr;
+		return data_ == nullptr;
 	}
 
-	size_t Buffer::get_number_of_samples() const
+	size_t Buffer::get_size() const
 	{
-		return number_of_samples_;
+		return size_;
 	}
 }

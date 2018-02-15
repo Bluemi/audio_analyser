@@ -29,9 +29,9 @@ void test_assign_nonempty() {
 
 bool test_clone() {
 	analyser::Buffer buffer1(100);
-	*(buffer1.get_samples() + 5) = 0.2f;
+	*(buffer1.get_data() + 5) = 0.2f;
 	analyser::Buffer buffer2 = buffer1.clone();
-	return (*(buffer2.get_samples() + 5) == *(buffer1.get_samples() + 5));
+	return (*(buffer2.get_data() + 5) == *(buffer1.get_data() + 5));
 }
 
 int main() {
