@@ -43,7 +43,7 @@ namespace analyser {
 
 	void Buffer::allocate(size_t size)
 	{
-		// this buffers data are overwritten
+		// this buffers data is overwritten
 		minus_reference();
 
 		data_ = (float*)::operator new(sizeof(float) * size);
@@ -74,11 +74,13 @@ namespace analyser {
 
 	void Buffer::minus_reference()
 	{
-		if (number_of_references_ != nullptr) {
+		if (!is_empty()) {
 			(*number_of_references_)--;
 			if (*number_of_references_ == 0) {
 				delete data_;
 				delete number_of_references_;
+				data_ = nullptr;
+				number_of_references_ = nullptr;
 			}
 		}
 	}
