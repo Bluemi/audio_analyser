@@ -34,6 +34,11 @@ bool test_clone() {
 	return (*(buffer2.get_data() + 5) == *(buffer1.get_data() + 5));
 }
 
+void test_empty_clone() {
+	analyser::Buffer buffer1;
+	analyser::Buffer buffer2(buffer1);
+}
+
 int main() {
 	test_simple();
 	test_assignment_operator();

@@ -60,15 +60,17 @@ namespace analyser {
 
 	Buffer Buffer::clone_from_to(size_t start, size_t end)  const
 	{
-		size_t size = end-start;
-		Buffer buffer(end-start);
-		memcpy(buffer.get_data(), get_data()+start, size);
-		return buffer;
+		if (start < end) {
+			size_t size = end-start;
+			Buffer buffer(size);
+			memcpy(buffer.get_data(), get_data()+start, size);
+		}
+		return Buffer();
 	}
 
 	void Buffer::plus_reference()
 	{
-		if (number_of_references_ != nullptr)
+		if (!is_empty())
 			(*number_of_references_)++;
 	}
 
