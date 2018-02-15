@@ -2,6 +2,13 @@
 
 verbose=0
 
+echo ""
+
+# for pretty output
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+NO_COLOR="\033[0m"
+
 # check flags
 while getopts ":v" opt; do
   case $opt in
@@ -43,7 +50,7 @@ do
 		fi
 	fi
 	if [ $success -eq 0 ]; then
-		echo "test $t failed"
+		echo -e "${RED}Failure:${NO_COLOR} test $t failed\n"
 		fail_counter=$(($fail_counter+1))
 	else
 		success_counter=$(($success_counter+1))
@@ -53,6 +60,15 @@ done
 
 # print results
 
-echo ""
 echo "Tests run: $run_counter"
-echo "Failures: $fail_counter"
+echo "Failures:  $fail_counter"
+
+echo
+
+if [ $fail_counter -eq 0 ]; then
+	echo -e "${GREEN}SUCCESS${NO_COLOR}"
+else
+	echo -e "${RED}FAILURE${NO_COLOR}"
+fi
+
+echo
