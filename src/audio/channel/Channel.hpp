@@ -102,11 +102,10 @@ namespace analyser {
 			Buffer buffer_;
 			unsigned int samplerate_;
 	};
+
 	// Iterator Functions
 	Channel::Iterator operator+(Channel::Iterator iterator, int step);
-
 	Channel::Iterator operator-(Channel::Iterator iterator, int step);
-
 }
 
 #endif
