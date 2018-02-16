@@ -17,7 +17,7 @@ lib_extra_libraries = "-I/usr/include/ -L/usr/lib -lsndfile"
 
 linked_libraries = "-I " .. src_dir .. " " .. lib_extra_libraries
 
-compiler_flags = "-Wall -O3"
+compiler_flags = "-Wall -O0 --std=c++17"
 
 function ExecuteCommandAndReturn(command)
     local lines = {}
