@@ -36,7 +36,6 @@ namespace analyser {
 
 			SampleSourceVariant sample_source_;
 	};
-
 }
 
 #endif
