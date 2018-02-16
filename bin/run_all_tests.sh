@@ -37,10 +37,18 @@ do
 	if [ $verbose -eq 1 ]; then
 		echo "-----------------------------------------------------------------------"
 		echo $t:
+
+		START=$(date +%s.%N)
+
 		if $t
 		then
 			success=1
 		fi 2>/dev/null
+
+		END=$(date +%s.%N)
+		DIFF=$(echo "$END - $START" | bc)
+		echo ""
+		echo "$DIFF sec"
 		echo ""
 	else
 	# unverbose

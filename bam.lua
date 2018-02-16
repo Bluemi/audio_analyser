@@ -17,7 +17,7 @@ lib_extra_libraries = "-I/usr/include/ -L/usr/lib -lsndfile"
 
 linked_libraries = "-I " .. src_dir .. " " .. lib_extra_libraries
 
-compiler_flags = "-Wall"
+compiler_flags = "-Wall -O3"
 
 function ExecuteCommandAndReturn(command)
     local lines = {}
@@ -43,7 +43,7 @@ for i, source in ipairs(sources) do
     full_path = PathJoin(build_dir, object_file)
     -- create targets
     targets[i] = full_path
-    AddJob(full_path, "compiling   " .. source, "g++ " .. linked_libraries .. " -c " .. source .. " -o " .. full_path)
+    AddJob(full_path, "compiling   " .. source, "g++ " .. compiler_flags .. " " .. linked_libraries .. " -c " .. source .. " -o " .. full_path)
     lines = ExecuteCommandAndReturn("g++ -MM -I" .. src_dir .. " " .. source)
     dependencies = {}
     for _, l in ipairs(lines) do

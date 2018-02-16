@@ -115,7 +115,7 @@ namespace analyser {
 
 	bool Time::operator==(const Time& time) const
 	{
-		return (this->number_of_samples_ == time.number_of_samples_) && (this->samplerate_ == this->samplerate_);
+		return (this->number_of_samples_ == time.number_of_samples_) && (this->samplerate_ == time.samplerate_);
 	}
 
 	bool Time::operator!=(const Time& time) const
