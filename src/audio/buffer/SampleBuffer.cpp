@@ -22,7 +22,6 @@ namespace analyser {
 			}
 
 			// set buffer properties
-			buffer->empty_ = false;
 			buffer->number_of_channels_ = info.channels;
 			buffer->samplerate_ = info.samplerate;
 			buffer->number_of_samples_ = info.frames;
@@ -40,7 +39,7 @@ namespace analyser {
 	}
 
 	SampleBuffer::SampleBuffer()
-		: buffer_(), empty_(true), number_of_channels_(0), samplerate_(0), number_of_samples_(0)
+		: buffer_(), number_of_channels_(0), samplerate_(0), number_of_samples_(0)
 	{}
 
 	SampleBuffer::~SampleBuffer()
@@ -51,6 +50,14 @@ namespace analyser {
 		SampleBuffer buffer(*this);
 		buffer.buffer_ = buffer_.clone();
 		return buffer;
+	}
+
+	void SampleBuffer::clear()
+	{
+		buffer_.clear();
+		number_of_channels_ = 0;
+		samplerate_ = 0;
+		number_of_samples_ = 0;
 	}
 
 	SampleBuffer::Iterator SampleBuffer::begin() const
@@ -83,7 +90,7 @@ namespace analyser {
 	}
 
 	bool SampleBuffer::is_empty() const {
-		return empty_;
+		return buffer_.is_empty();
 	}
 
 	Time SampleBuffer::get_duration() const {
