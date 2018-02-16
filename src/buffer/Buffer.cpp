@@ -51,6 +51,14 @@ namespace analyser {
 		*number_of_references_ = 1;
 	}
 
+	void Buffer::clear()
+	{
+		minus_reference();
+		number_of_references_ = nullptr;
+		data_ = nullptr;
+		size_ = 0;
+	}
+
 	Buffer Buffer::clone() const
 	{
 		Buffer buffer(size_);
