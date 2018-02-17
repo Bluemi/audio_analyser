@@ -20,8 +20,12 @@ function GenerateMainSettings()
     settings.cc.flags_cxx:Add("-std=c++17")
 
     -- include external libraries
+    -- include sndfile
 	settings.cc.includes:Add("usr/include")
 	settings.link.libs:Add("sndfile")
+
+    -- include fftw
+	settings.link.libs:Add("fftw3")
 
     settings.cc.includes:Add(src_dir)
     -- settings.link.flags:Add("-L/usr/lib")
@@ -67,14 +71,18 @@ function GenerateTestSettings()
     settings.cc.flags:Add("-Wall")
     settings.cc.flags_cxx:Add("-std=c++17")
 
-    -- settings.link.flags:Add("-L/usr/lib")
+    -- include audio analyser
     settings.cc.includes:Add(include_dir)
     settings.link.flags:Add("-L" .. lib_dir)
     settings.link.libs:Add(lib_name)
 
     -- include external libraries
-	settings.cc.includes:Add("usr/include")
+    -- include sndfile
+	settings.cc.includes:Add("/usr/include")
 	settings.link.libs:Add("sndfile")
+
+    -- include fftw
+	settings.link.libs:Add("fftw3")
 
     settings.cc.Output = function(settings, input)
         input = string.gsub(input, "^" .. test_src_dir, "")
