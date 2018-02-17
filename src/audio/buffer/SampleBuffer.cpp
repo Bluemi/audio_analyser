@@ -81,6 +81,26 @@ namespace analyser {
 		return get_iterator_at(seconds_to_time(seconds));
 	}
 
+	SampleBuffer::ChannelIterator SampleBuffer::begin(unsigned int channel_number) const
+	{
+		return ChannelIterator(buffer_.get_data(), 0, channel_number, number_of_channels_);
+	}
+
+	SampleBuffer::ChannelIterator SampleBuffer::end(unsigned int channel_number) const
+	{
+		return ChannelIterator(buffer_.get_data(), number_of_samples_, channel_number, number_of_channels_);
+	}
+
+	SampleBuffer::ChannelIterator SampleBuffer::get_iterator_at(unsigned int channel_number, const Time& time) const
+	{
+		return ChannelIterator(buffer_.get_data(), time.get_number_of_samples(), channel_number, number_of_channels_);
+	}
+
+	SampleBuffer::ChannelIterator SampleBuffer::get_iterator_at_second(unsigned int channel_number, double second) const
+	{
+		return get_iterator_at(channel_number, seconds_to_time(second));
+	}
+
 	unsigned int SampleBuffer::get_samplerate() const {
 		return samplerate_;
 	}
@@ -148,10 +168,25 @@ namespace analyser {
 		if (channel_index >= number_of_channels_) {
 			success = false;
 		} else {
-			Buffer buffer(number_of_samples_);
+			Buffer buffer(number_of_samples_, begin(channel_index), end(channel_index));
 			channel->set_all(buffer, samplerate_);
 		}
 
+		return success;
+	}
+
+	bool SampleBuffer::get_block(unsigned int channel_index, const Time& begin_time, const Time& end_time, Channel::Block* block) const
+	{
+		bool success = true;
+
+		if ((channel_index >= number_of_channels_) || (end_time < begin_time) || (end_time.get_number_of_samples() > number_of_samples_))
+		{
+			success = false;
+		} else {
+			size_t size = end_time.get_number_of_samples() - begin_time.get_number_of_samples();
+			Buffer b = Buffer(size, get_iterator_at(channel_index, begin_time), get_iterator_at(channel_index, end_time));
+			*block = Channel::Block(b);
+		}
 		return success;
 	}
 }

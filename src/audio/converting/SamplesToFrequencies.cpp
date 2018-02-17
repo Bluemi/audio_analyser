@@ -8,8 +8,7 @@ namespace analyser {
 		sample_source_ = SampleSourceVariant();
 	}
 
-	template<typename SampleSource>
-	FrequencyBuffer convert_impl(const SampleSource& /*sample_source*/, const Time& /*begin_time*/, const Time& /*end_time*/) {
+	FrequencyBuffer convert_impl(const SampleBuffer& buffer, const Time& /*begin_time*/, const Time& /*end_time*/) {
 		return FrequencyBuffer();
 	}
 
