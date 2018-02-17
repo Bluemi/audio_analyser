@@ -2,7 +2,7 @@
 /bam/build/
 /debug.log
 /audio_tests
-/target
+/build
 /.ycm_extra_conf.py
 /plan
 *.swp

@@ -1,95 +1,98 @@
-lib_dir = "target/lib/"
+conf = ScriptArgs["conf"] or "debug"
+
+conf_dir = PathJoin("build/", conf)
+
+lib_dir = PathJoin(conf_dir, "lib/")
 lib_name = "audio_analyser"
-lib_file = lib_dir .. "lib" .. lib_name .. ".a"
 src_dir = "src/"
-build_dir = "target/build/debug/"
-include_dir = "target/includes/"
+build_dir = PathJoin(conf_dir, "obj/")
+include_dir = PathJoin(conf_dir, "includes/")
 test_src_dir = "tests/"
-test_bin_dir = "target/tests/"
-tmp_dependency_file = "/tmp/bam.dep"
+test_obj_dir = PathJoin(conf_dir, "tests/obj/")
+test_bin_dir = PathJoin(conf_dir, "tests/bin/")
 
 sources = CollectRecursive(src_dir .. "*.cpp")
 headers = CollectRecursive(src_dir .. "*.hpp")
 
-targets = {}
+function GenerateMainSettings()
+    settings = NewSettings()
+    settings.cc.flags:Add("-Wall")
+    settings.cc.flags_cxx:Add("-std=c++17")
 
-lib_extra_libraries = "-I/usr/include/ -L/usr/lib -lsndfile"
+    -- include external libraries
+	settings.cc.includes:Add("usr/include")
+	settings.link.libs:Add("sndfile")
 
-linked_libraries = "-I " .. src_dir .. " " .. lib_extra_libraries
-
-compiler_flags = "-Wall -O0 --std=c++17"
-
-function ExecuteCommandAndReturn(command)
-    local lines = {}
-    os.execute(command .. ' > ' .. tmp_dependency_file)
-    local f = io.open(tmp_dependency_file)
-    if not f then return lines end
-    local k = 1
-    for line in f:lines() do
-        lines[k] = line
-        k = k + 1
+    settings.cc.includes:Add(src_dir)
+    -- settings.link.flags:Add("-L/usr/lib")
+    -- settings.cc.includes:Add("/usr/include")
+    settings.cc.Output = function(settings, input)
+        input = string.gsub(input, "^" .. src_dir, "")
+        return PathJoin(build_dir, PathBase(input))
     end
-    f:close()
-    return lines
-end
-
--- function CompileWithArgs(compiler, flags, sources, )
--- end
-
-
--- create compiling Jobs + Dependencies
-for i, source in ipairs(sources) do
-    object_file = string.gsub(string.gsub(source, src_dir, ""), ".cpp", ".o")
-    full_path = PathJoin(build_dir, object_file)
-    -- create targets
-    targets[i] = full_path
-    AddJob(full_path, "compiling   " .. source, "g++ " .. compiler_flags .. " " .. linked_libraries .. " -c " .. source .. " -o " .. full_path)
-    lines = ExecuteCommandAndReturn("g++ -MM -I" .. src_dir .. " " .. source)
-    dependencies = {}
-    for _, l in ipairs(lines) do
-        local i = 1
-        for dep in string.gmatch(l, "%S+") do
-            if i > 1 then
-                if dep ~= "\\" then
-                    table.insert(dependencies, dep)
-                end
-            end
-            i = i + 1
-        end
+    settings.lib.Output = function(settings, input)
+        return PathJoin(lib_dir, input)
     end
-
-    AddDependency(full_path, dependencies)
+    return settings
 end
 
--- building lib
--- creating object_file_str
-object_file_str = ""
-for _, target in ipairs(targets) do
-    object_file_str = object_file_str .. " " .. target
-end
+settings = GenerateMainSettings()
 
--- ar command
-AddJob(lib_file, "building    " .. lib_file, "ar rs " .. lib_file .. object_file_str .. " 2>/dev/null")
-AddDependency(lib_file, targets)
+-- compile sources
+objects = Compile(settings, sources)
+lib_file = StaticLibrary(settings, lib_name, objects)
+
+PseudoTarget("includes")
 
 -- creating includes
-include_headers = {}
-
 for _, header in ipairs(headers) do
-    without_src_header = string.gsub(header, src_dir, "")
+    without_src_header = string.gsub(header, "^" .. src_dir, "")
     include_header = PathJoin(include_dir, without_src_header)
     AddJob(include_header, "copying     " .. header, "cp " .. header .. " " .. include_header)
     AddDependency(include_header, header)
-    table.insert(include_headers, include_header)
+    AddDependency("includes", include_header)
 end
 
+PseudoTarget("lib")
+AddDependency("lib", lib_file)
+AddDependency("lib", "includes")
+
+DefaultTarget("lib")
+
 -- creating tests
+PseudoTarget("tests")
+
+function GenerateTestSettings()
+    settings = NewSettings()
+    settings.cc.flags:Add("-Wall")
+    settings.cc.flags_cxx:Add("-std=c++17")
+
+    -- settings.link.flags:Add("-L/usr/lib")
+    settings.cc.includes:Add(include_dir)
+    settings.link.flags:Add("-L" .. lib_dir)
+    settings.link.libs:Add(lib_name)
+
+    -- include external libraries
+	settings.cc.includes:Add("usr/include")
+	settings.link.libs:Add("sndfile")
+
+    settings.cc.Output = function(settings, input)
+        input = string.gsub(input, "^" .. test_src_dir, "")
+        return PathJoin(test_obj_dir, PathBase(input))
+    end
+
+    return settings
+end
+
+test_settings = GenerateTestSettings()
 test_sources = CollectRecursive(test_src_dir .. "*.cpp")
 
-for _, test_source in ipairs(test_sources) do
-    file = string.gsub(test_source, "tests/", "")
-    path = string.gsub(file, ".cpp", "")
-    target_executable = PathJoin(test_bin_dir, path)
-    AddJob(target_executable, "create test " .. target_executable, "g++ " .. compiler_flags .. " " .. test_source .. " -o " .. target_executable .. " -L" .. lib_dir .. " -l" .. lib_name .. " -I" .. include_dir .. " " .. lib_extra_libraries)
-    AddDependency(target_executable, test_source, lib_file, include_headers)
+test_objects = Compile(settings, test_sources)
+
+for _, test_obj in ipairs(test_objects) do
+    x = string.gsub(test_obj, "^" .. test_obj_dir .. "/", "")
+    test_bin = Link(test_settings, PathJoin(test_bin_dir, x), test_obj)
+    AddDependency(test_bin, lib_file)
+    AddDependency("tests", test_bin)
+    AddDependency(test_bin, "includes")
 end
