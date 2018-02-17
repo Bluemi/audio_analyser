@@ -24,20 +24,17 @@ namespace analyser {
 
 			template<typename SampleSource>
 			FrequencyBuffer operator()(const SampleSource& source) {
-				// defined in header
 				return convert_impl(source, begin_time_, end_time_);
 			}
 
-
 		private:
 			const SamplesToFrequencies* stf_;
-			Time begin_time_;
-			Time end_time_;
+			const Time begin_time_;
+			const Time end_time_;
 	};
 
 	FrequencyBuffer SamplesToFrequencies::convert(const Time& begin_time, const Time& end_time) const
 	{
-		FrequencyBuffer fbuffer = std::visit(Overloader(this, begin_time, end_time), sample_source_);
-		return fbuffer;
+		return std::visit(Overloader(this, begin_time, end_time), sample_source_);
 	}
 }
