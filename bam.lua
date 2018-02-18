@@ -1,5 +1,10 @@
 conf = ScriptArgs["conf"] or "debug"
 
+-- map conf to optimization level
+conf_to_optimization = {}
+conf_to_optimization["debug"] = "-O0"
+conf_to_optimization["release"] = "-O3"
+
 conf_dir = PathJoin("build/", conf)
 
 lib_dir = PathJoin(conf_dir, "lib/")
@@ -14,10 +19,21 @@ test_bin_dir = PathJoin(conf_dir, "tests/bin/")
 sources = CollectRecursive(src_dir .. "*.cpp")
 headers = CollectRecursive(src_dir .. "*.hpp")
 
+function UseGCompileFlag(conf)
+    return conf == "debug"
+end
+
 function GenerateMainSettings()
     settings = NewSettings()
+
+    -- flags
     settings.cc.flags:Add("-Wall")
     settings.cc.flags_cxx:Add("-std=c++17")
+    -- optimization depends on conf
+    settings.cc.flags:Add(conf_to_optimization[conf])
+    if UseGCompileFlag(conf) then
+        settings.cc.flags:Add("-g")
+    end
 
     -- include external libraries
     -- include sndfile
@@ -25,7 +41,7 @@ function GenerateMainSettings()
 	settings.link.libs:Add("sndfile")
 
     -- include fftw
-	settings.link.libs:Add("fftw3")
+	settings.link.libs:Add("fftw3f")
 
     settings.cc.includes:Add(src_dir)
     -- settings.link.flags:Add("-L/usr/lib")
@@ -70,6 +86,11 @@ function GenerateTestSettings()
     settings = NewSettings()
     settings.cc.flags:Add("-Wall")
     settings.cc.flags_cxx:Add("-std=c++17")
+    -- optimization
+    settings.cc.flags:Add(conf_to_optimization[conf])
+    if UseGCompileFlag(conf) then
+        settings.cc.flags:Add("-g")
+    end
 
     -- include audio analyser
     settings.cc.includes:Add(include_dir)
@@ -82,7 +103,7 @@ function GenerateTestSettings()
 	settings.link.libs:Add("sndfile")
 
     -- include fftw
-	settings.link.libs:Add("fftw3")
+	settings.link.libs:Add("fftw3f")
 
     settings.cc.Output = function(settings, input)
         input = string.gsub(input, "^" .. test_src_dir, "")

@@ -1,10 +1,11 @@
 #include "FFTWHandler.hpp"
 
-#include <cstdlib>
+#include <cstring>
+#include <type_traits>
 
 namespace __analyser_internal__ {
 	FFTWHandler::FFTWHandler(size_t size)
-		: size_(size), capacity_(size), initialized_transform_plan(false)
+		: size_(0), capacity_(0), initialized_transform_plan(false)
 	{
 		allocate(size);
 		update_transform_plan();
@@ -12,7 +13,11 @@ namespace __analyser_internal__ {
 
 	FFTWHandler::~FFTWHandler() {
 		if (initialized_transform_plan) {
-			fftw_destroy_plan(fftw_transform_plan);
+			fftwf_destroy_plan(fftw_transform_plan);
+		}
+		if (capacity_ != 0) {
+			fftwf_free(internal_input_buffer_);
+			fftwf_free(internal_output_buffer_);
 		}
 	}
 
@@ -24,21 +29,35 @@ namespace __analyser_internal__ {
 			update_transform_plan();
 		}
 
-		for (size_t i = 0; i < size; i++) {
-			internal_input_buffer_[i] = in_buffer[i];
+		// copy data to internal_input_buffer_
+		if constexpr (std::is_same<float, SampleType>()) {
+			// copy everything directly
+			memcpy(internal_input_buffer_, in_buffer, size);
+		} else {
+			// memberwise copy
+			for (size_t i = 0; i < size; i++) {
+				internal_input_buffer_[i] = in_buffer[i];
+			}
 		}
 	}
 
 	void FFTWHandler::load_output_buffer(float* out_buffer)
 	{
-		for (size_t i = 0; i < size_; i++) {
-			out_buffer[i] = internal_output_buffer_[i];
+		// copy data to internal_input_buffer_
+		if constexpr (std::is_same<float, SampleType>()) {
+			// copy everything directly
+			memcpy(out_buffer, internal_output_buffer_, size_);
+		} else {
+			// memberwise copy
+			for (size_t i = 0; i < size_; i++) {
+				out_buffer[i] = internal_output_buffer_[i];
+			}
 		}
 	}
 
 	void FFTWHandler::convert() const
 	{
-		fftw_execute(fftw_transform_plan);
+		fftwf_execute(fftw_transform_plan);
 	}
 
 	bool FFTWHandler::is_empty() const {
@@ -54,15 +73,15 @@ namespace __analyser_internal__ {
 		bool has_to_allocate = size > capacity_;
 
 		if (has_to_allocate) {
-			if (capacity_ == 0) {
-				internal_input_buffer_ = (double*) malloc(size * sizeof(double));
-				internal_output_buffer_ = (double*) malloc(size * sizeof(double));
-				capacity_ = size;
-			} else {
-				internal_input_buffer_ = (double*) realloc(internal_input_buffer_, size * sizeof(double));
-				internal_output_buffer_ = (double*) realloc(internal_output_buffer_, size * sizeof(double));
-				capacity_ = size;
+			// free if memory was allocated
+			if (capacity_ != 0) {
+				fftwf_free(internal_input_buffer_);
+				fftwf_free(internal_output_buffer_);
 			}
+			internal_input_buffer_ = (SampleType*) fftwf_malloc(size * sizeof(SampleType));
+			internal_output_buffer_ = (SampleType*) fftwf_malloc(size * sizeof(SampleType));
+
+			capacity_ = size;
 		}
 
 		size_ = size;
@@ -70,9 +89,9 @@ namespace __analyser_internal__ {
 
 	void FFTWHandler::update_transform_plan() {
 		if (initialized_transform_plan) {
-			fftw_destroy_plan(fftw_transform_plan);
+			fftwf_destroy_plan(fftw_transform_plan);
 		}
-		fftw_transform_plan = fftw_plan_r2r_1d(size_, internal_input_buffer_, internal_output_buffer_, FFTW_REDFT11, FFTW_ESTIMATE);
+		fftw_transform_plan = fftwf_plan_r2r_1d(size_, internal_input_buffer_, internal_output_buffer_, FFTW_REDFT11, FFTW_ESTIMATE);
 		initialized_transform_plan = true;
 	}
 }

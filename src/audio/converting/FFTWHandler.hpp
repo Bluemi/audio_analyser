@@ -3,6 +3,12 @@
 
 #include <fftw3.h>
 
+/*
+ * TODO:
+ * - fftwf_destroy_plan in destructor
+ * - fftwf_free arrays
+ */
+
 namespace __analyser_internal__ {
 	class FFTWHandler
 	{
@@ -21,18 +27,19 @@ namespace __analyser_internal__ {
 			bool is_empty() const;
 			size_t get_size() const;
 		private:
+			using SampleType = float;
 			// after this function, size_ will be size and capacity_ will be at least size
 			void allocate(size_t size);
 			void update_transform_plan();
 
-			double* internal_input_buffer_;
-			double* internal_output_buffer_;
+			SampleType* internal_input_buffer_;
+			SampleType* internal_output_buffer_;
 			size_t size_;
 			size_t capacity_;
 
 			bool initialized_transform_plan;
 
-			fftw_plan fftw_transform_plan;
+			fftwf_plan fftw_transform_plan;
 	};
 }
 
