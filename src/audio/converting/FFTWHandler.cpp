@@ -32,7 +32,7 @@ namespace __analyser_internal__ {
 		// copy data to internal_input_buffer_
 		if constexpr (std::is_same<float, SampleType>()) {
 			// copy everything directly
-			memcpy(internal_input_buffer_, in_buffer, size);
+			memcpy(internal_input_buffer_, in_buffer, sizeof(SampleType) * size);
 		} else {
 			// memberwise copy
 			for (size_t i = 0; i < size; i++) {
@@ -46,7 +46,7 @@ namespace __analyser_internal__ {
 		// copy data to internal_input_buffer_
 		if constexpr (std::is_same<float, SampleType>()) {
 			// copy everything directly
-			memcpy(out_buffer, internal_output_buffer_, size_);
+			memcpy(out_buffer, internal_output_buffer_, sizeof(SampleType) * size_);
 		} else {
 			// memberwise copy
 			for (size_t i = 0; i < size_; i++) {

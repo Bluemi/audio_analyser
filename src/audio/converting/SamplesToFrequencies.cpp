@@ -21,7 +21,7 @@ namespace analyser {
 				// getting frequency block
 				Buffer fb;
 				if (fbuffer.get_frequencies(channel_index, &fb)) {
-					fftw_handler.load_input_buffer(fb.get_data(), size);
+					fftw_handler.load_input_buffer(sample_block.get_samples(), size);
 					fftw_handler.convert();
 					fftw_handler.load_output_buffer(fb.get_data());
 				}
