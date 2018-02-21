@@ -1,5 +1,7 @@
 #include "SamplesToFrequencies.hpp"
 
+#include <iostream>
+
 namespace analyser {
 	SamplesToFrequencies::SamplesToFrequencies() {}
 
@@ -21,6 +23,7 @@ namespace analyser {
 				// getting frequency block
 				Buffer fb;
 				if (fbuffer.get_frequencies(channel_index, &fb)) {
+					std::cout << "sample_block.get_number_of_samples(): " << sample_block.get_number_of_samples() << std::endl;
 					fftw_handler.load_input_buffer(sample_block.get_samples(), size);
 					fftw_handler.convert();
 					fftw_handler.load_output_buffer(fb.get_data());

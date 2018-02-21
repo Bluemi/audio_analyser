@@ -3,39 +3,34 @@
 #include <cmath>
 
 namespace analyser {
-	Sample::Sample(float* samples, unsigned int number_of_channels)
-		: is_empty_(false), samples_(samples), number_of_channels_(number_of_channels)
+	Sample::Sample(std::vector<float> samples)
+		: samples_(samples)
 	{}
 
-	Sample::Sample()
-		: is_empty_(true), samples_(nullptr), number_of_channels_(0)
-	{}
+	Sample::Sample() {}
 
-	void Sample::set(float* samples, unsigned int number_of_channels)
-	{
-		is_empty_ = false;
-		samples_ = samples;
-		number_of_channels_ = number_of_channels;
-	}
+	void Sample::set(std::vector<float> samples) { samples_ = samples; }
 
 	void Sample::invalidate() {
-		is_empty_ = true;
-		samples_ = nullptr;
-		number_of_channels_ = 0;
+		samples_.clear();
 	}
 
-	bool Sample::is_empty() const { return is_empty_; }
+	bool Sample::is_empty() const { return samples_.empty(); }
 
-	bool Sample::get_subsample(unsigned int channel_number, float* subsample) const
+	bool Sample::get_subsample(unsigned int channel_index, float* subsample) const
 	{
 		bool success = false;
-		if (channel_number < number_of_channels_) {
-			*subsample = samples_[channel_number];
+		if (channel_index < get_number_of_channels()) {
+			*subsample = samples_[channel_index];
 			success = true;
 		} else {
 			*subsample = NAN;
 		}
 		return success;
+	}
+
+	unsigned int Sample::get_number_of_channels() const {
+		return samples_.size();
 	}
 
 	Sample* Sample::operator->()

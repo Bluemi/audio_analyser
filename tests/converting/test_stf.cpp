@@ -46,12 +46,12 @@ int main() {
 					}
 				}
 			} else failed = 1;
-		} else failed = 1;
+		} else failed = 2;
 
 		// std::cout << "samples:" << std::endl;
 		// for (auto iter = buffer.get_iterator_at(0, start_time); iter != buffer.get_iterator_at(0, end_time); ++iter) {
 		// 	std::cout << *iter << std::endl;
 		// }
-	} else failed = 1;
+	} else failed = 3;
 	return failed;
 }

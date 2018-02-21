@@ -1,57 +1,74 @@
 #include "SampleBuffer.hpp"
 
 namespace analyser {
-	SampleBuffer::Iterator::Iterator()
-		: samples_(nullptr), number_of_channels_(0)
-	{}
+	SampleBuffer::Iterator::Iterator() {}
 
-	SampleBuffer::Iterator::Iterator(float* samples, size_t initial_offset, unsigned int number_of_channels)
-		: samples_(samples + initial_offset * number_of_channels), number_of_channels_(number_of_channels)
-	{}
+	SampleBuffer::Iterator::Iterator(std::vector<float*> channels, size_t initial_offset)
+		: channels_(channels)
+	{
+		for (auto iter = channels_.begin(); iter != channels_.end(); ++iter) {
+			*iter += initial_offset;
+		}
+	}
 
 	float SampleBuffer::Iterator::get_subsample(const unsigned int channel_index) const
 	{
-		return *(this->samples_ + channel_index);
+		return *(channels_[channel_index]);
 	}
 
 	void SampleBuffer::Iterator::set_subsample(const unsigned int channel_index, const float sample)
 	{
-		*(this->samples_ + channel_index) = sample;
+		*(channels_[channel_index]) = sample;
 	}
 
 	bool SampleBuffer::Iterator::operator==(const SampleBuffer::Iterator& other_iterator) const
 	{
-		return this->samples_ == other_iterator.samples_;
+		bool equal = true;
+		for (unsigned int i = 0; i < channels_.size(); i++) {
+			if (other_iterator.channels_[i] != channels_[i]) {
+				equal = false;
+				break;
+			}
+		}
+		return equal;
 	}
 
 	bool SampleBuffer::Iterator::operator!=(const SampleBuffer::Iterator& other_iterator) const
 	{
-		return this->samples_ != other_iterator.samples_;
+		return ! (*this == other_iterator);
 	}
 
 	bool SampleBuffer::Iterator::operator<(const SampleBuffer::Iterator& other_iterator) const
 	{
-		return this->samples_ < other_iterator.samples_;
+		if (channels_.size() == 0) return false;
+		return this->channels_[0] < other_iterator.channels_[0];
 	}
 
 	bool SampleBuffer::Iterator::operator>(const SampleBuffer::Iterator& other_iterator) const
 	{
-		return this->samples_ > other_iterator.samples_;
+		if (channels_.size() == 0) return false;
+		return this->channels_[0] > other_iterator.channels_[0];
 	}
 
 	bool SampleBuffer::Iterator::operator<=(const SampleBuffer::Iterator& other_iterator) const
 	{
-		return this->samples_ <= other_iterator.samples_;
+		if (channels_.size() == 0) return false;
+		return this->channels_[0] <= other_iterator.channels_[0];
 	}
 
 	bool SampleBuffer::Iterator::operator>=(const SampleBuffer::Iterator& other_iterator) const
 	{
-		return this->samples_ >= other_iterator.samples_;
+		if (channels_.size() == 0) return false;
+		return this->channels_[0] >= other_iterator.channels_[0];
 	}
 
 	const Sample SampleBuffer::Iterator::operator*() const
 	{
-		return Sample(samples_, this->number_of_channels_);
+		std::vector<float> samples(channels_.size());
+		for (unsigned int i = 0; i < channels_.size(); i++) {
+			samples[i] = *channels_[i];
+		}
+		return Sample(samples);
 	}
 
 	const Sample SampleBuffer::Iterator::operator->() const
@@ -62,45 +79,60 @@ namespace analyser {
 	Sample SampleBuffer::Iterator::operator++(int)
 	{
 		Sample sample = *(*this);
-		samples_ += number_of_channels_;
+		for (unsigned int i = 0; i < channels_.size(); i++) {
+			channels_[i]++;
+		}
 		return sample;
 	}
 
 
 	Sample SampleBuffer::Iterator::operator++()
 	{
-		samples_ += number_of_channels_;
+		for (unsigned int i = 0; i < channels_.size(); i++) {
+			channels_[i]++;
+		}
 		return *(*this);
 	}
 
 	Sample SampleBuffer::Iterator::operator--(int)
 	{
 		Sample sample = *(*this);
-		samples_ -= number_of_channels_;
+		for (unsigned int i = 0; i < channels_.size(); i++) {
+			channels_[i]--;
+		}
 		return sample;
 	}
 
 	Sample SampleBuffer::Iterator::operator--()
 	{
-		samples_ -= number_of_channels_;
+		for (unsigned int i = 0; i < channels_.size(); i++) {
+			channels_[i]--;
+		}
 		return *(*this);
 	}
 
 
 	void SampleBuffer::Iterator::operator+=(int step)
 	{
-		samples_ += (number_of_channels_ * step);
+		for (unsigned int i = 0; i < channels_.size(); i++) {
+			channels_[i] += step;
+		}
 	}
 
 	void SampleBuffer::Iterator::operator-=(int step)
 	{
-		samples_ -= (number_of_channels_ * step);
+		for (unsigned int i = 0; i < channels_.size(); i++) {
+			channels_[i] -= step;
+		}
 	}
 
 	Sample SampleBuffer::Iterator::operator[](int index) const
 	{
-		float* samples = samples_ + (number_of_channels_ * index);
-		return Sample(samples, number_of_channels_);
+		std::vector<float> samples(channels_.size());
+		for (unsigned int i = 0; i < channels_.size(); i++) {
+			samples[i] = *(channels_[i] + index);
+		}
+		return Sample(samples);
 	}
 
 	SampleBuffer::Iterator operator+(SampleBuffer::Iterator iterator, int step)

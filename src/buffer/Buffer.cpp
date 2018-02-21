@@ -68,12 +68,13 @@ namespace analyser {
 
 	Buffer Buffer::clone_from_to(size_t start, size_t end)  const
 	{
+		Buffer buffer;
 		if (start < end) {
 			size_t size = end-start;
-			Buffer buffer(size);
+			buffer.allocate(size);
 			memcpy(buffer.get_data(), get_data()+start, size);
 		}
-		return Buffer();
+		return buffer;
 	}
 
 	void Buffer::plus_reference()

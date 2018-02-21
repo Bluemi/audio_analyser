@@ -16,18 +16,19 @@ int main() {
 		analyser::Sample sample;
 		if (buffer.get_sample_at(buffer.seconds_to_time(20.3), &sample)) {
 			float subsample;
+			std::cout << "number_of_subsamples:" << sample.get_number_of_channels() << std::endl;
 			if (sample.get_subsample(analyser::StereoChannel::LEFT, &subsample)) {
 				if (isnan(subsample)) {
 					failed = 1;
 				}
 			} else {
-				failed = 1;
+				failed = 2;
 			}
 		} else {
-			failed = 1;
+			failed = 3;
 		}
 	} else {
-		failed = 1;
+		failed = 4;
 	}
 	return failed;
 }

@@ -27,7 +27,7 @@ namespace analyser {
 				public:
 					Iterator();
 					Iterator(const Iterator& original) = default;
-					Iterator(float* samples, size_t initial_offset, unsigned int number_of_channels);
+					Iterator(std::vector<float*> channels, size_t initial_offset);
 					Iterator& operator=(const Iterator& original) = default;
 
 					float get_subsample(const unsigned int channel_index) const;
@@ -49,8 +49,7 @@ namespace analyser {
 					void operator-=(int step);
 					Sample operator[](int index) const;
 				private:
-					float* samples_;
-					unsigned int number_of_channels_;
+					std::vector<float*> channels_;
 			};
 
 			Iterator begin() const;
@@ -58,32 +57,7 @@ namespace analyser {
 			Iterator get_iterator_at(const Time& time) const;
 			Iterator get_iterator_at_second(double second) const;
 
-			class ChannelIterator {
-				public:
-					ChannelIterator();
-					ChannelIterator(const ChannelIterator& original) = default;
-					ChannelIterator(float* samples, size_t initial_offset, unsigned int channel_number, unsigned int number_of_channels);
-					ChannelIterator& operator=(const ChannelIterator& original) = default;
-
-					bool operator==(const SampleBuffer::ChannelIterator& iterator) const;
-					bool operator!=(const SampleBuffer::ChannelIterator& iterator) const;
-					bool operator<(const SampleBuffer::ChannelIterator& iterator) const;
-					bool operator>(const SampleBuffer::ChannelIterator& iterator) const;
-					bool operator<=(const SampleBuffer::ChannelIterator& iterator) const;
-					bool operator>=(const SampleBuffer::ChannelIterator& iterator) const;
-
-					float& operator*() const;
-					float operator++(int);
-					float operator++();
-					float operator--(int);
-					float operator--();
-					void operator+=(int step);
-					void operator-=(int step);
-					float& operator[](int index) const;
-				private:
-					float* samples_;
-					unsigned int number_of_channels_;
-			};
+			using ChannelIterator = float*;
 
 			ChannelIterator begin(unsigned int channel_number) const;
 			ChannelIterator end(unsigned int channel_number) const;
@@ -103,18 +77,17 @@ namespace analyser {
 			// Sample
 			bool get_sample_at(const Time& time, Sample* sample) const;
 			bool get_sample(const size_t sample_offset, Sample* sample) const;
-			bool get_subsample_at(const Time& time, unsigned int number_of_channel, float* subsample) const;
+			bool get_subsample_at(const Time& time, unsigned int channel_index, float* subsample) const;
 
 			// Channel
 			bool get_channel(unsigned int channel_index, Channel* channel) const;
 
 			// Block
-			bool get_block(unsigned int channel_index, const Time& begin_time, const Time& end_time, Channel::Block* block) const;
+			size_t get_block(unsigned int channel_index, const Time& begin_time, const Time& end_time, Channel::Block* block) const;
 		private:
 			static size_t loadSamples(SNDFILE *file, float *samples, const sf_count_t frames);
 
-			Buffer buffer_;
-			unsigned int number_of_channels_;
+			std::vector<Buffer> channels_;
 			unsigned int samplerate_;
 			size_t number_of_samples_;
 	};
@@ -122,10 +95,6 @@ namespace analyser {
 	// Iterator Functions
 	SampleBuffer::Iterator operator+(SampleBuffer::Iterator iterator, int step);
 	SampleBuffer::Iterator operator-(SampleBuffer::Iterator iterator, int step);
-
-	// ChannelIterator Functions
-	SampleBuffer::ChannelIterator operator+(SampleBuffer::ChannelIterator iterator, int step);
-	SampleBuffer::ChannelIterator operator-(SampleBuffer::ChannelIterator iterator, int step);
 }
 
 #endif
