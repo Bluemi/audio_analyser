@@ -41,15 +41,16 @@ namespace analyser {
 
 					const Sample operator*() const;
 					const Sample operator->() const;
-					Sample operator++(int);
-					Sample operator++();
-					Sample operator--(int);
-					Sample operator--();
+					void operator++(int);
+					void operator++();
+					void operator--(int);
+					void operator--();
 					void operator+=(int step);
 					void operator-=(int step);
 					Sample operator[](int index) const;
 				private:
 					std::vector<float*> channels_;
+					size_t offset_;
 			};
 
 			Iterator begin() const;

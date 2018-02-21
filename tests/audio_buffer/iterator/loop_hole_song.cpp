@@ -13,25 +13,11 @@ int main() {
 
 	if (analyser::SampleBuffer::load_from_file(INPUT_FILE_PATH, &buffer)) {
 		float sum = 0.f;
-		/*
-		for (analyser::SampleBuffer::Iterator iter = buffer.begin(); iter != buffer.end(); ++iter) {
-			float f = 0.f;
-			if (iter->get_subsample(analyser::StereoChannel::LEFT, &f)) {
-				sum += f;
-			} else {
-				failed = 1;
-				break;
-			}
-		}
-		*/
-		for (analyser::Sample sample : buffer) {
-			float subsample = 0.f;
-			if (sample.get_subsample(analyser::StereoChannel::LEFT, &subsample)) {
-				sum += subsample;
-			} else {
-				failed = 1;
-				break;
-			}
+
+		auto end = buffer.end();
+		for (auto iter = buffer.begin(); iter != end; ++iter) {
+			float subsample = iter.get_subsample(analyser::StereoChannel::LEFT);
+			sum += subsample;
 		}
 		std::cout << "sum=" << sum << std::endl;
 	} else {
