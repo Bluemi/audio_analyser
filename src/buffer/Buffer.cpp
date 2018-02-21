@@ -47,6 +47,7 @@ namespace analyser {
 		minus_reference();
 
 		data_ = (float*)::operator new(sizeof(float) * size);
+		size_ = size;
 		number_of_references_ = (unsigned int*)::operator new(sizeof(unsigned int));
 		*number_of_references_ = 1;
 	}

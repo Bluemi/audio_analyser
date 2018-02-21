@@ -1,6 +1,5 @@
 #include "SampleBuffer.hpp"
 
-#include <iostream>
 #include <cmath>
 #include <cstdlib>
 
@@ -204,11 +203,7 @@ namespace analyser {
 
 		if ((channel_index < channels_.size()) && (begin_time <= end_time) && (begin_time.get_number_of_samples() < number_of_samples_)) {
 			size_t end_index = std::min(end_time.get_number_of_samples(), number_of_samples_);
-			std::cout << "end_index: " << end_index << std::endl;
-			std::cout << "begin_index: " << begin_time.get_number_of_samples() << std::endl;
-			std::cout << "source_size: " << channels_[channel_index].get_size() << std::endl;
 			Buffer buffer = channels_[channel_index].clone_from_to(begin_time.get_number_of_samples(), end_index);
-			std::cout << "buffer.get_size(): " << buffer.get_size() << std::endl;
 			*block = Channel::Block(buffer);
 			number_of_copied_samples = end_index - begin_time.get_number_of_samples();
 		}
