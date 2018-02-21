@@ -60,10 +60,10 @@ namespace analyser {
 
 			using ChannelIterator = float*;
 
-			ChannelIterator begin(unsigned int channel_number) const;
-			ChannelIterator end(unsigned int channel_number) const;
-			ChannelIterator get_iterator_at(unsigned int channel_number, const Time& time) const;
-			ChannelIterator get_iterator_at_second(unsigned int channel_number, double second) const;
+			ChannelIterator begin(unsigned int channel_index) const;
+			ChannelIterator end(unsigned int channel_index) const;
+			ChannelIterator get_iterator_at(unsigned int channel_index, const Time& time) const;
+			ChannelIterator get_iterator_at_second(unsigned int channel_index, double second) const;
 
 			// stats
 			unsigned int get_samplerate() const;

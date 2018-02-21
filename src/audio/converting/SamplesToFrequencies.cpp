@@ -5,7 +5,7 @@ namespace analyser {
 
 	void SamplesToFrequencies::clear() {
 		// resets the sample_source to std::monostate
-		sample_source_ = SampleSourceVariant();
+		sample_source_ = SampleSource();
 	}
 
 	FrequencyBuffer SamplesToFrequencies::convert_impl(const SampleBuffer& sbuffer, const Time& begin_time, const Time& end_time) {
@@ -40,8 +40,8 @@ namespace analyser {
 				return FrequencyBuffer();
 			}
 
-			template<typename SampleSource>
-			FrequencyBuffer operator()(const SampleSource& source) {
+			template<typename TSampleSource>
+			FrequencyBuffer operator()(const TSampleSource& source) {
 				return stf_->convert_impl(source, begin_time_, end_time_);
 			}
 

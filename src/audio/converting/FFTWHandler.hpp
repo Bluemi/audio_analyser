@@ -9,7 +9,7 @@
  * - fftwf_free arrays
  */
 
-namespace __analyser_internal__ {
+namespace analyser {
 	class FFTWHandler
 	{
 		public:

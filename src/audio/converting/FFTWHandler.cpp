@@ -3,7 +3,7 @@
 #include <cstring>
 #include <type_traits>
 
-namespace __analyser_internal__ {
+namespace analyser {
 	FFTWHandler::FFTWHandler(size_t size)
 		: size_(0), capacity_(0), initialized_transform_plan(false)
 	{

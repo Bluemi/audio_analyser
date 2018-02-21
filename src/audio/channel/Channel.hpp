@@ -92,7 +92,7 @@ namespace analyser {
 					Buffer buffer_;
 			};
 
-			size_t get_block(const Time& start_time, const Time& end_time, Block* block) const;
+			size_t get_block(const Time& begin_time, const Time& end_time, Block* block) const;
 
 			// Subsample Access
 			bool get_subsample_at(const Time& time, float* subsample);
