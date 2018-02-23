@@ -9,6 +9,7 @@
 #include <audio/sample/Sample.hpp>
 #include <audio/channel/Channel.hpp>
 #include <buffer/Buffer.hpp>
+#include <audio/iterator/ChannelIterator.hpp>
 
 namespace analyser {
 	class SampleBuffer
@@ -57,8 +58,6 @@ namespace analyser {
 			Iterator end() const;
 			Iterator get_iterator_at(const Time& time) const;
 			Iterator get_iterator_at_second(double second) const;
-
-			using ChannelIterator = float*;
 
 			ChannelIterator begin(unsigned int channel_index) const;
 			ChannelIterator end(unsigned int channel_index) const;

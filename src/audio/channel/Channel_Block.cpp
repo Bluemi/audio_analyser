@@ -46,19 +46,19 @@ namespace analyser {
 		return buffer_.is_empty();
 	}
 
-	Channel::Iterator Channel::Block::begin() const
+	ChannelIterator Channel::Block::begin() const
 	{
-		return Channel::Iterator(buffer_.get_data(), 0);
+		return buffer_.get_data();
 	}
 
-	Channel::Iterator Channel::Block::end() const
+	ChannelIterator Channel::Block::end() const
 	{
-		return Channel::Iterator(buffer_.get_data(), buffer_.get_size());
+		return buffer_.get_data() + buffer_.get_size();
 	}
 
-	Channel::Iterator Channel::Block::get_iterator_at_sample(size_t index) const
+	ChannelIterator Channel::Block::get_iterator_at_sample(size_t index) const
 	{
-		return Channel::Iterator(buffer_.get_data(), index);
+		return buffer_.get_data() + index;
 	}
 
 	void Channel::Block::manipulate(std::function<void(float&, size_t, size_t)> function)

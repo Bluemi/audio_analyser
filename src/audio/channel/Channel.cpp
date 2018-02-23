@@ -48,24 +48,24 @@ namespace analyser {
 		return Time::from_number_of_samples(number_of_samples, samplerate_);
 	}
 
-	Channel::Iterator Channel::begin() const
+	ChannelIterator Channel::begin() const
 	{
-		return Channel::Iterator(buffer_.get_data(), 0);
+		return buffer_.get_data();
 	}
 
-	Channel::Iterator Channel::end()
+	ChannelIterator Channel::end()
 	{
-		return Channel::Iterator(buffer_.get_data(), get_number_of_samples());
+		return buffer_.get_data() + get_number_of_samples();
 	}
 
-	Channel::Iterator Channel::get_iterator_at(const Time& time)
+	ChannelIterator Channel::get_iterator_at(const Time& time)
 	{
 		return get_iterator_at_sample(time.get_number_of_samples());
 	}
 
-	Channel::Iterator Channel::get_iterator_at_sample(const size_t offset)
+	ChannelIterator Channel::get_iterator_at_sample(const size_t offset)
 	{
-		return Channel::Iterator(buffer_.get_data(), offset);
+		return buffer_.get_data() + offset;
 	}
 
 	size_t Channel::get_block(const Time& begin_time, const Time& end_time, Block* block) const

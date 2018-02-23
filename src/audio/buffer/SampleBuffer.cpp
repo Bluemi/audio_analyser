@@ -104,22 +104,22 @@ namespace analyser {
 		return get_iterator_at(seconds_to_time(seconds));
 	}
 
-	SampleBuffer::ChannelIterator SampleBuffer::begin(unsigned int channel_index) const
+	ChannelIterator SampleBuffer::begin(unsigned int channel_index) const
 	{
 		return channels_[channel_index].get_data();
 	}
 
-	SampleBuffer::ChannelIterator SampleBuffer::end(unsigned int channel_index) const
+	ChannelIterator SampleBuffer::end(unsigned int channel_index) const
 	{
 		return channels_[channel_index].get_data();
 	}
 
-	SampleBuffer::ChannelIterator SampleBuffer::get_iterator_at(unsigned int channel_index, const Time& time) const
+	ChannelIterator SampleBuffer::get_iterator_at(unsigned int channel_index, const Time& time) const
 	{
 		return channels_[channel_index].get_data() + time.get_number_of_samples();
 	}
 
-	SampleBuffer::ChannelIterator SampleBuffer::get_iterator_at_second(unsigned int channel_index, double second) const
+	ChannelIterator SampleBuffer::get_iterator_at_second(unsigned int channel_index, double second) const
 	{
 		return get_iterator_at(channel_index, seconds_to_time(second));
 	}

@@ -14,10 +14,16 @@ int main() {
 	if (analyser::SampleBuffer::load_from_file(INPUT_FILE_PATH, &buffer)) {
 		float sum = 0.f;
 
+		/*
 		auto end = buffer.end();
 		for (auto iter = buffer.begin(); iter != end; ++iter) {
 			float subsample = iter.get_subsample(analyser::StereoChannel::LEFT);
 			sum += subsample;
+		}
+		*/
+
+		for (auto iter = buffer.begin(analyser::StereoChannel::LEFT); iter != buffer.end(analyser::StereoChannel::LEFT); ++iter) {
+			sum += *iter;
 		}
 		std::cout << "sum=" << sum << std::endl;
 	} else {
