@@ -102,6 +102,11 @@ namespace analyser {
 		return data_;
 	}
 
+	float Buffer::operator[](size_t index) const
+	{
+		return *(data_ + index);
+	}
+
 	bool Buffer::is_empty() const
 	{
 		return data_ == nullptr;

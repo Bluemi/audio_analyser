@@ -22,6 +22,7 @@ namespace analyser {
 			void clear();
 
 			float* get_data() const;
+			float operator[](size_t index) const;
 			bool is_empty() const;
 			size_t get_size() const;
 		private:
