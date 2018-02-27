@@ -3,6 +3,8 @@
 #include <cstring> // for memcpy
 #include <algorithm> // for swap
 
+#include <buffer/BufferSection.hpp>
+
 namespace analyser {
 	Buffer::Buffer()
 		: data_(nullptr), number_of_references_(nullptr), size_(0)
@@ -93,6 +95,7 @@ namespace analyser {
 				delete number_of_references_;
 				data_ = nullptr;
 				number_of_references_ = nullptr;
+				size_ = 0;
 			}
 		}
 	}
@@ -115,5 +118,10 @@ namespace analyser {
 	size_t Buffer::get_size() const
 	{
 		return size_;
+	}
+
+	BufferSection Buffer::get_section(size_t begin, size_t end) const
+	{
+		return BufferSection(data_ + begin, end-begin, data_, number_of_references_);
 	}
 }

@@ -4,9 +4,12 @@
 #include <cstddef>
 
 namespace analyser {
+	class BufferSection;
+
 	class Buffer
 	{
 		public:
+			// memory stuff
 			Buffer();
 			Buffer(size_t size_);
 			template<typename IteratorType>
@@ -21,10 +24,12 @@ namespace analyser {
 			Buffer clone_from_to(size_t start, size_t end) const;
 			void clear();
 
+			// getters
 			float* get_data() const;
 			float operator[](size_t index) const;
 			bool is_empty() const;
 			size_t get_size() const;
+			BufferSection get_section(size_t begin, size_t end) const;
 		private:
 			void plus_reference();
 			void minus_reference();
