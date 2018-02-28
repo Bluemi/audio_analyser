@@ -44,8 +44,11 @@ namespace analyser {
 
 	Buffer BufferSection::clone() const
 	{
-		Buffer buffer(size_);
-		memcpy(buffer.get_data(), data_, size_);
+		Buffer buffer;
+		if (!is_empty()) {
+			buffer.allocate(size_);
+			memcpy(buffer.get_data(), data_, sizeof(float) * size_);
+		}
 		return buffer;
 	}
 

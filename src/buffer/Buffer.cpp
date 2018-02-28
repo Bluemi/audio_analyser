@@ -65,17 +65,17 @@ namespace analyser {
 	Buffer Buffer::clone() const
 	{
 		Buffer buffer(size_);
-		memcpy(buffer.get_data(), get_data(), size_);
+		memcpy(buffer.get_data(), get_data(), sizeof(float) * size_);
 		return buffer;
 	}
 
 	Buffer Buffer::clone_from_to(size_t start, size_t end)  const
 	{
 		Buffer buffer;
-		if (start < end) {
+		if (start < end && end < get_size()) {
 			size_t size = end-start;
 			buffer.allocate(size);
-			memcpy(buffer.get_data(), get_data()+start, size);
+			memcpy(buffer.get_data(), get_data()+start, sizeof(float) * size);
 		}
 		return buffer;
 	}
