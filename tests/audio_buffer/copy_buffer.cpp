@@ -1,7 +1,7 @@
 #include <iostream>
 #include <audio/buffer/SampleBuffer.hpp>
 
-#define INCLUDE_PATH "./audio_tests/"
+#define INCLUDE_PATH "./res/"
 #define INCLUDE_FILE INCLUDE_PATH"test1.wav"
 
 int main() {
