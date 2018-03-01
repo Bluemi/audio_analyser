@@ -6,6 +6,7 @@
 
 #include <time/Time.hpp>
 #include <buffer/Buffer.hpp>
+#include <buffer/BufferSection.hpp>
 #include <audio/iterator/ChannelIterator.hpp>
 
 namespace analyser {
@@ -39,10 +40,9 @@ namespace analyser {
 				public:
 					Block();
 					Block(const Block& original) = default;
-					Block(const Buffer& buffer);
+					Block(const BufferSection& buffer_section);
 
-					float& operator[](size_t index) const;
-					bool set_subsample(size_t index, float subsample);
+					float operator[](size_t index) const;
 
 					bool get_subsample(size_t index, float* subsample) const;
 					float* get_samples() const;
@@ -53,11 +53,8 @@ namespace analyser {
 					ChannelIterator begin() const;
 					ChannelIterator end() const;
 					ChannelIterator get_iterator_at_sample(size_t index) const;
-
-					void manipulate(std::function<void(float&, size_t, size_t)> function);
-
 				private:
-					Buffer buffer_;
+					BufferSection buffer_section_;
 			};
 
 			size_t get_block(const Time& begin_time, const Time& end_time, Block* block) const;

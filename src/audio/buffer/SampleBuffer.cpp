@@ -202,8 +202,8 @@ namespace analyser {
 
 		if ((channel_index < channels_.size()) && (begin_time <= end_time) && (begin_time.get_number_of_samples() < number_of_samples_)) {
 			size_t end_index = std::min(end_time.get_number_of_samples(), number_of_samples_);
-			Buffer buffer = channels_[channel_index].clone_from_to(begin_time.get_number_of_samples(), end_index);
-			*block = Channel::Block(buffer);
+			BufferSection buffer_section = channels_[channel_index].get_section(begin_time.get_number_of_samples(), end_index);
+			*block = Channel::Block(buffer_section);
 			number_of_copied_samples = end_index - begin_time.get_number_of_samples();
 		}
 		return number_of_copied_samples;

@@ -20,8 +20,8 @@ namespace analyser {
 
 			Buffer clone() const;
 
-			float* get_data();
-			size_t get_size();
+			float* get_data() const;
+			size_t get_size() const;
 			bool is_empty() const;
 		private:
 			void plus_reference();

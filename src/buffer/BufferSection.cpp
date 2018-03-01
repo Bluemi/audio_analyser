@@ -52,12 +52,12 @@ namespace analyser {
 		return buffer;
 	}
 
-	float* BufferSection::get_data()
+	float* BufferSection::get_data() const
 	{
 		return data_;
 	}
 
-	size_t BufferSection::get_size()
+	size_t BufferSection::get_size() const
 	{
 		return size_;
 	}
