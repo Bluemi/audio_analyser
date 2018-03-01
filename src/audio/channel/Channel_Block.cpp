@@ -22,7 +22,7 @@ namespace analyser {
 		return success;
 	}
 
-	float* Channel::Block::get_samples() const
+	const float* Channel::Block::get_samples() const
 	{
 		return buffer_section_.get_data();
 	}

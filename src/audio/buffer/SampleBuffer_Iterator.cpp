@@ -12,11 +12,6 @@ namespace analyser {
 		return *(channels_[channel_index] + offset_);
 	}
 
-	void SampleBuffer::Iterator::set_subsample(const unsigned int channel_index, const float sample)
-	{
-		*(channels_[channel_index] + offset_) = sample;
-	}
-
 	bool SampleBuffer::Iterator::operator==(const SampleBuffer::Iterator& other_iterator) const
 	{
 		return offset_ == other_iterator.offset_;

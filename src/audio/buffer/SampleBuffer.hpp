@@ -32,7 +32,6 @@ namespace analyser {
 					Iterator& operator=(const Iterator& original) = default;
 
 					float get_subsample(const unsigned int channel_index) const;
-					void set_subsample(const unsigned int channel_index, const float sample);
 					bool operator==(const SampleBuffer::Iterator& iterator) const;
 					bool operator!=(const SampleBuffer::Iterator& iterator) const;
 					bool operator<(const SampleBuffer::Iterator& iterator) const;

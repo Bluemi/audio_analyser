@@ -53,17 +53,17 @@ namespace analyser {
 		return buffer_.get_data();
 	}
 
-	ChannelIterator Channel::end()
+	ChannelIterator Channel::end() const
 	{
 		return buffer_.get_data() + get_number_of_samples();
 	}
 
-	ChannelIterator Channel::get_iterator_at(const Time& time)
+	ChannelIterator Channel::get_iterator_at(const Time& time) const
 	{
 		return get_iterator_at_sample(time.get_number_of_samples());
 	}
 
-	ChannelIterator Channel::get_iterator_at_sample(const size_t offset)
+	ChannelIterator Channel::get_iterator_at_sample(const size_t offset) const
 	{
 		return buffer_.get_data() + offset;
 	}

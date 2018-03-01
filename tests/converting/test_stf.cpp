@@ -4,7 +4,7 @@
 #include <audio/converting/SamplesToFrequencies.hpp>
 #include <cmath>
 
-void compute_DCT_IV(float* input_array, float* output_array, size_t size) {
+void compute_DCT_IV(const float* input_array, float* output_array, size_t size) {
 	for (size_t k = 0; k < size; k++) {
 		output_array[k] = 0.f;
 		for (size_t n = 0; n < size; n++) {

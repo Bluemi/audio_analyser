@@ -30,9 +30,9 @@ namespace analyser {
 			Time number_of_samples_to_time(size_t number_of_samples) const;
 
 			ChannelIterator begin() const;
-			ChannelIterator end();
-			ChannelIterator get_iterator_at(const Time& time);
-			ChannelIterator get_iterator_at_sample(const size_t offset);
+			ChannelIterator end() const;
+			ChannelIterator get_iterator_at(const Time& time) const;
+			ChannelIterator get_iterator_at_sample(const size_t offset) const;
 
 			// Block
 			class Block
@@ -45,7 +45,7 @@ namespace analyser {
 					float operator[](size_t index) const;
 
 					bool get_subsample(size_t index, float* subsample) const;
-					float* get_samples() const;
+					const float* get_samples() const;
 
 					size_t get_number_of_samples() const;
 					bool is_empty() const;

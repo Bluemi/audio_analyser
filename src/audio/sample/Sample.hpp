@@ -9,7 +9,6 @@ namespace analyser {
 		public:
 			Sample(std::vector<float> samples);
 			Sample();
-			void set(std::vector<float> samples);
 			void invalidate();
 
 			bool is_empty() const;

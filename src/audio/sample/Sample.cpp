@@ -9,8 +9,6 @@ namespace analyser {
 
 	Sample::Sample() {}
 
-	void Sample::set(std::vector<float> samples) { samples_ = samples; }
-
 	void Sample::invalidate() {
 		samples_.clear();
 	}
