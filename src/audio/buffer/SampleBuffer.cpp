@@ -185,12 +185,11 @@ namespace analyser {
 
 	bool SampleBuffer::get_channel(unsigned int channel_index, Channel* channel) const
 	{
-		bool success = true;
+		bool success = false;
 
-		// if this buffer is empty number_of_channels_ will be 0
-		if (channel_index >= channels_.size()) {
-			success = false;
-		} else {
+		// if this buffer is empty channels_.size() will be 0
+		if (channel_index < channels_.size()) {
+			success = true;
 			*channel = Channel(channels_[channel_index], samplerate_);
 		}
 
