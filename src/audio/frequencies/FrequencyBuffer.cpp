@@ -36,4 +36,14 @@ namespace analyser {
 	{
 		return channels_.size();
 	}
+
+	size_t FrequencyBuffer::get_number_of_blocks() const
+	{
+		return number_of_blocks_;
+	}
+
+	size_t FrequencyBuffer::get_block_size() const
+	{
+		return block_size_;
+	}
 }
