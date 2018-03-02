@@ -1,18 +1,19 @@
 #ifndef __FREQUENCYBLOCK_CLASS__
 #define __FREQUENCYBLOCK_CLASS__
 
-#include <buffer/Buffer.hpp>
+#include <buffer/BufferSection.hpp>
 
 namespace analyser {
 	class FrequencyBlock
 	{
 		public:
-			FrequencyBlock(const Buffer& buffer, float max_frequency);
+			FrequencyBlock();
+			FrequencyBlock(const BufferSection& buffer_section);
 
-			float get_frequency(float frequency) const;
+			float* get_frequencies() const;
+			size_t get_size() const;
 		private:
-			Buffer buffer_;
-			float max_frequency_;
+			BufferSection buffer_section_;
 	};
 }
 

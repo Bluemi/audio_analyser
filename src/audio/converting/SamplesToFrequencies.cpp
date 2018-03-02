@@ -1,7 +1,33 @@
 #include "SamplesToFrequencies.hpp"
 
+#include <audio/frequencies/FrequencyBlock.hpp>
+
 namespace analyser {
-	SamplesToFrequencies::SamplesToFrequencies() {}
+	const unsigned int DEFAULT_BLOCK_SIZE = 2048;
+
+	SamplesToFrequencies::SamplesToFrequencies() : block_size_(DEFAULT_BLOCK_SIZE) {}
+
+	SamplesToFrequencies::SamplesToFrequencies(const SampleSource& source)
+		: sample_source_(source), block_size_(DEFAULT_BLOCK_SIZE)
+	{}
+
+	SamplesToFrequencies::SamplesToFrequencies(unsigned int block_size)
+		: block_size_(block_size)
+	{}
+
+	SamplesToFrequencies::SamplesToFrequencies(const SampleSource& source, unsigned int block_size)
+		: sample_source_(source), block_size_(block_size)
+	{}
+
+	void SamplesToFrequencies::bind(const SampleSource& source)
+	{
+		sample_source_ = source;
+	}
+
+	void SamplesToFrequencies::set_block_size(size_t block_size)
+	{
+		block_size_ = block_size;
+	}
 
 	void SamplesToFrequencies::clear() {
 		// resets the sample_source to std::monostate
@@ -9,21 +35,23 @@ namespace analyser {
 	}
 
 	FrequencyBuffer SamplesToFrequencies::convert_impl(const SampleBuffer& sbuffer, const Time& begin_time, const Time& end_time) {
-		size_t size = end_time.get_number_of_samples() - begin_time.get_number_of_samples();
-		FrequencyBuffer fbuffer(sbuffer.get_number_of_channels(), size);
+		size_t number_of_samples = end_time.get_number_of_samples() - begin_time.get_number_of_samples();
+		size_t number_of_blocks = number_of_samples / block_size_ + (number_of_samples%block_size_?1:0);
+		FrequencyBuffer fbuffer(sbuffer.get_number_of_channels(), number_of_blocks, block_size_);
 
 		for (unsigned int channel_index = 0; channel_index < sbuffer.get_number_of_channels(); channel_index++) {
-
 			// getting sample block
 			Channel::Block sample_block;
-			if (sbuffer.get_block(channel_index, begin_time, end_time, &sample_block)) {
-
-				// getting frequency block
-				Buffer fb;
-				if (fbuffer.get_frequencies(channel_index, &fb)) {
-					fftw_handler.load_input_buffer(sample_block.get_samples(), size);
-					fftw_handler.convert();
-					fftw_handler.load_output_buffer(fb.get_data());
+			for (size_t block_index = 0; block_index < number_of_blocks; block_index++) {
+				Time block_begin = begin_time + (block_index * block_size_);
+				Time block_end = block_begin + block_size_;
+				if (sbuffer.get_block(channel_index, block_begin, block_end, &sample_block)) {
+					FrequencyBlock frequency_block;
+					if (fbuffer.get_frequency_block(channel_index, block_begin, &frequency_block)) {
+						fftw_handler.load_input_buffer(sample_block.get_samples(), block_size_);
+						fftw_handler.convert();
+						fftw_handler.load_output_buffer(frequency_block.get_frequencies());
+					}
 				}
 			}
 		}

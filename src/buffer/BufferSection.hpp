@@ -20,6 +20,8 @@ namespace analyser {
 
 			Buffer clone() const;
 
+			float operator[](size_t index) const;
+
 			float* get_data() const;
 			size_t get_size() const;
 			bool is_empty() const;

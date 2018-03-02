@@ -2,6 +2,7 @@
 
 #include <cstring> // for memcpy
 #include <algorithm> // for swap
+#include <cmath> // for NAN
 
 #include <buffer/Buffer.hpp>
 
@@ -50,6 +51,11 @@ namespace analyser {
 			memcpy(buffer.get_data(), data_, sizeof(float) * size_);
 		}
 		return buffer;
+	}
+
+	float BufferSection::operator[](size_t index) const
+	{
+		return *(data_+index);
 	}
 
 	float* BufferSection::get_data() const

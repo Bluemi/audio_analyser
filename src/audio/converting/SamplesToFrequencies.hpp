@@ -20,11 +20,13 @@ namespace analyser {
 	{
 		public:
 			SamplesToFrequencies();
-
-			SamplesToFrequencies(const SampleSource& source) : sample_source_(source) {}
+			SamplesToFrequencies(const SampleSource& source);
+			SamplesToFrequencies(unsigned int block_size);
+			SamplesToFrequencies(const SampleSource& source, unsigned int block_size);
 
 			// binds a source to this converter
-			void bind(const SampleSource& source) { sample_source_ = source; }
+			void bind(const SampleSource& source);
+			void set_block_size(size_t block_size);
 
 			// unbinds all sources
 			void clear();
@@ -35,9 +37,8 @@ namespace analyser {
 			void load_internal_double_buffer(float* input, size_t size);
 
 			SampleSource sample_source_;
-
-			// handling fftw
-			FFTWHandler fftw_handler;
+			FFTWHandler fftw_handler; // handling fftw
+			size_t block_size_;
 
 		friend class Overloader;
 	};

@@ -26,6 +26,8 @@ namespace analyser {
 
 			Time operator+(const Time& time) const;
 			Time operator-(const Time& time) const;
+			Time operator+(const size_t number_of_samples) const;
+			Time operator-(const size_t number_of_samples) const;
 
 			void operator+=(const Time& time);
 			void operator-=(const Time& time);

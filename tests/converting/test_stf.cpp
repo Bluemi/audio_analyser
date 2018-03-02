@@ -2,6 +2,7 @@
 
 #include <audio/buffer/SampleBuffer.hpp>
 #include <audio/converting/SamplesToFrequencies.hpp>
+#include <audio/frequencies/FrequencyBlock.hpp>
 #include <cmath>
 
 void compute_DCT_IV(const float* input_array, float* output_array, size_t size) {
@@ -27,9 +28,9 @@ int main() {
 
 		analyser::FrequencyBuffer fbuffer = stf.convert(start_time, end_time);
 
-		analyser::Buffer fb;
+		analyser::FrequencyBlock fb;
 
-		if (fbuffer.get_frequencies(0, &fb)) {
+		if (fbuffer.get_frequency_block(0, analyser::Time::from_number_of_samples(0, 44100), &fb)) {
 			analyser::Channel::Block sb;
 			if (buffer.get_block(0, start_time, end_time, &sb)) {
 				float own_out_array[width];
@@ -39,10 +40,10 @@ int main() {
 
 				for (size_t i = 0; i < fb.get_size(); i++) {
 					// std::cout << i << ". " << fb.get_data()[i] << "  \t" << own_out_array[i] * 2.f << std::endl;
-					if (std::abs(fb.get_data()[i] - own_out_array[i] * 2.f) > 0.1f) {
+					if (std::abs(fb.get_frequencies()[i] - own_out_array[i] * 2.f) > 0.1f) {
 						failed = 1;
 						std::cout << "     fftw                own_out_array * 2" << std::endl;
-						std::cout << i << ". " << fb.get_data()[i] << "      " << own_out_array[i] * 2.f << std::endl;
+						std::cout << i << ". " << fb.get_frequencies()[i] << "      " << own_out_array[i] * 2.f << std::endl;
 					}
 				}
 			} else failed = 1;

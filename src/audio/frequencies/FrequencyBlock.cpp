@@ -1,16 +1,19 @@
 #include "FrequencyBlock.hpp"
 
 namespace analyser {
-	FrequencyBlock::FrequencyBlock(const Buffer& buffer, float max_frequency)
-		: buffer_(buffer), max_frequency_(max_frequency)
+	FrequencyBlock::FrequencyBlock() {}
+
+	FrequencyBlock::FrequencyBlock(const BufferSection& buffer_section)
+		: buffer_section_(buffer_section)
 	{}
 
-	float FrequencyBlock::get_frequency(float frequency) const
+	float* FrequencyBlock::get_frequencies() const
 	{
-		unsigned int index = (unsigned int)((frequency / max_frequency_) * buffer_.get_size());
-		if (index < buffer_.get_size()) {
-			return buffer_[index];
-		}
-		return 0.f;
+		return buffer_section_.get_data();
+	}
+
+	size_t FrequencyBlock::get_size() const
+	{
+		return buffer_section_.get_size();
 	}
 }

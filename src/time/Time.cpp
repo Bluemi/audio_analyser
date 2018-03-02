@@ -81,6 +81,19 @@ namespace analyser {
 		return Time(this->number_of_samples_ - time.number_of_samples_, this->samplerate_);
 	}
 
+	Time Time::operator+(const size_t number_of_samples) const
+	{
+		return Time(this->number_of_samples_ + number_of_samples, this->samplerate_);
+	}
+
+	Time Time::operator-(const size_t number_of_samples) const
+	{
+		if (this->number_of_samples_ < number_of_samples) {
+			return Time(0, this->samplerate_);
+		}
+		return Time(this->number_of_samples_ - number_of_samples, this->samplerate_);
+	}
+
 	void Time::operator+=(const Time& time)
 	{
 		this->number_of_samples_ += time.number_of_samples_;
