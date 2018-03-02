@@ -3,12 +3,6 @@
 
 #include <fftw3.h>
 
-/*
- * TODO:
- * - fftwf_destroy_plan in destructor
- * - fftwf_free arrays
- */
-
 namespace analyser {
 	class FFTWHandler
 	{
