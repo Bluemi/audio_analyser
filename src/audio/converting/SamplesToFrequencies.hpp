@@ -11,10 +11,6 @@
 
 /*
  * Handles a SampleSource and converts its samples into frequencies.
- * A SampleSource has to implement the following methods:
- *  - SampleSource::Iterator begin()
- *  - SampleSource::Iterator end()
- *  - SampleSource::Iterator get_iterator_at(const Time& time)
  */
 
 class Overloader;

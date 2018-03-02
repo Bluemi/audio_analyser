@@ -105,7 +105,7 @@ namespace analyser {
 		return data_;
 	}
 
-	float Buffer::operator[](size_t index) const
+	float& Buffer::operator[](size_t index) const
 	{
 		return *(data_ + index);
 	}

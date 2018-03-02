@@ -26,7 +26,7 @@ namespace analyser {
 
 			// getters
 			float* get_data() const;
-			float operator[](size_t index) const;
+			float& operator[](size_t index) const;
 			bool is_empty() const;
 			size_t get_size() const;
 			BufferSection get_section(size_t begin, size_t end) const;
