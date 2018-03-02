@@ -22,7 +22,7 @@ while getopts ":v" opt; do
 done
 
 # find tests
-tests=$(find ./build/debug/tests/bin/ -type f)
+tests=$(find ./build/debug/tests/bin/passive/ -type f)
 
 # initiate counters
 run_counter=0
