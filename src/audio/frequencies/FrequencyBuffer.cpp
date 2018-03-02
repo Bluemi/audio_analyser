@@ -17,8 +17,13 @@ namespace analyser {
 
 	bool FrequencyBuffer::get_frequency_block(unsigned int channel_index, const Time& time, FrequencyBlock* frequency_block) const
 	{
-		bool success = false;
 		size_t block_index = time.get_number_of_samples() / block_size_;
+		return get_frequency_block_by_id(channel_index, block_index, frequency_block);
+	}
+
+	bool FrequencyBuffer::get_frequency_block_by_id(unsigned int channel_index, size_t block_index, FrequencyBlock* frequency_block) const
+	{
+		bool success = false;
 		if (channel_index < get_number_of_channels() && block_index < number_of_blocks_) {
 			success = true;
 			size_t block_begin = block_index * block_size_;

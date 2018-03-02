@@ -47,7 +47,7 @@ namespace analyser {
 				Time block_end = block_begin + block_size_;
 				if (sbuffer.get_block(channel_index, block_begin, block_end, &sample_block)) {
 					FrequencyBlock frequency_block;
-					if (fbuffer.get_frequency_block(channel_index, block_begin, &frequency_block)) {
+					if (fbuffer.get_frequency_block_by_id(channel_index, block_index, &frequency_block)) {
 						fftw_handler.load_input_buffer(sample_block.get_samples(), block_size_);
 						fftw_handler.convert();
 						fftw_handler.load_output_buffer(frequency_block.get_frequencies());
