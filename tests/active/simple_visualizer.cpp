@@ -13,7 +13,7 @@
 const unsigned int SCREEN_WIDTH = 180;
 const unsigned int NUMBER_OF_RENDER_BANDS = 10;
 const unsigned int NUMBER_OF_FREQUENCIES = 2048;
-const std::string AUDIO_PATH = "res/test_stereo_rhythm.wav";
+const std::string AUDIO_PATH = "res/the_who.wav";
 
 const unsigned int BAND_WIDTH = SCREEN_WIDTH / NUMBER_OF_RENDER_BANDS;
 const unsigned int NUMBER_OF_FREQUENCIES_PER_BAND = NUMBER_OF_FREQUENCIES / NUMBER_OF_RENDER_BANDS;
