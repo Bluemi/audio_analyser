@@ -41,10 +41,10 @@ namespace analyser {
 
 		for (unsigned int channel_index = 0; channel_index < sbuffer.get_number_of_channels(); channel_index++) {
 			// getting sample block
-			Channel::Block sample_block;
 			for (size_t block_index = 0; block_index < number_of_blocks; block_index++) {
 				Time block_begin = begin_time + (block_index * block_size_);
 				Time block_end = block_begin + block_size_;
+				Channel::Block sample_block;
 				if (sbuffer.get_block(channel_index, block_begin, block_end, &sample_block)) {
 					FrequencyBlock frequency_block;
 					if (fbuffer.get_frequency_block_by_id(channel_index, block_index, &frequency_block)) {

@@ -17,7 +17,7 @@ void compute_DCT_IV(const float* input_array, float* output_array, size_t size) 
 int main() {
 	analyser::SampleBuffer buffer;
 	int failed = 0;
-	if (analyser::SampleBuffer::load_from_file("res/test1.wav", &buffer)) {
+	if (analyser::SampleBuffer::load_from_file("res/the_who.wav", &buffer)) {
 		size_t sample_index = 44100*41; // 41 seconds
 		size_t width = 256;
 		analyser::SamplesToFrequencies stf(buffer, width);

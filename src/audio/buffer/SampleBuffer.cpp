@@ -13,33 +13,33 @@ namespace analyser {
 
 		// open audio file
 		SNDFILE* file = sf_open(path, SFM_READ, &info);
-		bool success;
+		bool success = false;
 		if (file != nullptr)
 		{
-			const size_t number_of_subsamples = info.frames * info.channels;
+			const size_t number_of_samples = info.frames;
+			const size_t number_of_channels = info.channels;
+			const size_t number_of_subsamples = number_of_samples * number_of_channels;
 			float* samples = (float*) malloc(number_of_subsamples * sizeof(float));
-			if (loadSamples(file, samples, info.frames) != (size_t) info.frames)
+			if (loadSamples(file, samples, number_of_samples) != (size_t) number_of_samples)
 			{
-				//Debug::out << Debug::warn << "SampleBuffer::SampleBuffer(): info.frames(" << info.frames << "differs with the result of READ_FUNCTION" << Debug::endl;
+				// ERROR
 			}
 
 			// fill channels with data
-			for (unsigned int channel_index = 0; channel_index < (unsigned int)info.channels; channel_index++) {
-				Buffer channel(info.frames);
-				for (size_t i = 0; i < (size_t)info.frames; i++) {
-					channel.get_data()[i] = samples[i+channel_index];
+			for (unsigned int channel_index = 0; channel_index < (unsigned int)number_of_channels; channel_index++) {
+				Buffer channel(number_of_samples);
+				for (size_t i = 0; i < (size_t)number_of_samples; i++) {
+					channel.get_data()[i] = samples[i*number_of_channels + channel_index];
 				}
 				buffer->channels_.push_back(channel);
 			}
 
 			// set buffer properties
 			buffer->samplerate_ = info.samplerate;
-			buffer->number_of_samples_ = info.frames;
+			buffer->number_of_samples_ = number_of_samples;
 			sf_close(file);
 			free(samples);
 			success = true;
-		} else {
-			success = false;
 		}
 		return success;
 	}

@@ -2,7 +2,7 @@
 #include <audio/buffer/SampleBuffer.hpp>
 
 #define INCLUDE_PATH "./res/"
-#define INCLUDE_FILE INCLUDE_PATH"test1.wav"
+#define INCLUDE_FILE INCLUDE_PATH"test_stereo.wav"
 
 int main() {
 	analyser::SampleBuffer buffer;
