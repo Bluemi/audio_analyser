@@ -2,13 +2,15 @@
 
 #include <cstring>
 #include <type_traits>
+#include <cstdlib>
 
 namespace analyser {
-	FFTWHandler::FFTWHandler(size_t buffer_size)
-		: buffer_size_(0), capacity_(0), initialized_transform_plan(false)
+	FFTWHandler::FFTWHandler(size_t buffer_size, WindowFunction window_function)
+		: buffer_size_(0), capacity_(0), initialized_transform_plan(false), window_function_(window_function)
 	{
 		allocate(buffer_size);
 		update_transform_plan();
+		update_window_buffer();
 	}
 
 	FFTWHandler::~FFTWHandler() {
@@ -18,6 +20,7 @@ namespace analyser {
 		if (capacity_ != 0) {
 			fftwf_free(internal_input_buffer_);
 			fftwf_free(internal_output_buffer_);
+			free(internal_window_buffer_);
 		}
 	}
 
@@ -27,6 +30,7 @@ namespace analyser {
 			allocate(input_size);
 			// has to update transform_plan
 			update_transform_plan();
+			update_window_buffer();
 		}
 
 		// copy data to internal_input_buffer_
@@ -62,6 +66,13 @@ namespace analyser {
 		}
 	}
 
+	void FFTWHandler::apply_window_function()
+	{
+		for (size_t i = 0; i < buffer_size_; i++) {
+			internal_input_buffer_[i] *= internal_window_buffer_[i];
+		}
+	}
+
 	void FFTWHandler::convert() const
 	{
 		fftwf_execute(fftw_transform_plan);
@@ -84,6 +95,12 @@ namespace analyser {
 		}
 	}
 
+	void FFTWHandler::set_window_function(WindowFunction window_function)
+	{
+		window_function_ = window_function;
+		update_window_buffer();
+	}
+
 	void FFTWHandler::allocate(size_t buffer_size) {
 		const bool has_to_allocate = buffer_size > capacity_;
 
@@ -92,9 +109,11 @@ namespace analyser {
 			if (capacity_ != 0) {
 				fftwf_free(internal_input_buffer_);
 				fftwf_free(internal_output_buffer_);
+				free(internal_window_buffer_);
 			}
 			internal_input_buffer_ = (SampleType*) fftwf_malloc(buffer_size * sizeof(SampleType));
 			internal_output_buffer_ = (SampleType*) fftwf_malloc(buffer_size * sizeof(SampleType));
+			internal_window_buffer_ = (SampleType*) malloc(buffer_size * sizeof(SampleType));
 
 			capacity_ = buffer_size;
 		}
@@ -108,5 +127,9 @@ namespace analyser {
 		}
 		fftw_transform_plan = fftwf_plan_r2r_1d(buffer_size_, internal_input_buffer_, internal_output_buffer_, FFTW_REDFT11, FFTW_ESTIMATE);
 		initialized_transform_plan = true;
+	}
+
+	void FFTWHandler::update_window_buffer() {
+		window_function_(internal_window_buffer_, buffer_size_);
 	}
 }

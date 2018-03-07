@@ -5,18 +5,22 @@
 namespace analyser {
 	const unsigned int DEFAULT_BLOCK_SIZE = 2048;
 
-	SamplesToFrequencies::SamplesToFrequencies() : fftw_handler(DEFAULT_BLOCK_SIZE), block_size_(DEFAULT_BLOCK_SIZE) {}
+	SamplesToFrequencies::SamplesToFrequencies() : fftw_handler(DEFAULT_BLOCK_SIZE, no_window), block_size_(DEFAULT_BLOCK_SIZE) {}
 
 	SamplesToFrequencies::SamplesToFrequencies(const SampleSource& source)
-		: sample_source_(source), fftw_handler(DEFAULT_BLOCK_SIZE), block_size_(DEFAULT_BLOCK_SIZE)
+		: sample_source_(source), fftw_handler(DEFAULT_BLOCK_SIZE, no_window), block_size_(DEFAULT_BLOCK_SIZE)
 	{}
 
 	SamplesToFrequencies::SamplesToFrequencies(unsigned int block_size)
-		: fftw_handler(DEFAULT_BLOCK_SIZE), block_size_(block_size)
+		: fftw_handler(DEFAULT_BLOCK_SIZE, no_window), block_size_(block_size)
 	{}
 
 	SamplesToFrequencies::SamplesToFrequencies(const SampleSource& source, unsigned int block_size)
-		: sample_source_(source), fftw_handler(block_size), block_size_(block_size)
+		: sample_source_(source), fftw_handler(block_size, no_window), block_size_(block_size)
+	{}
+
+	SamplesToFrequencies::SamplesToFrequencies(const SampleSource& source, unsigned int block_size, WindowFunction window_function)
+		: sample_source_(source), fftw_handler(block_size, window_function), block_size_(block_size)
 	{}
 
 	void SamplesToFrequencies::bind(const SampleSource& source)
@@ -28,6 +32,11 @@ namespace analyser {
 	{
 		block_size_ = block_size;
 		fftw_handler.set_buffer_size(block_size);
+	}
+
+	void SamplesToFrequencies::set_window_function(WindowFunction window_function)
+	{
+		fftw_handler.set_window_function(window_function);
 	}
 
 	void SamplesToFrequencies::clear() {

@@ -23,10 +23,12 @@ namespace analyser {
 			SamplesToFrequencies(const SampleSource& source);
 			SamplesToFrequencies(unsigned int block_size);
 			SamplesToFrequencies(const SampleSource& source, unsigned int block_size);
+			SamplesToFrequencies(const SampleSource& source, unsigned int block_size, WindowFunction window_function);
 
 			// binds a source to this converter
 			void bind(const SampleSource& source);
 			void set_block_size(size_t block_size);
+			void set_window_function(WindowFunction window_function);
 
 			// unbinds all sources
 			void clear();
