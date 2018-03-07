@@ -9,7 +9,7 @@ echo ""
 # find tests
 tests=$(find ./build/debug/tests/bin/active/ -type f)
 
-echo "choose a test:"
+echo "Choose a Test:"
 echo ""
 
 # print tests
@@ -24,11 +24,14 @@ done
 echo -n "> "
 read test_index
 
+tput reset
+echo "Active Tests"
+echo ""
+
 # find waves
 waves=$(find ./res/*.wav -type f)
 
-echo ""
-echo "choose a wave:"
+echo "Choose a Wave:"
 echo ""
 
 # print waves
@@ -42,5 +45,7 @@ done
 
 echo -n "> "
 read wave_index
+
+tput reset
 
 ${tests_[$test_index]} ${waves_[$wave_index]}
