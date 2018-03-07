@@ -5,18 +5,18 @@
 namespace analyser {
 	const unsigned int DEFAULT_BLOCK_SIZE = 2048;
 
-	SamplesToFrequencies::SamplesToFrequencies() : block_size_(DEFAULT_BLOCK_SIZE) {}
+	SamplesToFrequencies::SamplesToFrequencies() : fftw_handler(DEFAULT_BLOCK_SIZE), block_size_(DEFAULT_BLOCK_SIZE) {}
 
 	SamplesToFrequencies::SamplesToFrequencies(const SampleSource& source)
-		: sample_source_(source), block_size_(DEFAULT_BLOCK_SIZE)
+		: sample_source_(source), fftw_handler(DEFAULT_BLOCK_SIZE), block_size_(DEFAULT_BLOCK_SIZE)
 	{}
 
 	SamplesToFrequencies::SamplesToFrequencies(unsigned int block_size)
-		: block_size_(block_size)
+		: fftw_handler(DEFAULT_BLOCK_SIZE), block_size_(block_size)
 	{}
 
 	SamplesToFrequencies::SamplesToFrequencies(const SampleSource& source, unsigned int block_size)
-		: sample_source_(source), block_size_(block_size)
+		: sample_source_(source), fftw_handler(block_size), block_size_(block_size)
 	{}
 
 	void SamplesToFrequencies::bind(const SampleSource& source)
@@ -27,6 +27,7 @@ namespace analyser {
 	void SamplesToFrequencies::set_block_size(size_t block_size)
 	{
 		block_size_ = block_size;
+		fftw_handler.set_buffer_size(block_size);
 	}
 
 	void SamplesToFrequencies::clear() {
@@ -48,9 +49,9 @@ namespace analyser {
 				if (sbuffer.get_block(channel_index, block_begin, block_end, &sample_block)) {
 					FrequencyBlock frequency_block;
 					if (fbuffer.get_frequency_block_by_id(channel_index, block_index, &frequency_block)) {
-						fftw_handler.load_input_buffer(sample_block.get_samples(), block_size_);
+						fftw_handler.write_input_buffer(sample_block.get_samples(), block_size_);
 						fftw_handler.convert();
-						fftw_handler.load_output_buffer(frequency_block.get_frequencies());
+						fftw_handler.read_output_buffer(frequency_block.get_frequencies());
 					}
 				}
 			}

@@ -21,7 +21,6 @@ int main() {
 		size_t sample_index = 44100*41; // 41 seconds
 		size_t width = 256;
 		analyser::SamplesToFrequencies stf(buffer, width);
-		//stf.bind(buffer);
 
 		analyser::Time start_time = buffer.number_of_samples_to_time(sample_index);
 		analyser::Time end_time = buffer.number_of_samples_to_time(sample_index + width);
@@ -45,13 +44,22 @@ int main() {
 						std::cout << i << ". " << fb.get_frequencies()[i] << "      " << own_out_array[i] * 2.f << std::endl;
 					}
 				}
-			} else failed = 1;
-		} else failed = 2;
+			} else {
+				failed = 1;
+				std::cout << "couldn't get block at start_time: " << start_time.get_number_of_samples() << std::endl;
+			}
+		} else {
+			failed = 2;
+			std::cout << "couldn't initialize frequency buffer" << std::endl;
+		}
 
 		// std::cout << "samples:" << std::endl;
 		// for (auto iter = buffer.get_iterator_at(0, start_time); iter != buffer.get_iterator_at(0, end_time); ++iter) {
 		// 	std::cout << *iter << std::endl;
 		// }
-	} else failed = 3;
+	} else {
+		failed = 3;
+		std::cout << "couldn't load \"the_who.wav\" frequency buffer" << std::endl;
+	}
 	return failed;
 }
