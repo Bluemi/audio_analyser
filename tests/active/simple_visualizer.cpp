@@ -63,19 +63,19 @@ int main() {
 	analyser::SampleBuffer sample_buffer;
 	if (analyser::SampleBuffer::load_from_file(AUDIO_PATH.c_str(), &sample_buffer)) {
 		analyser::SamplesToFrequencies stf(sample_buffer, NUMBER_OF_FREQUENCIES);
-		analyser::Time end_time = sample_buffer.number_of_samples_to_time((sample_buffer.get_duration().get_number_of_samples() / NUMBER_OF_FREQUENCIES) * NUMBER_OF_FREQUENCIES);
-		analyser::FrequencyBuffer frequency_buffer = stf.convert(sample_buffer.number_of_samples_to_time(0), end_time);
+		analyser::FrequencyBuffer frequency_buffer = stf.convert(sample_buffer.number_of_samples_to_time(0), sample_buffer.get_duration());
 
-		std::cout << "number_of_samples of song: " << sample_buffer.get_duration().get_number_of_samples() << std::endl;
-
-		play_song();
 		int wait_time = (int)(1000 * sample_buffer.number_of_samples_to_time(NUMBER_OF_FREQUENCIES).get_seconds());
 
+		// print status information
+		std::cout << "number_of_samples of song: " << sample_buffer.get_duration().get_number_of_samples() << std::endl;
 		std::cout << "wait_time: " << wait_time << std::endl;
-
 		std::cout << "frequency_buffer.number_of_blocks(): " << frequency_buffer.get_number_of_blocks() << std::endl;
 		std::cout << "frequency_buffer.block_size(): " << frequency_buffer.get_block_size() << std::endl;
 
+		play_song();
+
+		// print frequencies
 		for (size_t i = 0; i < frequency_buffer.get_number_of_blocks(); i++) {
 			analyser::FrequencyBlock frequency_block;
 			if (frequency_buffer.get_frequency_block_by_id(analyser::StereoChannel::LEFT, i, &frequency_block)) {

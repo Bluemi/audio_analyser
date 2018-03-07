@@ -49,7 +49,7 @@ namespace analyser {
 				if (sbuffer.get_block(channel_index, block_begin, block_end, &sample_block)) {
 					FrequencyBlock frequency_block;
 					if (fbuffer.get_frequency_block_by_id(channel_index, block_index, &frequency_block)) {
-						fftw_handler.write_input_buffer(sample_block.get_samples(), block_size_);
+						fftw_handler.write_input_buffer(sample_block.get_samples(), sample_block.get_number_of_samples());
 						fftw_handler.convert();
 						fftw_handler.read_output_buffer(frequency_block.get_frequencies());
 					}
