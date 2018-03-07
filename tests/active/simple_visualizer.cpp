@@ -13,15 +13,15 @@
 const unsigned int SCREEN_WIDTH = 180;
 const unsigned int NUMBER_OF_RENDER_BANDS = 10;
 const unsigned int NUMBER_OF_FREQUENCIES = 2048;
-const std::string AUDIO_PATH = "res/the_who.wav";
+const std::string DEFAULT_AUDIO_PATH = "res/the_who.wav";
 
 const unsigned int BAND_WIDTH = SCREEN_WIDTH / NUMBER_OF_RENDER_BANDS;
 const unsigned int NUMBER_OF_FREQUENCIES_PER_BAND = NUMBER_OF_FREQUENCIES / NUMBER_OF_RENDER_BANDS;
 const float MAX_VALUE = 10.f;
 const float MAX_BAND_VALUES[] { 5572.38, 4527.65, 3167.44, 558.048, 526.94, 675.507, 261.743, 1267.84, 1344.45, 2225.26 };
 
-void play_song() {
-	std::string system_command = "cvlc " + AUDIO_PATH + " &";
+void play_song(const std::string& audio_path) {
+	std::string system_command = "cvlc " + audio_path + " &";
 	system(system_command.c_str());
 }
 
@@ -59,9 +59,15 @@ void render(float* frequencies) {
 	std::cout << "\n";
 }
 
-int main() {
+int main(int argc, char* argv[]) {
 	analyser::SampleBuffer sample_buffer;
-	if (analyser::SampleBuffer::load_from_file(AUDIO_PATH.c_str(), &sample_buffer)) {
+	std::string audio_path;
+	if (argc > 1) {
+		audio_path = argv[1];
+	} else {
+		audio_path = DEFAULT_AUDIO_PATH;
+	}
+	if (analyser::SampleBuffer::load_from_file(audio_path.c_str(), &sample_buffer)) {
 		analyser::SamplesToFrequencies stf(sample_buffer, NUMBER_OF_FREQUENCIES);
 		analyser::FrequencyBuffer frequency_buffer = stf.convert(sample_buffer.number_of_samples_to_time(0), sample_buffer.get_duration());
 
@@ -73,7 +79,7 @@ int main() {
 		std::cout << "frequency_buffer.number_of_blocks(): " << frequency_buffer.get_number_of_blocks() << std::endl;
 		std::cout << "frequency_buffer.block_size(): " << frequency_buffer.get_block_size() << std::endl;
 
-		play_song();
+		play_song(audio_path);
 
 		// print frequencies
 		for (size_t i = 0; i < frequency_buffer.get_number_of_blocks(); i++) {
@@ -87,7 +93,7 @@ int main() {
 			}
 		}
 	} else {
-		std::cout << "couldn't load " << AUDIO_PATH << std::endl;
+		std::cout << "couldn't load " << audio_path << std::endl;
 	}
 
 	return 0;
