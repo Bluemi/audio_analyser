@@ -26,7 +26,7 @@ namespace analyser {
 
 	void FFTWHandler::write_input_buffer(const float* in_buffer, size_t input_size)
 	{
-		if (buffer_size_ != input_size) {
+		if (buffer_size_ < input_size) {
 			allocate(input_size);
 			// has to update transform_plan
 			update_transform_plan();
