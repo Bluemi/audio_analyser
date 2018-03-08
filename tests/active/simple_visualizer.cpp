@@ -22,7 +22,7 @@ const float MAX_VALUE = 10.f;
 const float MAX_BAND_VALUES[] { 5572.38, 4527.65, 3167.44, 558.048, 526.94, 675.507, 261.743, 1267.84, 1344.45, 2225.26 };
 
 void play_song(const std::string& audio_path) {
-	std::string system_command = "cvlc " + audio_path + " &";
+	std::string system_command = "cvlc " + audio_path + " --play-and-exit &>/dev/null &";
 	system(system_command.c_str());
 }
 

@@ -11,7 +11,7 @@ const std::string DEFAULT_AUDIO_PATH = "res/test_stereo_rhythm.wav";
 const unsigned int BAND_WIDTH = 50;
 
 void play_song(const std::string& audio_path) {
-	std::string system_command = "cvlc " + audio_path + " &";
+	std::string system_command = "cvlc " + audio_path + " --play-and-exit &>/dev/null &";
 	system(system_command.c_str());
 }
 
