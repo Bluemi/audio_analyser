@@ -54,6 +54,7 @@ int main(int argc, char* argv[]) {
 	} else {
 		audio_path = DEFAULT_AUDIO_PATH;
 	}
+
 	std::cout << audio_path << std::endl;
 	if (analyser::SampleBuffer::load_from_file(audio_path.c_str(), &sample_buffer)) {
 		analyser::Time end_time = sample_buffer.number_of_samples_to_time((sample_buffer.get_duration().get_number_of_samples() / NUMBER_OF_FREQUENCIES) * NUMBER_OF_FREQUENCIES);

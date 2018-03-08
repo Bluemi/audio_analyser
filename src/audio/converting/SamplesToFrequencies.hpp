@@ -1,8 +1,6 @@
 #ifndef __SAMPLESTOFREQUENCIES_CLASS__
 #define __SAMPLESTOFREQUENCIES_CLASS__
 
-#include <variant>
-
 #include <audio/converting/FFTWHandler.hpp>
 #include <audio/buffer/SampleSource.hpp>
 
