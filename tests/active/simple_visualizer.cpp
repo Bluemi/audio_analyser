@@ -10,6 +10,7 @@
 
 #include <audio/channel/Channels.hpp>
 #include <audio/converting/WindowFunction.hpp>
+#include <time/Time.hpp>
 
 const unsigned int SCREEN_WIDTH = 180;
 const unsigned int NUMBER_OF_RENDER_BANDS = 10;

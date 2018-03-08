@@ -1,6 +1,8 @@
 #include "SamplesToFrequencies.hpp"
 
 #include <audio/frequencies/FrequencyBlock.hpp>
+#include <audio/frequencies/FrequencyBuffer.hpp>
+#include <time/Time.hpp>
 
 namespace analyser {
 	const unsigned int DEFAULT_BLOCK_SIZE = 2048;

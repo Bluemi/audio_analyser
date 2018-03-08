@@ -4,12 +4,13 @@
 #include <cstddef>
 #include <functional>
 
-#include <time/Time.hpp>
 #include <buffer/Buffer.hpp>
 #include <buffer/BufferSection.hpp>
 #include <audio/iterator/ChannelIterator.hpp>
 
 namespace analyser {
+	class Time;
+
 	class Channel
 	{
 		public:

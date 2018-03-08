@@ -1,7 +1,6 @@
 #include "FrequencyBuffer.hpp"
 
 #include <time/Time.hpp>
-#include <buffer/BufferSection.hpp>
 #include <audio/frequencies/FrequencyBlock.hpp>
 
 namespace analyser {

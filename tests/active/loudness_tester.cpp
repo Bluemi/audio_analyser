@@ -3,6 +3,7 @@
 
 #include <audio/buffer/SampleBuffer.hpp>
 #include <audio/channel/Channels.hpp>
+#include <time/Time.hpp>
 
 const unsigned int SCREEN_WIDTH = 180;
 const unsigned int NUMBER_OF_FREQUENCIES = 2048;

@@ -2,6 +2,8 @@
 
 #include <audio/buffer/SampleBuffer.hpp>
 #include <audio/channel/Channels.hpp>
+#include <audio/sample/Sample.hpp>
+#include <time/Time.hpp>
 
 #include <math.h>
 

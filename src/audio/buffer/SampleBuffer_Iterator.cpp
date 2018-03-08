@@ -1,5 +1,7 @@
 #include "SampleBuffer.hpp"
 
+#include <audio/sample/Sample.hpp>
+
 namespace analyser {
 	SampleBuffer::Iterator::Iterator() : offset_(0) {}
 

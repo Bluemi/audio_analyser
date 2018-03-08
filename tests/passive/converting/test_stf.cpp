@@ -3,6 +3,9 @@
 #include <audio/buffer/SampleBuffer.hpp>
 #include <audio/converting/SamplesToFrequencies.hpp>
 #include <audio/frequencies/FrequencyBlock.hpp>
+#include <audio/frequencies/FrequencyBuffer.hpp>
+#include <time/Time.hpp>
+
 #include <cmath>
 
 void compute_DCT_IV(const float* input_array, float* output_array, size_t size) {

@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <audio/buffer/SampleBuffer.hpp>
+#include <time/Time.hpp>
 
 #define INPUT_PATH "./res/"
 #define INPUT_FILE_PATH INPUT_PATH"test_stereo.wav"

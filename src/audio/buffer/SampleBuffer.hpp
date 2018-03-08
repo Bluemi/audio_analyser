@@ -5,13 +5,14 @@
 #include <vector>
 #include <fftw3.h>
 
-#include <time/Time.hpp>
-#include <audio/sample/Sample.hpp>
-#include <audio/channel/Channel.hpp>
 #include <buffer/Buffer.hpp>
+#include <audio/channel/Channel.hpp>
 #include <audio/iterator/ChannelIterator.hpp>
 
 namespace analyser {
+	class Time;
+	class Sample;
+
 	class SampleBuffer
 	{
 		public:

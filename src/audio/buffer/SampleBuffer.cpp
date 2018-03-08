@@ -3,6 +3,9 @@
 #include <cmath>
 #include <cstdlib>
 
+#include <time/Time.hpp>
+#include <audio/sample/Sample.hpp>
+
 namespace analyser {
 	bool SampleBuffer::load_from_file(const char* path, SampleBuffer* buffer)
 	{

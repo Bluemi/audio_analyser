@@ -1,5 +1,7 @@
 #include "Channel.hpp"
 
+#include <time/Time.hpp>
+
 namespace analyser {
 	Channel::Channel()
 		: buffer_(), samplerate_(0)

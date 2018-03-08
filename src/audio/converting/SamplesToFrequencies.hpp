@@ -3,10 +3,7 @@
 
 #include <variant>
 
-#include <audio/buffer/SampleBuffer.hpp>
-#include <audio/frequencies/FrequencyBuffer.hpp>
 #include <audio/converting/FFTWHandler.hpp>
-
 #include <audio/converting/SampleSource.hpp>
 
 /*
@@ -16,6 +13,8 @@
 class Overloader;
 
 namespace analyser {
+	class FrequencyBuffer;
+
 	class SamplesToFrequencies
 	{
 		public:
