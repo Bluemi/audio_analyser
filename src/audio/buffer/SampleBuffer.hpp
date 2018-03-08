@@ -8,10 +8,13 @@
 #include <buffer/Buffer.hpp>
 #include <audio/channel/Channel.hpp>
 #include <audio/channel/ChannelIterator.hpp>
+#include <audio/buffer/SampleBufferIterator.hpp>
 
 namespace analyser {
 	class Time;
 	class Sample;
+	class Channel;
+	class SampleBufferIterator;
 
 	class SampleBuffer
 	{
@@ -24,35 +27,7 @@ namespace analyser {
 
 			void clear();
 
-			class Iterator
-			{
-				public:
-					Iterator();
-					Iterator(const Iterator& original) = default;
-					Iterator(std::vector<float*> channels, size_t initial_offset);
-					Iterator& operator=(const Iterator& original) = default;
-
-					float get_subsample(const unsigned int channel_index) const;
-					bool operator==(const SampleBuffer::Iterator& iterator) const;
-					bool operator!=(const SampleBuffer::Iterator& iterator) const;
-					bool operator<(const SampleBuffer::Iterator& iterator) const;
-					bool operator>(const SampleBuffer::Iterator& iterator) const;
-					bool operator<=(const SampleBuffer::Iterator& iterator) const;
-					bool operator>=(const SampleBuffer::Iterator& iterator) const;
-
-					const Sample operator*() const;
-					const Sample operator->() const;
-					void operator++(int);
-					void operator++();
-					void operator--(int);
-					void operator--();
-					void operator+=(int step);
-					void operator-=(int step);
-					Sample operator[](int index) const;
-				private:
-					std::vector<float*> channels_;
-					size_t offset_;
-			};
+			using Iterator = SampleBufferIterator;
 
 			Iterator begin() const;
 			Iterator end() const;

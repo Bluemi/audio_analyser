@@ -5,6 +5,8 @@
 
 #include <time/Time.hpp>
 #include <audio/sample/Sample.hpp>
+#include <audio/buffer/SampleBufferIterator.hpp>
+#include <audio/channel/ChannelIterator.hpp>
 
 namespace analyser {
 	bool SampleBuffer::load_from_file(const char* path, SampleBuffer* buffer)
