@@ -4,7 +4,7 @@
 #include <variant>
 
 #include <audio/converting/FFTWHandler.hpp>
-#include <audio/converting/SampleSource.hpp>
+#include <audio/buffer/SampleSource.hpp>
 
 /*
  * Handles a SampleSource and converts its samples into frequencies.
