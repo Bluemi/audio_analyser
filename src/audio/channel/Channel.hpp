@@ -6,7 +6,7 @@
 
 #include <buffer/Buffer.hpp>
 #include <buffer/BufferSection.hpp>
-#include <audio/iterator/ChannelIterator.hpp>
+#include <audio/channel/ChannelIterator.hpp>
 
 namespace analyser {
 	class Time;
