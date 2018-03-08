@@ -5,11 +5,11 @@
 #include <functional>
 
 #include <buffer/Buffer.hpp>
-#include <buffer/BufferSection.hpp>
 #include <audio/channel/ChannelIterator.hpp>
 
 namespace analyser {
 	class Time;
+	class ChannelBlock;
 
 	class Channel
 	{
@@ -36,27 +36,7 @@ namespace analyser {
 			ChannelIterator get_iterator_at_sample(const size_t offset) const;
 
 			// Block
-			class Block
-			{
-				public:
-					Block();
-					Block(const Block& original) = default;
-					Block(const BufferSection& buffer_section);
-
-					float operator[](size_t index) const;
-
-					bool get_subsample(size_t index, float* subsample) const;
-					const float* get_samples() const;
-
-					size_t get_number_of_samples() const;
-					bool is_empty() const;
-
-					ChannelIterator begin() const;
-					ChannelIterator end() const;
-					ChannelIterator get_iterator_at_sample(size_t index) const;
-				private:
-					BufferSection buffer_section_;
-			};
+			using Block = ChannelBlock;
 
 			size_t get_block(const Time& begin_time, const Time& end_time, Block* block) const;
 

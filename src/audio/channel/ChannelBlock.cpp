@@ -1,19 +1,19 @@
-#include "Channel.hpp"
+#include "ChannelBlock.hpp"
 
 namespace analyser {
-	Channel::Block::Block()
+	ChannelBlock::ChannelBlock()
 	{}
 
-	Channel::Block::Block(const BufferSection& buffer_section)
+	ChannelBlock::ChannelBlock(const BufferSection& buffer_section)
 		: buffer_section_(buffer_section)
 	{}
 
-	float Channel::Block::operator[](size_t index) const
+	float ChannelBlock::operator[](size_t index) const
 	{
 		return *(buffer_section_.get_data() + index);
 	}
 
-	bool Channel::Block::get_subsample(size_t index, float* subsample) const
+	bool ChannelBlock::get_subsample(size_t index, float* subsample) const
 	{
 		bool success = (index < buffer_section_.get_size());
 		if (success) {
@@ -22,32 +22,32 @@ namespace analyser {
 		return success;
 	}
 
-	const float* Channel::Block::get_samples() const
+	const float* ChannelBlock::get_samples() const
 	{
 		return buffer_section_.get_data();
 	}
 
-	size_t Channel::Block::get_number_of_samples() const
+	size_t ChannelBlock::get_number_of_samples() const
 	{
 		return buffer_section_.get_size();
 	}
 
-	bool Channel::Block::is_empty() const
+	bool ChannelBlock::is_empty() const
 	{
 		return buffer_section_.is_empty();
 	}
 
-	ChannelIterator Channel::Block::begin() const
+	ChannelIterator ChannelBlock::begin() const
 	{
 		return buffer_section_.get_data();
 	}
 
-	ChannelIterator Channel::Block::end() const
+	ChannelIterator ChannelBlock::end() const
 	{
 		return buffer_section_.get_data() + buffer_section_.get_size();
 	}
 
-	ChannelIterator Channel::Block::get_iterator_at_sample(size_t index) const
+	ChannelIterator ChannelBlock::get_iterator_at_sample(size_t index) const
 	{
 		return buffer_section_.get_data() + index;
 	}

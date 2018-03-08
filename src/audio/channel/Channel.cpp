@@ -1,6 +1,8 @@
 #include "Channel.hpp"
 
 #include <time/Time.hpp>
+#include <buffer/BufferSection.hpp>
+#include <audio/channel/ChannelBlock.hpp>
 
 namespace analyser {
 	Channel::Channel()
