@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include <audio/buffer/SampleBuffer.hpp>
+#include <audio/buffer/SampleBufferIterator.hpp>
 #include <audio/channel/Channels.hpp>
 
 #define INPUT_PATH "./res/"

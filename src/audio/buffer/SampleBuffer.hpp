@@ -6,14 +6,13 @@
 #include <fftw3.h>
 
 #include <buffer/Buffer.hpp>
-#include <audio/channel/Channel.hpp>
 #include <audio/channel/ChannelIterator.hpp>
-#include <audio/buffer/SampleBufferIterator.hpp>
 
 namespace analyser {
 	class Time;
 	class Sample;
 	class Channel;
+	class ChannelBlock;
 	class SampleBufferIterator;
 
 	class SampleBuffer
@@ -58,7 +57,7 @@ namespace analyser {
 			bool get_channel(unsigned int channel_index, Channel* channel) const;
 
 			// Block
-			size_t get_block(unsigned int channel_index, const Time& begin_time, const Time& end_time, Channel::Block* block) const;
+			size_t get_block(unsigned int channel_index, const Time& begin_time, const Time& end_time, ChannelBlock* block) const;
 		private:
 			static size_t loadSamples(SNDFILE *file, float *samples, const sf_count_t frames);
 

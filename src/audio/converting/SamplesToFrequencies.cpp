@@ -3,6 +3,7 @@
 #include <audio/frequencies/FrequencyBlock.hpp>
 #include <audio/frequencies/FrequencyBuffer.hpp>
 #include <time/Time.hpp>
+#include <audio/channel/ChannelBlock.hpp>
 
 namespace analyser {
 	const unsigned int DEFAULT_BLOCK_SIZE = 2048;
@@ -56,7 +57,7 @@ namespace analyser {
 			for (size_t block_index = 0; block_index < number_of_blocks; block_index++) {
 				Time block_begin = begin_time + (block_index * block_size_);
 				Time block_end = block_begin + block_size_;
-				Channel::Block sample_block;
+				ChannelBlock sample_block;
 				if (sbuffer.get_block(channel_index, block_begin, block_end, &sample_block)) {
 					FrequencyBlock frequency_block;
 					if (fbuffer.get_frequency_block_by_id(channel_index, block_index, &frequency_block)) {

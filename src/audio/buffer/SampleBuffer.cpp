@@ -9,6 +9,7 @@
 #include <audio/channel/ChannelIterator.hpp>
 #include <buffer/BufferSection.hpp>
 #include <audio/channel/ChannelBlock.hpp>
+#include <audio/channel/Channel.hpp>
 
 namespace analyser {
 	bool SampleBuffer::load_from_file(const char* path, SampleBuffer* buffer)

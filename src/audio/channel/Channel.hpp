@@ -6,6 +6,7 @@
 
 #include <buffer/Buffer.hpp>
 #include <audio/channel/ChannelIterator.hpp>
+#include <audio/channel/ChannelBlock.hpp>
 
 namespace analyser {
 	class Time;
@@ -30,10 +31,13 @@ namespace analyser {
 			Time seconds_to_time(float seconds) const;
 			Time number_of_samples_to_time(size_t number_of_samples) const;
 
-			ChannelIterator begin() const;
-			ChannelIterator end() const;
-			ChannelIterator get_iterator_at(const Time& time) const;
-			ChannelIterator get_iterator_at_sample(const size_t offset) const;
+			// Iterator
+			using Iterator = ChannelIterator;
+
+			Iterator begin() const;
+			Iterator end() const;
+			Iterator get_iterator_at(const Time& time) const;
+			Iterator get_iterator_at_sample(const size_t offset) const;
 
 			// Block
 			using Block = ChannelBlock;

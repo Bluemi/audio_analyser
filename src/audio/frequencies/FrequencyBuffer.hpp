@@ -4,11 +4,10 @@
 #include <cstddef>
 #include <vector>
 
-#include <buffer/Buffer.hpp>
-
 namespace analyser {
 	class FrequencyBlock;
 	class Time;
+	class Buffer;
 
 	class FrequencyBuffer
 	{

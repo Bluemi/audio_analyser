@@ -4,6 +4,7 @@
 #include <audio/converting/SamplesToFrequencies.hpp>
 #include <audio/frequencies/FrequencyBlock.hpp>
 #include <audio/frequencies/FrequencyBuffer.hpp>
+#include <audio/channel/Channel.hpp>
 #include <time/Time.hpp>
 
 #include <cmath>

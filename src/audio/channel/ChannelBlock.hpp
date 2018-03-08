@@ -22,9 +22,12 @@ namespace analyser {
 			size_t get_number_of_samples() const;
 			bool is_empty() const;
 
-			ChannelIterator begin() const;
-			ChannelIterator end() const;
-			ChannelIterator get_iterator_at_sample(size_t index) const;
+			// Iterator
+			using Iterator = ChannelIterator;
+
+			Iterator begin() const;
+			Iterator end() const;
+			Iterator get_iterator_at_sample(size_t index) const;
 		private:
 			BufferSection buffer_section_;
 	};

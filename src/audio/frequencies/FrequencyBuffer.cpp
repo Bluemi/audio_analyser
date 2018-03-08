@@ -2,6 +2,7 @@
 
 #include <time/Time.hpp>
 #include <audio/frequencies/FrequencyBlock.hpp>
+#include <buffer/Buffer.hpp>
 
 namespace analyser {
 	FrequencyBuffer::FrequencyBuffer() {}
