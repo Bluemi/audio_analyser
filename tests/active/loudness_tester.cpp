@@ -4,6 +4,9 @@
 #include <audio/buffer/SampleBuffer.hpp>
 #include <audio/channel/Channels.hpp>
 #include <audio/channel/Channel.hpp>
+#include <audio/volume/SamplesToVolume.hpp>
+#include <audio/volume/VolumeBuffer.hpp>
+#include <audio/channel/Channels.hpp>
 #include <time/Time.hpp>
 
 const unsigned int SCREEN_WIDTH = 180;
@@ -47,7 +50,6 @@ void render(float f1, float f2) {
 }
 
 int main(int argc, char* argv[]) {
-	analyser::SampleBuffer sample_buffer;
 	std::string audio_path;
 	if (argc > 1) {
 		audio_path = argv[1];
@@ -56,41 +58,19 @@ int main(int argc, char* argv[]) {
 	}
 
 	std::cout << audio_path << std::endl;
-	if (analyser::SampleBuffer::load_from_file(audio_path.c_str(), &sample_buffer)) {
-		analyser::Time end_time = sample_buffer.number_of_samples_to_time((sample_buffer.get_duration().get_number_of_samples() / NUMBER_OF_FREQUENCIES) * NUMBER_OF_FREQUENCIES);
 
-		play_song(audio_path);
+	analyser::SampleBuffer sample_buffer;
+	if (analyser::SampleBuffer::load_from_file(audio_path.c_str(), &sample_buffer)) {
+		analyser::SamplesToVolume stv(sample_buffer);
+		analyser::VolumeBuffer volume_buffer = stv.convert(sample_buffer.number_of_samples_to_time(0), sample_buffer.get_duration());
+
 		int wait_time = (int)(1000 * sample_buffer.number_of_samples_to_time(NUMBER_OF_FREQUENCIES).get_seconds());
 
-		for (analyser::Time t = sample_buffer.number_of_samples_to_time(0); t < end_time; t = t + NUMBER_OF_FREQUENCIES) {
-			analyser::Channel::Block sample_block;
-			float max_value_left = 0.f;
-			if (sample_buffer.get_block(analyser::StereoChannel::LEFT, t, t + NUMBER_OF_FREQUENCIES, &sample_block)) {
-				for (auto iter = sample_block.begin(); iter != sample_block.end(); ++iter) {
-					if (max_value_left < abs(*iter)) {
-						max_value_left = abs(*iter);
-					}
-				}
-			} else {
-				std::cout << "couldn't get left block at sample " << t.get_number_of_samples() << std::endl;
-				break;
-			}
+		play_song(audio_path);
 
-			float max_value_right = 0.f;
-			if (sample_buffer.get_number_of_channels() > 1) {
-				if (sample_buffer.get_block(analyser::StereoChannel::RIGHT, t, t + NUMBER_OF_FREQUENCIES, &sample_block)) {
-					for (auto iter = sample_block.begin(); iter != sample_block.end(); ++iter) {
-						if (max_value_right < abs(*iter)) {
-							max_value_right = abs(*iter);
-						}
-					}
-				} else {
-					std::cout << "couldn't get right block at sample " << t.get_number_of_samples() << std::endl;
-					break;
-				}
-			}
+		for (unsigned int i = 0; i < volume_buffer.get_number_of_volumes(); i++) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(wait_time));
-			render(max_value_left, max_value_right);
+			render(volume_buffer.get_volumes(analyser::StereoChannel::LEFT)[i], volume_buffer.get_volumes(analyser::StereoChannel::RIGHT)[i]);
 		}
 	} else {
 		std::cout << "couldn't load " << audio_path << std::endl;
