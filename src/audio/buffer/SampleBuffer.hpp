@@ -3,7 +3,6 @@
 
 #include <sndfile.h>
 #include <vector>
-#include <fftw3.h>
 
 #include <buffer/Buffer.hpp>
 #include <audio/channel/ChannelIterator.hpp>
