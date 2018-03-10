@@ -72,7 +72,7 @@ namespace analyser {
 		return buffer_.get_data() + offset;
 	}
 
-	size_t Channel::get_block(const Time& begin_time, const Time& end_time, Block* block) const
+	size_t Channel::get_block(const Time& begin_time, const Time& end_time, ChannelBlock* block) const
 	{
 		size_t number_of_copied_samples = 0;
 		if (begin_time <= get_duration()) {
@@ -80,7 +80,7 @@ namespace analyser {
 										get_duration().get_number_of_samples());		// index if end would be out of bounds
 
 			BufferSection buffer_section = buffer_.get_section(begin_time.get_number_of_samples(), end_index);
-			*block = Block(buffer_section);
+			*block = ChannelBlock(buffer_section);
 			number_of_copied_samples = end_index - begin_time.get_number_of_samples();
 		}
 		return number_of_copied_samples;

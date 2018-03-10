@@ -34,7 +34,7 @@ int main() {
 		analyser::FrequencyBlock fb;
 
 		if (fbuffer.get_frequency_block(0, analyser::Time::from_number_of_samples(0, 44100), &fb)) {
-			analyser::Channel::Block sb;
+			analyser::ChannelBlock sb;
 			if (buffer.get_block(0, start_time, end_time, &sb)) {
 				float own_out_array[width];
 				compute_DCT_IV(sb.get_samples(), own_out_array, width);

@@ -39,10 +39,7 @@ namespace analyser {
 			Iterator get_iterator_at(const Time& time) const;
 			Iterator get_iterator_at_sample(const size_t offset) const;
 
-			// Block
-			using Block = ChannelBlock;
-
-			size_t get_block(const Time& begin_time, const Time& end_time, Block* block) const;
+			size_t get_block(const Time& begin_time, const Time& end_time, ChannelBlock* block) const;
 
 			// Subsample Access
 			bool get_subsample_at(const Time& time, float* subsample);

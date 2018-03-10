@@ -204,14 +204,14 @@ namespace analyser {
 		return success;
 	}
 
-	size_t SampleBuffer::get_block(unsigned int channel_index, const Time& begin_time, const Time& end_time, Channel::Block* block) const
+	size_t SampleBuffer::get_block(unsigned int channel_index, const Time& begin_time, const Time& end_time, ChannelBlock* block) const
 	{
 		size_t number_of_copied_samples = 0;
 
 		if ((channel_index < channels_.size()) && (begin_time <= end_time) && (begin_time.get_number_of_samples() < number_of_samples_)) {
 			size_t end_index = std::min(end_time.get_number_of_samples(), number_of_samples_);
 			BufferSection buffer_section = channels_[channel_index].get_section(begin_time.get_number_of_samples(), end_index);
-			*block = Channel::Block(buffer_section);
+			*block = ChannelBlock(buffer_section);
 			number_of_copied_samples = end_index - begin_time.get_number_of_samples();
 		}
 		return number_of_copied_samples;
