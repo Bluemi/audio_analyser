@@ -55,7 +55,7 @@ namespace analyser {
 		size_t number_of_blocks = number_of_samples / block_size_ + (number_of_samples%block_size_?1:0);
 		unsigned int number_of_channels = sample_buffer.get_number_of_channels();
 
-		VolumeBuffer volume_buffer(sample_buffer.get_number_of_channels(), number_of_blocks);
+		VolumeBuffer volume_buffer(sample_buffer.get_number_of_channels(), number_of_blocks, block_size_, sample_buffer.get_samplerate());
 		for (unsigned int channel_index = 0; channel_index < number_of_channels; channel_index++) {
 			for (size_t block_index = 0; block_index < number_of_blocks; block_index++) {
 				Time block_begin = begin_time + (block_index * block_size_);

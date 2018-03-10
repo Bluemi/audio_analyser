@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
 
 		for (unsigned int i = 0; i < volume_buffer.get_number_of_volumes(); i++) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(wait_time));
-			render(volume_buffer.get_volumes(analyser::StereoChannel::LEFT)[i], volume_buffer.get_volumes(analyser::StereoChannel::RIGHT)[i]);
+			render(volume_buffer.get_volume(analyser::StereoChannel::LEFT, i), volume_buffer.get_volume(analyser::StereoChannel::RIGHT, i));
 		}
 	} else {
 		std::cout << "couldn't load " << audio_path << std::endl;
