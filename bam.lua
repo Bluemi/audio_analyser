@@ -102,6 +102,9 @@ function GenerateTestSettings()
 	settings.cc.includes:Add("/usr/include")
 	settings.link.libs:Add("sndfile")
 
+    -- include curses
+	settings.link.libs:Add("curses")
+
     -- include fftw
 	settings.link.libs:Add("fftw3f")
 
