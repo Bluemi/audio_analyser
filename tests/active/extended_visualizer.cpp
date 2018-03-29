@@ -11,6 +11,7 @@
 #include <audio/channel/Channels.hpp>
 #include <audio/converting/WindowFunction.hpp>
 #include <time/Time.hpp>
+#include <time/PartialTime.hpp>
 
 const unsigned int SCREEN_WIDTH = 180;
 const unsigned int SCREEN_HEIGHT = 57;
@@ -92,7 +93,7 @@ int main(int argc, char* argv[]) {
 	}
 	if (analyser::SampleBuffer::load_from_file(audio_path.c_str(), &sample_buffer)) {
 		analyser::SamplesToFrequencies stf(sample_buffer, NUMBER_OF_FREQUENCIES, analyser::von_hann_window);
-		analyser::FrequencyBuffer frequency_buffer = stf.convert(sample_buffer.number_of_samples_to_time(0), sample_buffer.get_duration());
+		analyser::FrequencyBuffer frequency_buffer = stf.convert((size_t)0, sample_buffer.get_duration());
 
 		int wait_time = (int)(1000 * sample_buffer.number_of_samples_to_time(NUMBER_OF_FREQUENCIES).get_seconds());
 

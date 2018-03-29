@@ -6,6 +6,7 @@
 #include <audio/frequencies/FrequencyBuffer.hpp>
 #include <audio/channel/Channel.hpp>
 #include <time/Time.hpp>
+#include <time/PartialTime.hpp>
 
 #include <cmath>
 

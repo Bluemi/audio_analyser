@@ -3,7 +3,7 @@
 #include <audio/buffer/SampleBuffer.hpp>
 #include <audio/channel/Channels.hpp>
 #include <audio/sample/Sample.hpp>
-#include <time/Time.hpp>
+#include <time/PartialTime.hpp>
 
 #include <math.h>
 
@@ -16,7 +16,7 @@ int main() {
 	analyser::SampleBuffer buffer;
 	if (analyser::SampleBuffer::load_from_file(INPUT_FILE_PATH, &buffer)) {
 		analyser::Sample sample;
-		if (buffer.get_sample_at(buffer.seconds_to_time(20.3), &sample)) {
+		if (buffer.get_sample_at(20.3, &sample)) {
 			float subsample;
 			std::cout << "number_of_subsamples:" << sample.get_number_of_channels() << std::endl;
 			if (sample.get_subsample(analyser::StereoChannel::LEFT, &subsample)) {

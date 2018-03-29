@@ -3,6 +3,7 @@
 #include <audio/volume/VolumeBuffer.hpp>
 #include <audio/channel/ChannelBlock.hpp>
 #include <time/Time.hpp>
+#include <time/PartialTime.hpp>
 
 namespace analyser {
 	const unsigned int DEFAULT_BLOCK_SIZE = 2048;

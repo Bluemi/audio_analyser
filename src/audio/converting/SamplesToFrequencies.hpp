@@ -30,9 +30,9 @@ namespace analyser {
 			// unbinds all sources
 			void clear();
 
-			FrequencyBuffer convert(const Time& begin_time, const Time& end_time);
+			FrequencyBuffer convert(const PartialTime& begin_time, const PartialTime& end_time);
 		private:
-			FrequencyBuffer convert_impl(const SampleBuffer& sbuffer, const Time& begin_time, const Time& end_time);
+			FrequencyBuffer convert_impl(const SampleBuffer& sbuffer, const PartialTime& begin_time, const PartialTime& end_time);
 			void load_internal_double_buffer(float* input, size_t size);
 
 			SampleSource sample_source_;

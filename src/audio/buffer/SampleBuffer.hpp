@@ -9,6 +9,7 @@
 
 namespace analyser {
 	class Time;
+	class PartialTime;
 	class Sample;
 	class Channel;
 	class ChannelBlock;
@@ -29,13 +30,11 @@ namespace analyser {
 
 			Iterator begin() const;
 			Iterator end() const;
-			Iterator get_iterator_at(const Time& time) const;
-			Iterator get_iterator_at_second(double second) const;
+			Iterator get_iterator_at(const PartialTime& time) const;
 
 			ChannelIterator begin(unsigned int channel_index) const;
 			ChannelIterator end(unsigned int channel_index) const;
-			ChannelIterator get_iterator_at(unsigned int channel_index, const Time& time) const;
-			ChannelIterator get_iterator_at_second(unsigned int channel_index, double second) const;
+			ChannelIterator get_iterator_at(unsigned int channel_index, const PartialTime& time) const;
 
 			// stats
 			unsigned int get_samplerate() const;
@@ -48,15 +47,15 @@ namespace analyser {
 			Time number_of_samples_to_time(size_t number_of_samples) const;
 
 			// Sample
-			bool get_sample_at(const Time& time, Sample* sample) const;
+			bool get_sample_at(const PartialTime& time, Sample* sample) const;
 			bool get_sample(const size_t sample_offset, Sample* sample) const;
-			bool get_subsample_at(const Time& time, unsigned int channel_index, float* subsample) const;
+			bool get_subsample_at(const PartialTime& time, unsigned int channel_index, float* subsample) const;
 
 			// Channel
 			bool get_channel(unsigned int channel_index, Channel* channel) const;
 
 			// Block
-			size_t get_block(unsigned int channel_index, const Time& begin_time, const Time& end_time, ChannelBlock* block) const;
+			size_t get_block(unsigned int channel_index, const PartialTime& begin_time, const PartialTime& end_time, ChannelBlock* block) const;
 		private:
 			static size_t loadSamples(SNDFILE *file, float *samples, const sf_count_t frames);
 

@@ -3,6 +3,7 @@
 #include <audio/frequencies/FrequencyBlock.hpp>
 #include <audio/frequencies/FrequencyBuffer.hpp>
 #include <time/Time.hpp>
+#include <time/PartialTime.hpp>
 #include <audio/channel/ChannelBlock.hpp>
 
 namespace analyser {
@@ -47,15 +48,15 @@ namespace analyser {
 		sample_source_ = SampleSource();
 	}
 
-	FrequencyBuffer SamplesToFrequencies::convert_impl(const SampleBuffer& sbuffer, const Time& begin_time, const Time& end_time) {
-		size_t number_of_samples = end_time.get_number_of_samples() - begin_time.get_number_of_samples();
+	FrequencyBuffer SamplesToFrequencies::convert_impl(const SampleBuffer& sbuffer, const PartialTime& begin_time, const PartialTime& end_time) {
+		size_t number_of_samples = end_time.to_time(sbuffer.get_samplerate()).get_number_of_samples() - begin_time.to_time(sbuffer.get_samplerate()).get_number_of_samples();
 		size_t number_of_blocks = number_of_samples / block_size_ + (number_of_samples%block_size_?1:0);
 		FrequencyBuffer fbuffer(sbuffer.get_number_of_channels(), number_of_blocks, block_size_);
 
 		for (unsigned int channel_index = 0; channel_index < sbuffer.get_number_of_channels(); channel_index++) {
 			// getting sample block
 			for (size_t block_index = 0; block_index < number_of_blocks; block_index++) {
-				Time block_begin = begin_time + (block_index * block_size_);
+				Time block_begin = begin_time.to_time(sbuffer.get_samplerate()) + (block_index * block_size_);
 				Time block_end = block_begin + block_size_;
 				ChannelBlock sample_block;
 				if (sbuffer.get_block(channel_index, block_begin, block_end, &sample_block)) {
@@ -76,7 +77,7 @@ namespace analyser {
 	// Dispatcher for different SampleSource Types
 	class Overloader {
 		public:
-			Overloader(SamplesToFrequencies* stf, const Time& begin_time, const Time& end_time) : stf_(stf), begin_time_(begin_time), end_time_(end_time) {}
+			Overloader(SamplesToFrequencies* stf, const PartialTime& begin_time, const PartialTime& end_time) : stf_(stf), begin_time_(begin_time), end_time_(end_time) {}
 
 			FrequencyBuffer operator()(std::monostate) {
 				return FrequencyBuffer();
@@ -89,11 +90,11 @@ namespace analyser {
 
 		private:
 			SamplesToFrequencies* stf_;
-			const Time begin_time_;
-			const Time end_time_;
+			const PartialTime begin_time_;
+			const PartialTime end_time_;
 	};
 
-	FrequencyBuffer SamplesToFrequencies::convert(const Time& begin_time, const Time& end_time)
+	FrequencyBuffer SamplesToFrequencies::convert(const PartialTime& begin_time, const PartialTime& end_time)
 	{
 		return std::visit(Overloader(this, begin_time, end_time), sample_source_);
 	}

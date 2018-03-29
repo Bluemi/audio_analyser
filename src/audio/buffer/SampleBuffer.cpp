@@ -4,6 +4,7 @@
 #include <cstdlib>
 
 #include <time/Time.hpp>
+#include <time/PartialTime.hpp>
 #include <audio/sample/Sample.hpp>
 #include <audio/buffer/SampleBufferIterator.hpp>
 #include <audio/channel/ChannelIterator.hpp>
@@ -98,18 +99,13 @@ namespace analyser {
 		return SampleBuffer::Iterator(channels, number_of_samples_);
 	}
 
-	SampleBuffer::Iterator SampleBuffer::get_iterator_at(const Time& time) const
+	SampleBuffer::Iterator SampleBuffer::get_iterator_at(const PartialTime& time) const
 	{
 		std::vector<float*> channels(channels_.size());
 		for (unsigned int i = 0; i < channels_.size(); i++) {
-			channels[i] = channels_[i].get_data() + time.get_number_of_samples();
+			channels[i] = channels_[i].get_data() + time.to_time(samplerate_).get_number_of_samples();
 		}
 		return SampleBuffer::Iterator(channels, number_of_samples_);
-	}
-
-	SampleBuffer::Iterator SampleBuffer::get_iterator_at_second(double seconds) const
-	{
-		return get_iterator_at(seconds_to_time(seconds));
 	}
 
 	ChannelIterator SampleBuffer::begin(unsigned int channel_index) const
@@ -122,14 +118,9 @@ namespace analyser {
 		return channels_[channel_index].get_data();
 	}
 
-	ChannelIterator SampleBuffer::get_iterator_at(unsigned int channel_index, const Time& time) const
+	ChannelIterator SampleBuffer::get_iterator_at(unsigned int channel_index, const PartialTime& time) const
 	{
-		return channels_[channel_index].get_data() + time.get_number_of_samples();
-	}
-
-	ChannelIterator SampleBuffer::get_iterator_at_second(unsigned int channel_index, double second) const
-	{
-		return get_iterator_at(channel_index, seconds_to_time(second));
+		return channels_[channel_index].get_data() + time.to_time(samplerate_).get_number_of_samples();
 	}
 
 	unsigned int SampleBuffer::get_samplerate() const {
@@ -158,9 +149,9 @@ namespace analyser {
 		return Time::from_number_of_samples(number_of_samples, samplerate_);
 	}
 
-	bool SampleBuffer::get_sample_at(const Time& time, Sample* sample) const
+	bool SampleBuffer::get_sample_at(const PartialTime& time, Sample* sample) const
 	{
-		return get_sample(time.get_number_of_samples(), sample);
+		return get_sample(time.to_time(samplerate_).get_number_of_samples(), sample);
 	}
 
 	bool SampleBuffer::get_sample(const size_t sample_offset, Sample* sample) const
@@ -179,13 +170,14 @@ namespace analyser {
 		return success;
 	}
 
-	bool SampleBuffer::get_subsample_at(const Time& time, unsigned int channel_index, float* subsample) const
+	bool SampleBuffer::get_subsample_at(const PartialTime& time, unsigned int channel_index, float* subsample) const
 	{
+		Time t = time.to_time(samplerate_);
 		bool success = true;
-		if ((time.get_number_of_samples() >= number_of_samples_) || (channel_index>= channels_.size())) {
+		if ((t.get_number_of_samples() >= number_of_samples_) || (channel_index>= channels_.size())) {
 			success = false;
 		} else {
-			*subsample = *(channels_[channel_index].get_data() + time.get_number_of_samples());
+			*subsample = *(channels_[channel_index].get_data() + t.get_number_of_samples());
 		}
 
 		return success;
@@ -204,15 +196,17 @@ namespace analyser {
 		return success;
 	}
 
-	size_t SampleBuffer::get_block(unsigned int channel_index, const Time& begin_time, const Time& end_time, ChannelBlock* block) const
+	size_t SampleBuffer::get_block(unsigned int channel_index, const PartialTime& begin_time, const PartialTime& end_time, ChannelBlock* block) const
 	{
+		const Time b_time = begin_time.to_time(samplerate_);
+		const Time e_time = end_time.to_time(samplerate_);
 		size_t number_of_copied_samples = 0;
 
-		if ((channel_index < channels_.size()) && (begin_time <= end_time) && (begin_time.get_number_of_samples() < number_of_samples_)) {
-			size_t end_index = std::min(end_time.get_number_of_samples(), number_of_samples_);
-			BufferSection buffer_section = channels_[channel_index].get_section(begin_time.get_number_of_samples(), end_index);
+		if ((channel_index < channels_.size()) && (b_time <= e_time) && (b_time.get_number_of_samples() < number_of_samples_)) {
+			size_t end_index = std::min(e_time.get_number_of_samples(), number_of_samples_);
+			BufferSection buffer_section = channels_[channel_index].get_section(b_time.get_number_of_samples(), end_index);
 			*block = ChannelBlock(buffer_section);
-			number_of_copied_samples = end_index - begin_time.get_number_of_samples();
+			number_of_copied_samples = end_index - b_time.get_number_of_samples();
 		}
 		return number_of_copied_samples;
 	}
