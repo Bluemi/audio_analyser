@@ -17,9 +17,9 @@ namespace analyser {
 			void bind(const SampleSource& sample_source);
 			void unbind();
 
-			VolumeBuffer convert(const Time& begin_time, const Time& end_time) const;
+			VolumeBuffer convert(const PartialTime& begin_time, const PartialTime& end_time) const;
 		private:
-			VolumeBuffer convert_impl(const SampleBuffer& sample_buffer, const Time& begin_time, const Time& end_time) const;
+			VolumeBuffer convert_impl(const SampleBuffer& sample_buffer, const PartialTime& begin_time, const PartialTime& end_time) const;
 
 			SampleSource sample_source_;
 			size_t block_size_;

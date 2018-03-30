@@ -8,6 +8,7 @@
 #include <audio/volume/VolumeBuffer.hpp>
 #include <audio/channel/Channels.hpp>
 #include <time/Time.hpp>
+#include <time/PartialTime.hpp>
 
 const unsigned int SCREEN_WIDTH = 180;
 const unsigned int NUMBER_OF_FREQUENCIES = 2048;
@@ -62,7 +63,7 @@ int main(int argc, char* argv[]) {
 	analyser::SampleBuffer sample_buffer;
 	if (analyser::SampleBuffer::load_from_file(audio_path.c_str(), &sample_buffer)) {
 		analyser::SamplesToVolume stv(sample_buffer);
-		analyser::VolumeBuffer volume_buffer = stv.convert(sample_buffer.number_of_samples_to_time(0), sample_buffer.get_duration());
+		analyser::VolumeBuffer volume_buffer = stv.convert((size_t)0, sample_buffer.get_duration());
 
 		int wait_time = (int)(1000 * sample_buffer.number_of_samples_to_time(NUMBER_OF_FREQUENCIES).get_seconds());
 

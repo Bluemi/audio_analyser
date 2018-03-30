@@ -10,6 +10,7 @@
 
 namespace analyser {
 	class Time;
+	class PartialTime;
 	class ChannelBlock;
 
 	class Channel
@@ -28,7 +29,7 @@ namespace analyser {
 			Time get_duration() const;
 
 			// Time
-			Time seconds_to_time(float seconds) const;
+			Time seconds_to_time(double seconds) const;
 			Time number_of_samples_to_time(size_t number_of_samples) const;
 
 			// Iterator
@@ -36,14 +37,13 @@ namespace analyser {
 
 			Iterator begin() const;
 			Iterator end() const;
-			Iterator get_iterator_at(const Time& time) const;
+			Iterator get_iterator_at(const PartialTime& time) const;
 			Iterator get_iterator_at_sample(const size_t offset) const;
 
-			size_t get_block(const Time& begin_time, const Time& end_time, ChannelBlock* block) const;
+			size_t get_block(const PartialTime& begin_time, const PartialTime& end_time, ChannelBlock* block) const;
 
 			// Subsample Access
-			bool get_subsample_at(const Time& time, float* subsample);
-			bool get_subsample_at_seconds(double seconds, float* subsample);
+			bool get_subsample_at(const PartialTime& time, float* subsample);
 
 		private:
 			Buffer buffer_;

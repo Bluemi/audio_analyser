@@ -50,16 +50,18 @@ namespace analyser {
 		return max_value;
 	}
 
-	VolumeBuffer SamplesToVolume::convert_impl(const SampleBuffer& sample_buffer, const Time& begin_time, const Time& end_time) const
+	VolumeBuffer SamplesToVolume::convert_impl(const SampleBuffer& sample_buffer, const PartialTime& begin_time, const PartialTime& end_time) const
 	{
-		size_t number_of_samples = end_time.get_number_of_samples() - begin_time.get_number_of_samples();
+		const Time b_time = begin_time.to_time(sample_buffer.get_samplerate());
+		const Time e_time = end_time.to_time(sample_buffer.get_samplerate());
+		size_t number_of_samples = e_time.get_number_of_samples() - b_time.get_number_of_samples();
 		size_t number_of_blocks = number_of_samples / block_size_ + (number_of_samples%block_size_?1:0);
 		unsigned int number_of_channels = sample_buffer.get_number_of_channels();
 
 		VolumeBuffer volume_buffer(sample_buffer.get_number_of_channels(), number_of_blocks, block_size_, sample_buffer.get_samplerate());
 		for (unsigned int channel_index = 0; channel_index < number_of_channels; channel_index++) {
 			for (size_t block_index = 0; block_index < number_of_blocks; block_index++) {
-				Time block_begin = begin_time + (block_index * block_size_);
+				Time block_begin = b_time + (block_index * block_size_);
 				Time block_end = block_begin + block_size_;
 				ChannelBlock sample_block;
 				if (sample_buffer.get_block(channel_index, block_begin, block_end, &sample_block)) {
@@ -74,7 +76,7 @@ namespace analyser {
 	// Dispatcher for different SampleSource Types
 	class Overloader {
 		public:
-			Overloader(const SamplesToVolume* stl, const Time& begin_time, const Time& end_time) : stl_(stl), begin_time_(begin_time), end_time_(end_time) {}
+			Overloader(const SamplesToVolume* stl, const PartialTime& begin_time, const PartialTime& end_time) : stl_(stl), begin_time_(begin_time), end_time_(end_time) {}
 
 			VolumeBuffer operator()(std::monostate) {
 				return VolumeBuffer();
@@ -87,11 +89,11 @@ namespace analyser {
 
 		private:
 			const SamplesToVolume* stl_;
-			const Time begin_time_;
-			const Time end_time_;
+			const PartialTime begin_time_;
+			const PartialTime end_time_;
 	};
 
-	VolumeBuffer SamplesToVolume::convert(const Time& begin_time, const Time& end_time) const
+	VolumeBuffer SamplesToVolume::convert(const PartialTime& begin_time, const PartialTime& end_time) const
 	{
 		return std::visit(Overloader(this, begin_time, end_time), sample_source_);
 	}

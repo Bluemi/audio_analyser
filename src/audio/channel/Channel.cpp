@@ -1,6 +1,7 @@
 #include "Channel.hpp"
 
 #include <time/Time.hpp>
+#include <time/PartialTime.hpp>
 #include <buffer/BufferSection.hpp>
 #include <audio/channel/ChannelBlock.hpp>
 
@@ -42,7 +43,7 @@ namespace analyser {
 		return Time::from_number_of_samples(get_number_of_samples(), samplerate_);
 	}
 
-	Time Channel::seconds_to_time(float seconds) const
+	Time Channel::seconds_to_time(double seconds) const
 	{
 		return Time::from_seconds(seconds, samplerate_);
 	}
@@ -62,9 +63,9 @@ namespace analyser {
 		return buffer_.get_data() + get_number_of_samples();
 	}
 
-	ChannelIterator Channel::get_iterator_at(const Time& time) const
+	ChannelIterator Channel::get_iterator_at(const PartialTime& time) const
 	{
-		return get_iterator_at_sample(time.get_number_of_samples());
+		return get_iterator_at_sample(time.to_time(samplerate_).get_number_of_samples());
 	}
 
 	ChannelIterator Channel::get_iterator_at_sample(const size_t offset) const
@@ -72,33 +73,31 @@ namespace analyser {
 		return buffer_.get_data() + offset;
 	}
 
-	size_t Channel::get_block(const Time& begin_time, const Time& end_time, ChannelBlock* block) const
+	size_t Channel::get_block(const PartialTime& begin_time, const PartialTime& end_time, ChannelBlock* block) const
 	{
+		const Time b_time = begin_time.to_time(samplerate_);
+		const Time e_time = end_time.to_time(samplerate_);
 		size_t number_of_copied_samples = 0;
-		if (begin_time <= get_duration()) {
-			size_t end_index = std::min(end_time.get_number_of_samples(), 				// normal end index
+		if (b_time <= get_duration()) {
+			size_t end_index = std::min(e_time.get_number_of_samples(), 				// normal end index
 										get_duration().get_number_of_samples());		// index if end would be out of bounds
 
-			BufferSection buffer_section = buffer_.get_section(begin_time.get_number_of_samples(), end_index);
+			BufferSection buffer_section = buffer_.get_section(b_time.get_number_of_samples(), end_index);
 			*block = ChannelBlock(buffer_section);
-			number_of_copied_samples = end_index - begin_time.get_number_of_samples();
+			number_of_copied_samples = end_index - b_time.get_number_of_samples();
 		}
 		return number_of_copied_samples;
 	}
 
-	bool Channel::get_subsample_at(const Time& time, float* subsample)
+	bool Channel::get_subsample_at(const PartialTime& time, float* subsample)
 	{
+		Time t = time.to_time(samplerate_);
 		bool success = true;
-		if (time > get_duration()) {
+		if (t > get_duration()) {
 			success = false;
 		} else {
-			*subsample = *(buffer_.get_data() + time.get_number_of_samples());
+			*subsample = *(buffer_.get_data() + t.get_number_of_samples());
 		}
 		return success;
-	}
-
-	bool Channel::get_subsample_at_seconds(double seconds, float* subsample)
-	{
-		return get_subsample_at(this->seconds_to_time(seconds), subsample);
 	}
 }
