@@ -1,23 +1,24 @@
 #include "FrequencyBuffer.hpp"
 
 #include <time/Time.hpp>
+#include <time/PartialTime.hpp>
 #include <audio/frequencies/FrequencyBlock.hpp>
 #include <buffer/Buffer.hpp>
 
 namespace analyser {
 	FrequencyBuffer::FrequencyBuffer() {}
 
-	FrequencyBuffer::FrequencyBuffer(unsigned int number_of_channels, size_t number_of_blocks, size_t block_size)
-		: channels_(number_of_channels), number_of_blocks_(number_of_blocks), block_size_(block_size)
+	FrequencyBuffer::FrequencyBuffer(unsigned int number_of_channels, size_t number_of_blocks, size_t block_size, unsigned int samplerate)
+		: channels_(number_of_channels), number_of_blocks_(number_of_blocks), block_size_(block_size), samplerate_(samplerate)
 	{
 		for (unsigned int i = 0; i < number_of_channels; i++) {
 			channels_[i] = Buffer(number_of_blocks * block_size);
 		}
 	}
 
-	bool FrequencyBuffer::get_frequency_block(unsigned int channel_index, const Time& time, FrequencyBlock* frequency_block) const
+	bool FrequencyBuffer::get_frequency_block(unsigned int channel_index, const PartialTime& time, FrequencyBlock* frequency_block) const
 	{
-		size_t block_index = time.get_number_of_samples() / block_size_;
+		size_t block_index = time.to_time(samplerate_).get_number_of_samples() / block_size_;
 		return get_frequency_block_by_id(channel_index, block_index, frequency_block);
 	}
 

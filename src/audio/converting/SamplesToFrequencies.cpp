@@ -51,7 +51,7 @@ namespace analyser {
 	FrequencyBuffer SamplesToFrequencies::convert_impl(const SampleBuffer& sbuffer, const PartialTime& begin_time, const PartialTime& end_time) {
 		size_t number_of_samples = end_time.to_time(sbuffer.get_samplerate()).get_number_of_samples() - begin_time.to_time(sbuffer.get_samplerate()).get_number_of_samples();
 		size_t number_of_blocks = number_of_samples / block_size_ + (number_of_samples%block_size_?1:0);
-		FrequencyBuffer fbuffer(sbuffer.get_number_of_channels(), number_of_blocks, block_size_);
+		FrequencyBuffer fbuffer(sbuffer.get_number_of_channels(), number_of_blocks, block_size_, sbuffer.get_samplerate());
 
 		for (unsigned int channel_index = 0; channel_index < sbuffer.get_number_of_channels(); channel_index++) {
 			// getting sample block
