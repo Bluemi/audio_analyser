@@ -21,6 +21,8 @@ namespace analyser {
 			unsigned int get_number_of_channels() const;
 			size_t get_number_of_blocks() const;
 			size_t get_block_size() const;
+			float frequency_to_index(float frequency) const;
+			float get_frequency_volume(unsigned int channel_index, float frequency) const;
 
 		private:
 			std::vector<Buffer> channels_;

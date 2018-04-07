@@ -47,4 +47,18 @@ namespace analyser {
 	{
 		return block_size_;
 	}
+
+	float FrequencyBuffer::frequency_to_index(float frequency) const
+	{
+		return frequency * (2*block_size_) / samplerate_ - 0.5f;
+	}
+
+	float FrequencyBuffer::get_frequency_volume(unsigned int channel_index, float frequency) const
+	{
+		float index = frequency_to_index(frequency);
+		int abs_index = (int) index;
+		float abs_percentage = 1.f - (index - abs_index);
+		float* data = channels_[channel_index].get_data();
+		return data[abs_index] * abs_percentage + data[abs_index+1] * (1.f - abs_percentage);
+	}
 }
