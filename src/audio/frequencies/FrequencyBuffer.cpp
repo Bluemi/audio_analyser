@@ -1,5 +1,7 @@
 #include "FrequencyBuffer.hpp"
 
+#include <cmath>
+
 #include <time/Time.hpp>
 #include <time/PartialTime.hpp>
 #include <audio/frequencies/FrequencyBlock.hpp>
@@ -59,6 +61,6 @@ namespace analyser {
 		int abs_index = (int) index;
 		float abs_percentage = 1.f - (index - abs_index);
 		float* data = channels_[channel_index].get_data();
-		return data[abs_index] * abs_percentage + data[abs_index+1] * (1.f - abs_percentage);
+		return std::abs(data[abs_index]) * abs_percentage + std::abs(data[abs_index+1]) * (1.f - abs_percentage);
 	}
 }
